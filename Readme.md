@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
 * Студент: [Евгений Скробов](https://up.htmlacademy.ru/php/12/user/1530283).
-* Наставник: `Неизвестно`.
+* Наставник: [Антон Попов](https://htmlacademy.ru/profile/joker).
 
 ---
 
