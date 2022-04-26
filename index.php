@@ -1,8 +1,6 @@
 <?php
 require_once 'helpers.php';
 
-const AUTH_STATUS = 1;
-
 $is_auth = rand(0, 1);
 
 $user_name = 'Евгений';
@@ -44,7 +42,7 @@ $user_name = 'Евгений';
             </div>
         </form>
         <div class="header__nav-wrapper">
-            <?php if ($is_auth === AUTH_STATUS): ?>
+            <?php if ($is_auth): ?>
                 <nav class="header__nav">
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
