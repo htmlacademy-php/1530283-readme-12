@@ -42,6 +42,52 @@ $post_cards = [
         'avatar' => 'userpic.jpg',
     ]
 ];
+
+const TEXT_SEPARATOR = ' ';
+
+function crop_text (string $text, int $max_length): string
+{
+    $words = explode(TEXT_SEPARATOR, $text);
+    $words_count = count($words);
+
+    $current_word_index = 0;
+    $current_text_length = 0;
+
+    while ($current_word_index < $words_count)  {
+        $current_text_length += mb_strlen($words[$current_word_index]);
+
+        if ($current_text_length > $max_length) {
+            break;
+        }
+
+        $current_text_length++;
+        $current_word_index++;
+    }
+
+    $is_cropped = $current_word_index < $words_count;
+
+    if (!$is_cropped) {
+        return $text;
+    }
+
+    $cropped_words = array_slice($words, 0, $current_word_index);
+
+    return implode(TEXT_SEPARATOR, $cropped_words) . '...';
+}
+
+function decorate_post_text_content (string $text, int $max_length = 300): string
+{
+    $cropped_text = crop_text($text, $max_length);
+
+    if ($text === $cropped_text) {
+        return "<p>$text</p>";
+    }
+
+    return "
+        <p>$cropped_text</p>
+        <a class='post-text__more-link' href='#'>Читать далее</a>
+    ";
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -276,7 +322,7 @@ $post_cards = [
                                 </blockquote>
                                 <?php break; ?>
                             <?php case 'post-text': ?>
-                                <p><?= $content ?></p>
+                                <?= decorate_post_text_content($content) ?>
                                 <?php break; ?>
                             <?php case 'post-photo': ?>
                                 <div class="post-photo__image-wrapper">
