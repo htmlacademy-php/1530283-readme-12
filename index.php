@@ -44,7 +44,15 @@ $post_cards = [
 ];
 
 const TEXT_SEPARATOR = ' ';
-
+/**
+ * Функция обрезает текст с учетом максимально заданнной длины, сохраняя целостность слов.
+ * При обрезке текста после последнего слова добавляется многоточие.
+ * Длина обрезанного текста рассчитывается без учета добавленного многоточия.
+ * Ограничения: Длина первого слова исходного текста не должна превышать максимальную длину.
+ * @param string $text Исходный текст
+ * @param int $max_length Максимальная длина текста
+ * @return string Обрезанный текст
+ */
 function crop_text (string $text, int $max_length): string
 {
     $words = explode(TEXT_SEPARATOR, $text);
@@ -75,6 +83,12 @@ function crop_text (string $text, int $max_length): string
     return implode(TEXT_SEPARATOR, $cropped_words) . '...';
 }
 
+/**
+ * Функция шаблонизирует контент текстового поста
+ * @param string $text Контент текстового поста
+ * @param int $max_length Максимальная длина, показываемого текста. По умолчанию - 300 символов.
+ * @return string Шаблон контента текстового поста
+ */
 function decorate_post_text_content (string $text, int $max_length = 300): string
 {
     $cropped_text = crop_text($text, $max_length);
