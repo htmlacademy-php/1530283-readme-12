@@ -106,7 +106,7 @@ function decorate_post_text_content (string $text, int $max_length = 300): strin
 <header class="header">
     <div class="header__wrapper container">
         <div class="header__logo-wrapper">
-            <a class="header__logo-link" href="main.html">
+            <a class="header__logo-link" href="markup/main.html">
                 <img class="header__logo" src="img/logo.svg" alt="Логотип readme" width="128" height="24">
             </a>
             <p class="header__topic">
@@ -135,12 +135,12 @@ function decorate_post_text_content (string $text, int $max_length = 300): strin
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--feed">
-                            <a class="header__page-link" href="feed.html" title="Моя лента">
+                            <a class="header__page-link" href="markup/feed.html" title="Моя лента">
                                 <span class="visually-hidden">Моя лента</span>
                             </a>
                         </li>
                         <li class="header__my-page header__my-page--messages">
-                            <a class="header__page-link" href="messages.html" title="Личные сообщения">
+                            <a class="header__page-link" href="markup/messages.html" title="Личные сообщения">
                                 <span class="visually-hidden">Личные сообщения</span>
                             </a>
                         </li>
@@ -192,7 +192,7 @@ function decorate_post_text_content (string $text, int $max_length = 300): strin
                             </div>
                         </li>
                         <li>
-                            <a class="header__post-button button button--transparent" href="adding-post.html">Пост</a>
+                            <a class="header__post-button button button--transparent" href="markup/adding-post.html">Пост</a>
                         </li>
                     </ul>
                 </nav>
@@ -419,13 +419,13 @@ function decorate_post_text_content (string $text, int $max_length = 300): strin
             <div class="footer__my-info">
                 <ul class="footer__my-pages">
                     <li class="footer__my-page footer__my-page--feed">
-                        <a class="footer__page-link" href="feed.html">Моя лента</a>
+                        <a class="footer__page-link" href="markup/feed.html">Моя лента</a>
                     </li>
                     <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="popular.html">Популярный контент</a>
+                        <a class="footer__page-link" href="markup/popular.html">Популярный контент</a>
                     </li>
                     <li class="footer__my-page footer__my-page--messages">
-                        <a class="footer__page-link" href="messages.html">Личные сообщения</a>
+                        <a class="footer__page-link" href="markup/messages.html">Личные сообщения</a>
                     </li>
                 </ul>
                 <div class="footer__copyright">
