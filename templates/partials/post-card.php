@@ -6,43 +6,22 @@ list(
     'user_name' => $user_name,
     'avatar' => $avatar
     ) = $post_card;
+
+$post_content_decorators = [
+    'quote' => 'decorate_post_quote_content',
+    'text' => 'decorate_post_text_content',
+    'photo' => 'decorate_post_photo_content',
+    'link' => 'decorate_post_link_content',
+];
 ?>
 <article class="popular__post post post-<?= $type ?>">
     <header class="post__header">
         <h2><?= $title ?></h2>
     </header>
     <div class="post__main">
-        <?php switch ($type):
-            case 'quote': ?>
-                <blockquote>
-                    <p><?= $content ?></p>
-                    <cite>Неизвестный Автор</cite>
-                </blockquote>
-                <?php break; ?>
-            <?php case 'text': ?>
-                <?= decorate_post_text_content($content) ?>
-                <?php break; ?>
-            <?php case 'photo': ?>
-                <div class="post-photo__image-wrapper">
-                    <img src="img/<?= $content ?>" alt="Фото от пользователя" width="360" height="240">
-                </div>
-                <?php break; ?>
-            <?php case 'link': ?>
-                <div class="post-link__wrapper">
-                    <a class="post-link__external" href="http://<?= $content ?>" title="Перейти по ссылке">
-                        <div class="post-link__info-wrapper">
-                            <div class="post-link__icon-wrapper">
-                                <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
-                            </div>
-                            <div class="post-link__info">
-                                <h3><?= $title ?></h3>
-                            </div>
-                        </div>
-                        <span><?= $content ?></span>
-                    </a>
-                </div>
-                <?php break; ?>
-            <?php endswitch; ?>
+        <?php if (is_callable($post_content_decorators[$type])) {
+            print($post_content_decorators[$type]($content));
+        }?>
     </div>
     <footer class="post__footer">
         <div class="post__author">
