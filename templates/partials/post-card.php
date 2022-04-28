@@ -16,7 +16,7 @@ $post_content_decorators = [
 ?>
 <article class="popular__post post post-<?= $type ?>">
     <header class="post__header">
-        <h2><?= $title ?></h2>
+        <h2><?= strip_tags($title) ?></h2>
     </header>
     <div class="post__main">
         <?php if (is_callable($post_content_decorators[$type])) {
@@ -30,7 +30,7 @@ $post_content_decorators = [
                     <img class="post__author-avatar" src="img/<?= $avatar ?>" alt="Аватар пользователя">
                 </div>
                 <div class="post__info">
-                    <b class="post__author-name"><?= $user_name ?></b>
+                    <b class="post__author-name"><?= strip_tags($user_name) ?></b>
                     <time class="post__time" datetime="">дата</time>
                 </div>
             </a>

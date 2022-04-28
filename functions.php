@@ -48,6 +48,7 @@ function crop_text (string $text, int $max_length): string
 */
 function decorate_post_text_content (string $content, int $max_length = 300): string
 {
+    $content = htmlspecialchars($content);
     $cropped_text = crop_text($content, $max_length);
 
     if ($content === $cropped_text) {
@@ -67,6 +68,8 @@ function decorate_post_text_content (string $content, int $max_length = 300): st
  */
 function decorate_post_quote_content (string $content): string
 {
+    $content = htmlspecialchars($content);
+
     return "
         <blockquote>
             <p>$content</p>
@@ -96,6 +99,8 @@ function decorate_post_photo_content (string $content): string
  */
 function decorate_post_link_content (string $content): string
 {
+    $content = strip_tags($content);
+
     return "
         <div class=\"post-link__wrapper\">
             <a class=\"post-link__external\" href=\"http://$content\" title=\"Перейти по ссылке\">
