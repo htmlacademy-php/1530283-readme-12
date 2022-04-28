@@ -1,37 +1,41 @@
 <?php
 
+$post_types = [
+
+];
+
 $post_cards = [
     [
         'title' => 'Цитата',
-        'type' => 'post-quote',
+        'type' => 'quote',
         'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих',
         'user_name' => 'Лариса',
         'avatar' => 'userpic-larisa-small.jpg',
     ],
     [
         'title' => 'Игра престолов',
-        'type' => 'post-text',
+        'type' => 'text',
         'content' => 'Не могу дождаться начала финального сезона своего любимого сериала!',
         'user_name' => 'Владик',
         'avatar' => 'userpic.jpg',
     ],
     [
         'title' => 'Наконец, обработал фотки!',
-        'type' => 'post-photo',
+        'type' => 'photo',
         'content' => 'rock-medium.jpg',
         'user_name' => 'Виктор',
         'avatar' => 'userpic-mark.jpg',
     ],
     [
         'title' => 'Моя мечта',
-        'type' => 'post-photo',
+        'type' => 'photo',
         'content' => 'coast-medium.jpg',
         'user_name' => 'Лариса',
         'avatar' => 'userpic-larisa-small.jpg',
     ],
     [
         'title' => 'Лучшие курсы',
-        'type' => 'post-link',
+        'type' => 'link',
         'content' => 'www.htmlacademy.ru',
         'user_name' => 'Владик',
         'avatar' => 'userpic.jpg',

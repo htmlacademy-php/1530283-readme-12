@@ -25,27 +25,27 @@
                 'avatar' => $avatar
                 ) = $post_card;
             ?>
-            <article class="popular__post post <?= $type ?>">
+            <article class="popular__post post post-<?= $type ?>">
                 <header class="post__header">
                     <h2><?= $title ?></h2>
                 </header>
                 <div class="post__main">
                     <?php switch ($type):
-                        case 'post-quote': ?>
+                        case 'quote': ?>
                             <blockquote>
                                 <p><?= $content ?></p>
                                 <cite>Неизвестный Автор</cite>
                             </blockquote>
                             <?php break; ?>
-                        <?php case 'post-text': ?>
+                        <?php case 'text': ?>
                             <?= decorate_post_text_content($content) ?>
                             <?php break; ?>
-                        <?php case 'post-photo': ?>
+                        <?php case 'photo': ?>
                             <div class="post-photo__image-wrapper">
                                 <img src="img/<?= $content ?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
                             <?php break; ?>
-                        <?php case 'post-link': ?>
+                        <?php case 'link': ?>
                             <div class="post-link__wrapper">
                                 <a class="post-link__external" href="http://<?= $content ?>" title="Перейти по ссылке">
                                     <div class="post-link__info-wrapper">
