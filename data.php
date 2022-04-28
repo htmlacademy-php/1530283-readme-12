@@ -1,9 +1,5 @@
 <?php
 
-$post_types = [
-
-];
-
 $post_cards = [
     [
         'title' => 'Цитата',
