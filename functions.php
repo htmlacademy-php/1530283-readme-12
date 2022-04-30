@@ -1,8 +1,5 @@
 <?php
-const TEXT_SEPARATOR = ' ';
-const RELATIVE_TIME_POSTFIX = ' назад';
-const DAYS_IN_WEEk = 7;
-const DAYS_IN_MONTH = 30;
+require_once 'constants.php';
 
 /**
 * Функция обрезает текст с учетом максимально заданнной длины, сохраняя целостность слов.
@@ -157,34 +154,55 @@ function format_relative_time(string $date): string {
     $hours_remainder = (int) $hours_remainder;
     $minutes_remainder = (int) $minutes_remainder;
 
-    $weeks_total = (int) floor($days_total / DAYS_IN_WEEk);
+    $weeks_total = (int) floor($days_total / DAYS_IN_WEEK);
 
-    if ($weeks_total >= 5) {
-        $months_total = floor($days_total / DAYS_IN_MONTH);
-        return "$months_total "
-            . get_noun_plural_form($months_total, 'месяц', 'месяца', 'месяцев')
-            . RELATIVE_TIME_POSTFIX;
-    }
+    list(
+        'unit' => $unit,
+        'amount' => $amount,
+        ) = (function () use ($weeks_total, $days_total, $hours_remainder, $minutes_remainder) {
+        if ($weeks_total >= 5) {
+            $months_total = floor($days_total / DAYS_IN_MONTH);
 
-    if ($weeks_total >= 1) {
-        return "$weeks_total "
-            . get_noun_plural_form($weeks_total, 'неделю', 'недели', 'недель')
-            . RELATIVE_TIME_POSTFIX;
-    }
+            return [
+                'unit' => 'month',
+                'amount' => $months_total,
+            ];
+        }
 
-    if ($days_total >= 1) {
-        return "$days_total "
-            . get_noun_plural_form($days_total, 'день', 'дня', 'дней')
-            . RELATIVE_TIME_POSTFIX;
-    }
+        if ($weeks_total >= 1) {
+            return [
+                'unit' => 'week',
+                'amount' => $weeks_total,
+            ];
+        }
 
-    if ($hours_remainder >= 1) {
-        return "$hours_remainder "
-            . get_noun_plural_form($hours_remainder, 'час', 'часа', 'часов')
-            . RELATIVE_TIME_POSTFIX;
-    }
+        if ($days_total >= 1) {
+            return [
+                'unit' => 'day',
+                'amount' => $days_total,
+            ];
+        }
 
-    return "$minutes_remainder "
-        . get_noun_plural_form($minutes_remainder, 'минуту', 'минуты', 'минут')
+        if ($hours_remainder >= 1) {
+            return [
+                'unit' => 'hour',
+                'amount' => $hours_remainder,
+            ];
+        }
+
+        return [
+            'unit' => 'minute',
+            'amount' => $minutes_remainder,
+        ];
+    })();
+
+    list(
+        'one' => $one_unit,
+        'two' => $two_units,
+        'many' => $many_units,
+        ) = RELATIVE_TIME_UNITS[$unit];
+
+    return "$amount "
+        . get_noun_plural_form($amount, $one_unit, $two_units, $many_units)
         . RELATIVE_TIME_POSTFIX;
 }
