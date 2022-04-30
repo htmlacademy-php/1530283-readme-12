@@ -1,5 +1,8 @@
 <?php
 const TEXT_SEPARATOR = ' ';
+const RELATIVE_TIME_POSTFIX = ' назад';
+const DAYS_IN_WEEk = 7;
+const DAYS_IN_MONTH = 30;
 
 /**
 * Функция обрезает текст с учетом максимально заданнной длины, сохраняя целостность слов.
@@ -119,11 +122,69 @@ function decorate_post_link_content (string $content): string
 }
 
 /**
- * Функция преобразует строку даты из произвольного формата в формат стандарта ISO 8601
- * Ограничения: произвольный формат даты должен поддерживаться стандартной функцией strtotime
+ * Функция преобразует строку даты из произвольного формата в формат стандарта ISO 8601.
+ * Ограничения: произвольный формат даты должен поддерживаться стандартной функцией strtotime.
  * @param string $date Строка даты в произвольном формате
  * @return string Строка даты в формате стандарта ISO 8601
  */
 function format_iso_date_time (string $date): string {
     return date('c', strtotime($date));
+}
+
+/** Форматирует преобразует строку даты из произвольного формата в дату в относительном формате, удобном для пользователя:
+ * - если до текущего времени прошло меньше 60 минут, то формат будет вида «% минут назад»;
+ * - если до текущего времени прошло не меньше 60 минут, но меньше 24 часов, то формат будет вида «% часов назад»;
+ * - если до текущего времени прошло не меньше 24 часов, но меньше 7 дней, то формат будет вида «% дней назад»;
+ * - если до текущего времени прошло не меньше 7 дней, но меньше 5 недель, то формат будет вида «% недель назад»;
+ * - если до текущего времени прошло больше 5 недель, то формат будет вида «% месяцев назад».
+ * Ограничения: произвольный формат даты должен поддерживаться стандартной функцией date_create.
+ * @param string $date Строка даты в произвольном формате
+ * @return string Строка даты в относительном формате, удобном для пользователя
+ */
+function format_relative_time(string $date): string {
+    $date = date_create($date);
+    $current_date = date_create();
+
+    $interval = date_diff($current_date, $date);
+
+    list(
+        $days_total,
+        $hours_remainder,
+        $minutes_remainder
+        ) = explode(TEXT_SEPARATOR, date_interval_format($interval, '%a %h %i'));
+
+    $days_total = (int) $days_total;
+    $hours_remainder = (int) $hours_remainder;
+    $minutes_remainder = (int) $minutes_remainder;
+
+    $weeks_total = (int) floor($days_total / DAYS_IN_WEEk);
+
+    if ($weeks_total >= 5) {
+        $months_total = floor($days_total / DAYS_IN_MONTH);
+        return "$months_total "
+            . get_noun_plural_form($months_total, 'месяц', 'месяца', 'месяцев')
+            . RELATIVE_TIME_POSTFIX;
+    }
+
+    if ($weeks_total >= 1) {
+        return "$weeks_total "
+            . get_noun_plural_form($weeks_total, 'неделю', 'недели', 'недель')
+            . RELATIVE_TIME_POSTFIX;
+    }
+
+    if ($days_total >= 1) {
+        return "$days_total "
+            . get_noun_plural_form($days_total, 'день', 'дня', 'дней')
+            . RELATIVE_TIME_POSTFIX;
+    }
+
+    if ($hours_remainder >= 1) {
+        return "$hours_remainder "
+            . get_noun_plural_form($hours_remainder, 'час', 'часа', 'часов')
+            . RELATIVE_TIME_POSTFIX;
+    }
+
+    return "$minutes_remainder "
+        . get_noun_plural_form($minutes_remainder, 'минуту', 'минуты', 'минут')
+        . RELATIVE_TIME_POSTFIX;
 }

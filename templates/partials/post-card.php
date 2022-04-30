@@ -32,7 +32,7 @@ $post_content_decorators = [
                 </div>
                 <div class="post__info">
                     <b class="post__author-name"><?= strip_tags($user_name) ?></b>
-                    <time class="post__time" datetime="<?= format_iso_date_time($date) ?>"><?= $date ?></time>
+                    <time class="post__time" datetime="<?= format_iso_date_time($date) ?>"><?= format_relative_time($date) ?></time>
                 </div>
             </a>
         </div>
