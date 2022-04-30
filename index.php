@@ -3,6 +3,10 @@ require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'data.php';
 
+array_walk($post_cards, function (&$value, $key) {
+    $value['date'] = generate_random_date($key);
+});
+
 $page_content = include_template('main.php', [
     'post_cards' => $post_cards
 ]);

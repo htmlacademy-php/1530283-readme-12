@@ -117,3 +117,13 @@ function decorate_post_link_content (string $content): string
         </div>
     ";
 }
+
+/**
+ * Функция преобразует строку даты из произвольного формата в формат стандарта ISO 8601
+ * Ограничения: произвольный формат даты должен поддерживаться стандартной функцией strtotime
+ * @param string $date Строка даты в произвольном формате
+ * @return string Строка даты в формате стандарта ISO 8601
+ */
+function format_iso_date_time (string $date): string {
+    return date('c', strtotime($date));
+}

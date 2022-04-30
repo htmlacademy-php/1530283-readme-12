@@ -4,7 +4,8 @@ list(
     'type' => $type,
     'content' => $content,
     'user_name' => $user_name,
-    'avatar' => $avatar
+    'avatar' => $avatar,
+    'date' => $date,
     ) = $post_card;
 
 $post_content_decorators = [
@@ -19,9 +20,9 @@ $post_content_decorators = [
         <h2><?= strip_tags($title) ?></h2>
     </header>
     <div class="post__main">
-        <?php if (is_callable($post_content_decorators[$type])) {
-            print($post_content_decorators[$type]($content));
-        }?>
+        <?php if (is_callable($post_content_decorators[$type])): ?>
+            <?= $post_content_decorators[$type]($content) ?>
+        <?php endif; ?>
     </div>
     <footer class="post__footer">
         <div class="post__author">
@@ -31,7 +32,7 @@ $post_content_decorators = [
                 </div>
                 <div class="post__info">
                     <b class="post__author-name"><?= strip_tags($user_name) ?></b>
-                    <time class="post__time" datetime="">дата</time>
+                    <time class="post__time" datetime="<?= format_iso_date_time($date) ?>"><?= $date ?></time>
                 </div>
             </a>
         </div>
