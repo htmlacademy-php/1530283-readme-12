@@ -1,5 +1,5 @@
 <?php
-const TEXT_SEPARATOR = ' ';
+require_once 'constants.php';
 
 /**
 * Функция обрезает текст с учетом максимально заданнной длины, сохраняя целостность слов.
@@ -116,4 +116,93 @@ function decorate_post_link_content (string $content): string
             </a>
         </div>
     ";
+}
+
+/**
+ * Функция преобразует строку даты из произвольного формата в формат стандарта ISO 8601.
+ * Ограничения: произвольный формат даты должен поддерживаться стандартной функцией strtotime.
+ * @param string $date Строка даты в произвольном формате
+ * @return string Строка даты в формате стандарта ISO 8601
+ */
+function format_iso_date_time (string $date): string {
+    return date('c', strtotime($date));
+}
+
+/** Форматирует преобразует строку даты из произвольного формата в дату в относительном формате, удобном для пользователя:
+ * - если до текущего времени прошло меньше 60 минут, то формат будет вида «% минут назад»;
+ * - если до текущего времени прошло не меньше 60 минут, но меньше 24 часов, то формат будет вида «% часов назад»;
+ * - если до текущего времени прошло не меньше 24 часов, но меньше 7 дней, то формат будет вида «% дней назад»;
+ * - если до текущего времени прошло не меньше 7 дней, но меньше 5 недель, то формат будет вида «% недель назад»;
+ * - если до текущего времени прошло больше 5 недель, то формат будет вида «% месяцев назад».
+ * Ограничения: произвольный формат даты должен поддерживаться стандартной функцией date_create.
+ * @param string $date Строка даты в произвольном формате
+ * @return string Строка даты в относительном формате, удобном для пользователя
+ */
+function format_relative_time(string $date): string {
+    $date = date_create($date);
+    $current_date = date_create();
+
+    $interval = date_diff($current_date, $date);
+
+    list(
+        $days_total,
+        $hours_remainder,
+        $minutes_remainder
+        ) = explode(TEXT_SEPARATOR, date_interval_format($interval, '%a %h %i'));
+
+    $days_total = (int) $days_total;
+    $hours_remainder = (int) $hours_remainder;
+    $minutes_remainder = (int) $minutes_remainder;
+
+    $weeks_total = (int) floor($days_total / DAYS_IN_WEEK);
+
+    list(
+        'unit' => $unit,
+        'amount' => $amount,
+        ) = (function () use ($weeks_total, $days_total, $hours_remainder, $minutes_remainder) {
+        if ($weeks_total >= 5) {
+            $months_total = floor($days_total / DAYS_IN_MONTH);
+
+            return [
+                'unit' => 'month',
+                'amount' => $months_total,
+            ];
+        }
+
+        if ($weeks_total >= 1) {
+            return [
+                'unit' => 'week',
+                'amount' => $weeks_total,
+            ];
+        }
+
+        if ($days_total >= 1) {
+            return [
+                'unit' => 'day',
+                'amount' => $days_total,
+            ];
+        }
+
+        if ($hours_remainder >= 1) {
+            return [
+                'unit' => 'hour',
+                'amount' => $hours_remainder,
+            ];
+        }
+
+        return [
+            'unit' => 'minute',
+            'amount' => $minutes_remainder,
+        ];
+    })();
+
+    list(
+        'one' => $one_unit,
+        'two' => $two_units,
+        'many' => $many_units,
+        ) = RELATIVE_TIME_UNITS[$unit];
+
+    return "$amount "
+        . get_noun_plural_form($amount, $one_unit, $two_units, $many_units)
+        . RELATIVE_TIME_POSTFIX;
 }

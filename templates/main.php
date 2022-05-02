@@ -10,7 +10,9 @@
                     isset($post_card['type']) and
                     isset($post_card['content']) and
                     isset($post_card['user_name']) and
-                    isset($post_card['avatar']));
+                    isset($post_card['avatar']) and
+                    isset($post_card['date'])
+                );
 
                 if ($is_post_card_invalid) {
                     continue;
