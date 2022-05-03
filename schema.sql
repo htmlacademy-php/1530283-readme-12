@@ -7,13 +7,13 @@ CREATE DATABASE readme
 USE readme;
 
 CREATE TABLE content_types(
-    id int PRIMARY KEY AUTO_INCREMENT,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
     name varchar(255) NOT NULL UNIQUE,
     icon varchar(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE users(
-    id int PRIMARY KEY AUTO_INCREMENT,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
     created_at timestamp DEFAULT current_timestamp,
     email varchar(255) NOT NULL UNIQUE,
     login varchar(255) NOT NULL,
@@ -22,24 +22,24 @@ CREATE TABLE users(
 );
 
 CREATE TABLE hashtags(
-    id int PRIMARY KEY AUTO_INCREMENT,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
     name varchar(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE posts(
-    id int PRIMARY KEY AUTO_INCREMENT,
-    author_id int NOT NULL,
-    content_type_id int NOT NULL,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
+    author_id int unsigned NOT NULL,
+    content_type_id int unsigned NOT NULL,
     created_at timestamp DEFAULT current_timestamp,
     title varchar(255) NOT NULL,
-    text_content text,
+    text_content varchar(1000),
     string_content varchar(255),
-    views_count int DEFAULT 0
+    views_count int unsigned DEFAULT 0
 );
 
 CREATE TABLE posts_hashtags(
-    post_id int NOT NULL,
-    hashtag_id int NOT NULL,
+    post_id int unsigned NOT NULL,
+    hashtag_id int unsigned NOT NULL,
     PRIMARY KEY (post_id, hashtag_id),
     FOREIGN KEY (post_id) REFERENCES posts(id)
         ON UPDATE CASCADE
@@ -50,11 +50,11 @@ CREATE TABLE posts_hashtags(
 );
 
 CREATE TABLE comments(
-    id int PRIMARY KEY AUTO_INCREMENT,
-    author_id int NOT NULL,
-    post_id int NOT NULL,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
+    author_id int unsigned NOT NULL,
+    post_id int unsigned NOT NULL,
     created_at timestamp DEFAULT current_timestamp,
-    content text NOT NULL,
+    content varchar(1000) NOT NULL,
     FOREIGN KEY (post_id) REFERENCES posts(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
@@ -64,8 +64,8 @@ CREATE TABLE comments(
 );
 
 CREATE TABLE likes(
-    post_id int NOT NULL,
-    author_id int NOT NULL,
+    post_id int unsigned NOT NULL,
+    author_id int unsigned NOT NULL,
     PRIMARY KEY (post_id, author_id),
     FOREIGN KEY (post_id) REFERENCES posts(id)
        ON UPDATE CASCADE
@@ -76,8 +76,8 @@ CREATE TABLE likes(
 );
 
 CREATE TABLE subscriptions(
-    subscriber_id int NOT NULL CHECK (subscriber_id != observable_id),
-    observable_id int NOT NULL CHECK (subscriber_id != observable_id),
+    subscriber_id int unsigned NOT NULL CHECK (subscriber_id != observable_id),
+    observable_id int unsigned NOT NULL CHECK (subscriber_id != observable_id),
     PRIMARY KEY (subscriber_id, observable_id),
     FOREIGN KEY (subscriber_id) REFERENCES users(id)
         ON UPDATE CASCADE
@@ -88,11 +88,11 @@ CREATE TABLE subscriptions(
 );
 
 CREATE TABLE messages(
-    id int PRIMARY KEY AUTO_INCREMENT,
-    sender_id int NOT NULL CHECK (sender_id != receiver_id),
-    receiver_id int NOT NULL CHECK (sender_id != receiver_id),
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
+    sender_id int unsigned NOT NULL CHECK (sender_id != receiver_id),
+    receiver_id int unsigned NOT NULL CHECK (sender_id != receiver_id),
     created_at timestamp DEFAULT current_timestamp,
-    content text NOT NULL,
+    content varchar(1000) NOT NULL,
     FOREIGN KEY (sender_id) REFERENCES users(id)
        ON UPDATE CASCADE
        ON DELETE CASCADE,
@@ -100,3 +100,5 @@ CREATE TABLE messages(
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+
+CREATE INDEX post_text_content_index ON posts(text_content);
