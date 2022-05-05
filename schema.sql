@@ -34,7 +34,13 @@ CREATE TABLE posts(
     title varchar(255) NOT NULL,
     text_content varchar(1000),
     string_content varchar(255),
-    views_count int unsigned DEFAULT 0
+    views_count int unsigned DEFAULT 0,
+    FOREIGN KEY (author_id) REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (content_type_id) REFERENCES content_types(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
 
 CREATE TABLE posts_hashtags(
