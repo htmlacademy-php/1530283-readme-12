@@ -4,9 +4,10 @@ require_once 'functions.php';
 require_once 'init/db.php';
 
 if (!isset($db_connection) or !$db_connection) {
-    // todo: 500 Error template
-    print '<h1>Error occurred</h1>';
-    exit();
+    $error_layout = include_template('error.php', ['content' => 'Данные недоступны']);
+    ob_end_clean();
+    print($error_layout);
+    return;
 }
 
 $sql = "
