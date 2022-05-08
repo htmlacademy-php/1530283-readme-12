@@ -1,11 +1,16 @@
 <?php
+if (!isset($post_card)) {
+    throw new Exception('Post card is not defined');
+}
+
 list(
     'title' => $title,
-    'type' => $type,
-    'content' => $content,
-    'user_name' => $user_name,
-    'avatar' => $avatar,
-    'date' => $date,
+    'content_type' => $content_type,
+    'string_content' => $string_content,
+    'text_content' => $text_content,
+    'author_login' => $author_login,
+    'author_avatar' => $author_avatar,
+    'created_at' => $created_at,
     ) = $post_card;
 
 $post_content_decorators = [
@@ -15,24 +20,24 @@ $post_content_decorators = [
     'link' => 'decorate_post_link_content',
 ];
 ?>
-<article class="popular__post post post-<?= $type ?>">
+<article class="popular__post post post-<?= $content_type ?>">
     <header class="post__header">
         <h2><?= strip_tags($title) ?></h2>
     </header>
     <div class="post__main">
-        <?php if (is_callable($post_content_decorators[$type])): ?>
-            <?= $post_content_decorators[$type]($content) ?>
+        <?php if (is_callable($post_content_decorators[$content_type])): ?>
+            <?= $post_content_decorators[$content_type]($text_content, $string_content) ?>
         <?php endif; ?>
     </div>
     <footer class="post__footer">
         <div class="post__author">
             <a class="post__author-link" href="#" title="Автор">
                 <div class="post__avatar-wrapper">
-                    <img class="post__author-avatar" src="img/<?= $avatar ?>" alt="Аватар пользователя">
+                    <img class="post__author-avatar" src="img/<?= $author_avatar ?>" alt="Аватар пользователя">
                 </div>
                 <div class="post__info">
-                    <b class="post__author-name"><?= strip_tags($user_name) ?></b>
-                    <time class="post__time" datetime="<?= format_iso_date_time($date) ?>"><?= format_relative_time($date) ?></time>
+                    <b class="post__author-name"><?= strip_tags($author_login) ?></b>
+                    <time class="post__time" datetime="<?= format_iso_date_time($created_at) ?>"><?= format_relative_time($created_at) ?></time>
                 </div>
             </a>
         </div>

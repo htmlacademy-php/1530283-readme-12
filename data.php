@@ -1,5 +1,5 @@
 <?php
-
+// todo: remove after db handling is finished
 $post_cards = [
     [
         'title' => 'Цитата',
