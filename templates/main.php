@@ -1,5 +1,5 @@
 <?php
-if (!isset($post_cards)) {
+if (!isset($post_cards) or !$post_cards) {
     throw new Exception('Post cards are not defined');
 }
 ?>
