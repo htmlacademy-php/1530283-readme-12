@@ -16,6 +16,7 @@ list(
     'author_avatar' => $author_avatar,
     'created_at' => $created_at,
     'likes_count' => $likes_count,
+    'comments_count' => $comments_count,
     ) = $post_card;
 
 $post_content_decorators = [
@@ -79,7 +80,7 @@ $post_content_decorators = [
                     <svg class="post__indicator-icon" width="19" height="17">
                         <use xlink:href="#icon-comment"></use>
                     </svg>
-                    <span>0</span>
+                    <span><?= $comments_count ?></span>
                     <span class="visually-hidden">количество комментариев</span>
                 </a>
             </div>

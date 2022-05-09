@@ -18,6 +18,8 @@
  *     author_login: string,
  *     author_avatar: string,
  *     content_type: string,
+ *     likes_count: int,
+ *     comments_count: int,
  * }>
  */
 function get_posts(mysqli $db_connection, $config = []) {
@@ -34,11 +36,13 @@ function get_posts(mysqli $db_connection, $config = []) {
             users.login AS author_login,
             users.avatar_url AS author_avatar,
             content_types.icon AS content_type,
-            COUNT(likes.post_id) AS likes_count
+            COUNT(likes.author_id) AS likes_count,
+            COUNT(comments.id) AS comments_count
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
+            LEFT JOIN comments ON posts.id = comments.post_id
         GROUP BY posts.id
     ";
 
