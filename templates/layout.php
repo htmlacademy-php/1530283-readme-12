@@ -1,3 +1,25 @@
+<?php
+if (!isset($title)) {
+    $title = 'Заголовок';
+}
+
+if (!isset($user_name)) {
+    $user_name = 'Аноним';
+}
+
+if (!isset($is_auth)) {
+    $is_auth = 0;
+}
+
+if (!isset($page_modifier)) {
+    $page_modifier = '';
+}
+
+if (!isset($content)) {
+    $content = '';
+}
+
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -111,6 +133,9 @@
 </header>
 
 <section class="page__main <?= $page_modifier ? "page__main--$page_modifier" : '' ?>">
+    <div class="container">
+        <h1 class="page__title <?= $page_modifier ? "page__title--$page_modifier" : '' ?>"><?= $title ?></h1>
+    </div>
    <?= $content ?>
 </section>
 
