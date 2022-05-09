@@ -18,10 +18,27 @@ list(
     ) = $post_card;
 
 $post_content_decorators = [
-    'quote' => 'decorate_post_quote_content',
-    'text' => 'decorate_post_text_content',
-    'photo' => 'decorate_post_photo_content',
-    'link' => 'decorate_post_link_content',
+    'quote' => function () use ($text_content, $string_content) {
+          return include_template('partials/post-card-quote-content.php', [
+              'text_content' => $text_content,
+              'string_content' => $string_content,
+          ]);
+    },
+    'text' => function () use ($text_content, $string_content) {
+        return include_template('partials/post-card-text-content.php', [
+            'text_content' => $text_content,
+        ]);
+    },
+    'photo' => function () use ($string_content) {
+        return include_template('partials/post-card-photo-content.php', [
+            'string_content' => $string_content,
+        ]);
+    },
+    'link' => function () use ($string_content) {
+        return include_template('partials/post-card-link-content.php', [
+            'string_content' => $string_content,
+        ]);
+    },
 ];
 ?>
 <article class="popular__post post post-<?= $content_type ?>">
@@ -30,7 +47,7 @@ $post_content_decorators = [
     </header>
     <div class="post__main">
         <?php if (is_callable($post_content_decorators[$content_type])): ?>
-            <?= $post_content_decorators[$content_type]($text_content, $string_content) ?>
+            <?= $post_content_decorators[$content_type]() ?>
         <?php endif; ?>
     </div>
     <footer class="post__footer">
