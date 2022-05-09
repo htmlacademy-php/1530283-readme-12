@@ -33,10 +33,13 @@ function get_posts(mysqli $db_connection, $config = []) {
             posts.views_count,
             users.login AS author_login,
             users.avatar_url AS author_avatar,
-            content_types.icon AS content_type
+            content_types.icon AS content_type,
+            COUNT(likes.post_id) AS likes_count
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
+            LEFT JOIN likes ON posts.id = likes.post_id
+        GROUP BY posts.id
     ";
 
     if ($sort === 'views_count') {

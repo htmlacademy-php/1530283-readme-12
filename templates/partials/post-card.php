@@ -15,6 +15,7 @@ list(
     'author_login' => $author_login,
     'author_avatar' => $author_avatar,
     'created_at' => $created_at,
+    'likes_count' => $likes_count,
     ) = $post_card;
 
 $post_content_decorators = [
@@ -71,7 +72,7 @@ $post_content_decorators = [
                     <svg class="post__indicator-icon post__indicator-icon--like-active" width="20" height="17">
                         <use xlink:href="#icon-heart-active"></use>
                     </svg>
-                    <span>0</span>
+                    <span><?= $likes_count ?></span>
                     <span class="visually-hidden">количество лайков</span>
                 </a>
                 <a class="post__indicator post__indicator--comments button" href="#" title="Комментарии">
