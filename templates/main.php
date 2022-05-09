@@ -1,6 +1,10 @@
 <?php
-if (!isset($post_cards) or !$post_cards) {
-    throw new Exception('Post cards are not defined');
+if (!isset($post_cards)) {
+    throw new Exception('Post cards variable is not defined');
+}
+
+if (!is_array($post_cards)) {
+    throw new Exception('Post cards variable is not array');
 }
 ?>
 
