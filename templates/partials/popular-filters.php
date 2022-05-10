@@ -1,9 +1,3 @@
-<?php
-if (!isset($content_types)) {
-    throw new Exception('Content types variable is not defined');
-}
-?>
-
 <div class="popular__filters-wrapper">
     <div class="popular__sorting sorting">
         <b class="popular__sorting-caption sorting__caption">Сортировка:</b>
@@ -37,21 +31,27 @@ if (!isset($content_types)) {
     <div class="popular__filters filters">
         <b class="popular__filters-caption filters__caption">Тип контента:</b>
         <ul class="popular__filters-list filters__list">
-            <li class="popular__filters-item popular__filters-item--all filters__item filters__item--all">
-                <a class="filters__button filters__button--ellipse filters__button--all filters__button--active" href="#">
-                    <span>Все</span>
+            <li class="popular__filters-item popular__filters-item--<?= $empty_filter['icon'] ?> filters__item filters__item--<?= $empty_filter['icon'] ?>">
+                <a class="filters__button filters__button--ellipse filters__button--all <?= $empty_filter['active']
+                    ? 'filters__button--active' : '' ?>"
+                   href="<?= $empty_filter['url'] ?>">
+                    <span><?= $empty_filter['name'] ?></span>
                 </a>
             </li>
-            <?php foreach ($content_types as $content_type): ?>
+            <?php
+            foreach ($filters as $filter): ?>
                 <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--photo button" href="#">
-                        <span class="visually-hidden"><?= $content_type['name'] ?></span>
+                    <a class="filters__button filters__button--<?= $filter['icon'] ?> <?= $filter['active']
+                        ? 'filters__button--active' : '' ?> button"
+                       href="<?= $filter['url'] ?>">
+                        <span class="visually-hidden"><?= $filter['name'] ?></span>
                         <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-<?= $content_type['icon'] ?>"></use>
+                            <use xlink:href="#icon-filter-<?= $filter['icon'] ?>"></use>
                         </svg>
                     </a>
                 </li>
-            <?php endforeach; ?>
+            <?php
+            endforeach; ?>
         </ul>
     </div>
 </div>

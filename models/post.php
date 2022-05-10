@@ -1,14 +1,17 @@
 <?php
+
 /**
  * Функция принимает ресурс соединения с базой данный
  * и ассоциативныый массив с параметрами запроса
  * и возвращает массив с публикациями.
  * Параметры запроса позволяют задавать фильтрацию и сортировку публикаций.
- * @param mysqli $db_connection - ресурс соединения с базой данных
- * @param array[
- *     'sort' => 'views_count' | null,
- *     'filter' => 'text' | 'link' | 'quote' | 'video' | 'photo' | null] $config - параметры запроса
- * @return false | array<int, array{
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  array[
+ *                                 'sort' => 'views_count' | null,
+ *                                 'content_type_id' => int | null] $config - параметры запроса
+ *
+ * @return null | array<int, array{
  *     id: int,
  *     title: string,
  *     string_content: string,
@@ -22,8 +25,13 @@
  *     comments_count: int,
  * }>
  */
-function get_posts(mysqli $db_connection, $config = []) {
-    $sort = $config['sort'];
+function get_posts(mysqli $db_connection, $config = [])
+{
+    list(
+        'sort' => $sort,
+        'content_type_id' => $content_type_id
+        )
+        = $config;
 
     $sql = "
         SELECT
@@ -43,8 +51,14 @@ function get_posts(mysqli $db_connection, $config = []) {
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
-        GROUP BY posts.id
     ";
+
+    // todo: add sql injection escape
+    if ($content_type_id) {
+        $sql .= " WHERE content_types.id = $content_type_id";
+    }
+
+    $sql .= " GROUP BY posts.id";
 
     if ($sort === 'views_count') {
         $sql .= " ORDER BY posts.views_count";
@@ -52,8 +66,8 @@ function get_posts(mysqli $db_connection, $config = []) {
 
     $result = mysqli_query($db_connection, $sql);
 
-    if (!$result) {
-        return false;
+    if ( ! $result) {
+        return null;
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);

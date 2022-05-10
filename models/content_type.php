@@ -1,15 +1,19 @@
 <?php
+
 /**
  * Функция принимает ресурс соединения с базой данный
  * и возвращает массив с типами контента.
- * @param mysqli $db_connection - ресурс соединения с базой данных
- * @return false | array<int, array{
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ *
+ * @return null | array<int, array{
  *     id: int,
  *     icon: string,
  *     name: string
  * }>
  */
-function get_content_types(mysqli $db_connection) {
+function get_content_types(mysqli $db_connection)
+{
     $sql = "
         SELECT
             content_types.id,
@@ -20,8 +24,8 @@ function get_content_types(mysqli $db_connection) {
 
     $result = mysqli_query($db_connection, $sql);
 
-    if (!$result) {
-        return false;
+    if ( ! $result) {
+        return null;
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);

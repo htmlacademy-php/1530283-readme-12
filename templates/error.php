@@ -1,9 +1,10 @@
 <?php
-if (!isset($title)) {
+
+if ( ! isset($title)) {
     $title = 'Ошибка';
 }
 
-if (!isset($content)) {
+if ( ! isset($content)) {
     $content = 'Что-то пошло не так...';
 }
 ?>
@@ -21,7 +22,8 @@ if (!isset($content)) {
 
 <header class="header" style="min-height:10vh"></header>
 
-<section class="page__main" style="min-height:90vh;padding-top:10vh;text-align:center">
+<section class="page__main"
+         style="min-height:90vh;padding-top:10vh;text-align:center">
     <div class="container">
         <h1><?= $title ?></h1>
         <p><?= $content ?></p>
