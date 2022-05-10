@@ -1,6 +1,8 @@
 <?php
 const TEXT_SEPARATOR = ' ';
 
+const MAX_POST_CARD_TEXT_CONTENT_LENGTH = 300;
+
 const RELATIVE_TIME_POSTFIX = ' назад';
 
 const DAYS_IN_WEEK = 7;
