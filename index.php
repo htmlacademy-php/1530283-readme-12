@@ -74,7 +74,7 @@ $popular_filters_content = include_template(
 );
 
 $page_content = include_template(
-    'main.php',
+    'popular.php',
     [
         'popular_filters_content' => $popular_filters_content,
         'post_cards'              => $post_cards,

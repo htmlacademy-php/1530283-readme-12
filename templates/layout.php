@@ -123,6 +123,7 @@ if ( ! isset($is_auth)) {
                     <ul class="header__my-nav">
                         <li class="header__my-page header__my-page--popular">
                             <a class="header__page-link header__page-link--active"
+                               href="index.php"
                                title="Популярный контент">
                                 <span class="visually-hidden">Популярный контент</span>
                             </a>
@@ -207,10 +208,6 @@ if ( ! isset($is_auth)) {
 
 <section class="page__main <?= $page_modifier ? "page__main--$page_modifier"
     : '' ?>">
-    <div class="container">
-        <h1 class="page__title <?= $page_modifier
-            ? "page__title--$page_modifier" : '' ?>"><?= $title ?></h1>
-    </div>
     <?= $content ?>
 </section>
 

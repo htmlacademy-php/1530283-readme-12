@@ -73,3 +73,40 @@ function get_posts(mysqli $db_connection, $config = [])
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
+/**
+ * @param  mysqli  $db_connection
+ * @param  int     $id
+ *
+ * return
+ */
+function get_post(mysqli $db_connection, int $id)
+{
+    $sql = "
+        SELECT
+            posts.id,
+            posts.title,
+            posts.string_content,
+            posts.text_content,
+            posts.created_at,
+            posts.views_count,
+            users.login AS author_login,
+            users.avatar_url AS author_avatar,
+            content_types.icon AS content_type,
+            COUNT(likes.author_id) AS likes_count,
+            COUNT(comments.id) AS comments_count
+        FROM posts
+            JOIN users ON posts.author_id = users.id
+            JOIN content_types ON posts.content_type_id = content_types.id
+            LEFT JOIN likes ON posts.id = likes.post_id
+            LEFT JOIN comments ON posts.id = comments.post_id
+        WHERE posts.id = $id
+    ";
+
+    $result = mysqli_query($db_connection, $sql);
+
+    if ( ! $result) {
+        return null;
+    }
+
+    return mysqli_fetch_assoc($result);
+}
