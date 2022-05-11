@@ -93,7 +93,7 @@ $layout_content = include_template(
     'layout.php',
     [
         'title'         => $post['title'],
-        'is_auth'       => rand(0, 1),
+        'is_auth'       => 1,
         'user_name'     => 'Евгений',
         'page_modifier' => 'publication',
         'content'       => $page_content,

@@ -85,7 +85,7 @@ $layout_content = include_template(
     'layout.php',
     [
         'title'         => 'Популярное',
-        'is_auth'       => rand(0, 1),
+        'is_auth'       => 1,
         'user_name'     => 'Евгений',
         'page_modifier' => 'popular',
         'content'       => $page_content,
