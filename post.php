@@ -8,7 +8,7 @@ require_once 'init/db.php';
 
 if ( ! isset($db_connection) or ! $db_connection) {
     $error_layout = include_template(
-        'error.php',
+        'empty_layout.php',
         ['content' => 'Данные недоступны']
     );
     ob_end_clean();
@@ -28,7 +28,7 @@ if ($post_id) {
 
 if (is_null($post) or is_null($comments)) {
     $error_layout = include_template(
-        'error.php',
+        'empty_layout.php',
         ['content' => 'Данные недоступны']
     );
     ob_end_clean();

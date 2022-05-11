@@ -25,6 +25,10 @@ if ( ! isset($is_auth)) {
             flex-grow: 1;
         }
 
+        .page__main--empty {
+            text-align: center;
+        }
+
         .popular__empty {
             margin-top: 6rem;
             text-align: center;

@@ -6,6 +6,12 @@ const SORT_TYPE_QUERY = 'sort_type';
 
 const SORT_ORDER_REVERSED = "sort_order_reversed";
 
+const SERVER_ERROR_STATUS = 500;
+
+const BAD_REQUEST_STATUS = 400;
+
+const NOT_FOUND_STATUS = 404;
+
 const SORT_TYPE_OPTIONS
 = [
     [

@@ -1,5 +1,6 @@
 <?php
 
+require_once 'constants.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'models/post.php';
@@ -7,14 +8,17 @@ require_once 'models/content_type.php';
 require_once 'init/db.php';
 
 if ( ! isset($db_connection) or ! $db_connection) {
+    http_response_code(SERVER_ERROR_STATUS);
+
     $error_layout = include_template(
-        'error.php',
-        ['content' => 'Данные недоступны']
+        'empty_layout.php',
+        ['content' => 'Произошла внутренняя ошибка сервера']
     );
+
     ob_end_clean();
+
     print($error_layout);
 
-    // todo: page error
     return;
 }
 
@@ -45,15 +49,30 @@ $is_sort_order_reversed  = isset($_GET[SORT_ORDER_REVERSED]);
 
 $content_types = get_content_types($db_connection);
 
-if (is_null($content_types)) {
-    $error_layout = include_template(
-        'error.php',
-        ['content' => 'Данные недоступны']
-    );
-    ob_end_clean();
-    print($error_layout);
+$layout_data = [
+    'title'         => 'Популярное',
+    'is_auth'       => 1,
+    'user_name'     => 'Евгений',
+    'page_modifier' => 'popular',
+    'content'       => '',
+];
 
-    // todo: page error
+if (is_null($content_types)) {
+    http_response_code(NOT_FOUND_STATUS);
+
+    $page_content = include_template(
+        'partials/error.php',
+        [
+            'content' => 'Не удалось загрузить страницу'
+        ]
+    );
+
+    $layout_data['content'] = $page_content;
+
+    $layout_content = include_template('layout.php', $layout_data);
+
+    print($layout_content);
+
     return;
 }
 
@@ -79,38 +98,7 @@ $is_filter_valid     = is_null($current_content_type_id)
                               $available_filters
                           ) !== false;
 
-if ( ! $is_sort_types_valid or ! $is_filter_valid) {
-    $error_layout = include_template(
-        'error.php',
-        ['content' => 'Ошибка фильтров']
-    );
-    ob_end_clean();
-    print($error_layout);
-
-    // todo: filters error
-    return;
-}
-
-$post_cards = get_posts(
-    $db_connection,
-    [
-        'sort_type'         => $current_sort_type,
-        'is_order_reversed' => $is_sort_order_reversed,
-        'content_type_id'   => $current_content_type_id
-    ]
-);
-
-if (is_null($post_cards)) {
-    $error_layout = include_template(
-        'error.php',
-        ['content' => 'Данные недоступны']
-    );
-    ob_end_clean();
-    print($error_layout);
-
-    // todo: post cards data error
-    return;
-}
+$is_page_filters_invalid = ! $is_sort_types_valid or ! $is_filter_valid;
 
 $sort_types = SORT_TYPE_OPTIONS;
 
@@ -160,33 +148,74 @@ $popular_filters_content = include_template(
     ]
 );
 
-$is_empty = ! count($post_cards);
+if ( ! $is_sort_types_valid or ! $is_filter_valid) {
+    http_response_code(BAD_REQUEST_STATUS);
 
-$page_content = $is_empty
-    ? include_template(
+    $page_content = include_template(
         'popular_empty.php',
         [
             'popular_filters_content' => $popular_filters_content,
+            'title'                   => 'Ошибка',
+            'content'                 => 'Параметры фильтрации или сортировки заданы некорректно',
+            'link_description'        => 'Сброс параметров',
+            'link_url'                => $basename,
         ]
-    )
-    :
-    include_template(
+    );
+
+    $layout_data['content'] = $page_content;
+
+    $layout_content = include_template('layout.php', $layout_data);
+
+    print($layout_content);
+
+    exit();
+}
+
+$post_cards = get_posts(
+    $db_connection,
+    [
+        'sort_type'         => $current_sort_type,
+        'is_order_reversed' => $is_sort_order_reversed,
+        'content_type_id'   => $current_content_type_id
+    ]
+);
+
+$page_content = (function () use ($post_cards, $popular_filters_content) {
+    if (is_null($post_cards)) {
+        http_response_code(NOT_FOUND_STATUS);
+
+        return include_template(
+            'popular_empty.php',
+            [
+                'popular_filters_content' => $popular_filters_content,
+                'title'                   => 'Ошибка',
+                'content'                 => 'Не удалось загрузить публикации',
+            ]
+        );
+    }
+
+    if ( ! count($post_cards)) {
+        return include_template(
+            'popular_empty.php',
+            [
+                'popular_filters_content' => $popular_filters_content,
+                'title'                   => 'Ничего не найдено',
+            ]
+        );
+    }
+
+    return include_template(
         'popular.php',
         [
             'popular_filters_content' => $popular_filters_content,
             'post_cards'              => $post_cards,
         ]
     );
+})();
 
-$layout_content = include_template(
-    'layout.php',
-    [
-        'title'         => 'Популярное',
-        'is_auth'       => 1,
-        'user_name'     => 'Евгений',
-        'page_modifier' => 'popular',
-        'content'       => $page_content,
-    ]
-);
+
+$layout_data['content'] = $page_content;
+
+$layout_content = include_template('layout.php', $layout_data);
 
 print($layout_content);
