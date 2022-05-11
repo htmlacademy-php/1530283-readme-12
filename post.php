@@ -3,6 +3,7 @@
 require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'models/post.php';
+require_once 'models/comment.php';
 require_once 'init/db.php';
 
 if ( ! isset($db_connection) or ! $db_connection) {
@@ -16,14 +17,16 @@ if ( ! isset($db_connection) or ! $db_connection) {
     return;
 }
 
-$post_id = $_GET['post_id'] ? intval($_GET['post_id']) : null;
-$post    = null;
+$post_id  = $_GET['post_id'] ? intval($_GET['post_id']) : null;
+$post     = null;
+$comments = null;
 
 if ($post_id) {
-    $post = get_post($db_connection, $post_id);
+    $post     = get_post($db_connection, $post_id);
+    $comments = get_comments($db_connection, $post_id);
 }
 
-if ( ! $post) {
+if (is_null($post) or is_null($comments)) {
     $error_layout = include_template(
         'error.php',
         ['content' => 'Данные недоступны']
@@ -80,8 +83,9 @@ $post_content_decorators = [
 $page_content = include_template(
     'post.php',
     [
-        'post' => $post,
-        'content' => $post_content_decorators[$content_type]()
+        'post'     => $post,
+        'content'  => $post_content_decorators[$content_type](),
+        'comments' => $comments
     ]
 );
 

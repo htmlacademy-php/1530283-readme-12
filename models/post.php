@@ -44,8 +44,8 @@ function get_posts(mysqli $db_connection, $config = [])
             users.login AS author_login,
             users.avatar_url AS author_avatar,
             content_types.icon AS content_type,
-            COUNT(likes.author_id) AS likes_count,
-            COUNT(comments.id) AS comments_count
+            COUNT(DISTINCT likes.author_id) AS likes_count,
+            COUNT(DISTINCT comments.id) AS comments_count
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -92,8 +92,8 @@ function get_post(mysqli $db_connection, int $id)
             users.login AS author_login,
             users.avatar_url AS author_avatar,
             content_types.icon AS content_type,
-            COUNT(likes.author_id) AS likes_count,
-            COUNT(comments.id) AS comments_count
+            COUNT(DISTINCT likes.author_id) AS likes_count,
+            COUNT(DISTINCT comments.id) AS comments_count
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
