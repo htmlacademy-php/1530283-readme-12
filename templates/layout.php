@@ -20,6 +20,18 @@ if ( ! isset($is_auth)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?></title>
     <link rel="stylesheet" href="css/main.css">
+    <style>
+        .page__main {
+            flex-grow: 1;
+        }
+
+        .popular__empty {
+            margin-top: 6rem;
+            text-align: center;
+            font-size: 1.5rem;
+            flex-grow: 1;
+        }
+    </style>
 </head>
 <body class="page">
 <div style="display: none">

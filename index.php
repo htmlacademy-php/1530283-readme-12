@@ -73,13 +73,23 @@ $popular_filters_content = include_template(
     ]
 );
 
-$page_content = include_template(
-    'popular.php',
-    [
-        'popular_filters_content' => $popular_filters_content,
-        'post_cards'              => $post_cards,
-    ]
-);
+$is_empty = ! count($post_cards);
+
+$page_content = $is_empty
+    ? include_template(
+        'popular_empty.php',
+        [
+            'popular_filters_content' => $popular_filters_content,
+        ]
+    )
+    :
+    include_template(
+        'popular.php',
+        [
+            'popular_filters_content' => $popular_filters_content,
+            'post_cards'              => $post_cards,
+        ]
+    );
 
 $layout_content = include_template(
     'layout.php',
