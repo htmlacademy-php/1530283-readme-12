@@ -17,7 +17,7 @@ if ( ! isset($db_connection) or ! $db_connection) {
     return;
 }
 
-$post_id  = $_GET['post_id'] ? intval($_GET['post_id']) : null;
+$post_id  = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 $post     = null;
 $comments = null;
 

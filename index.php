@@ -14,16 +14,13 @@ if ( ! isset($db_connection) or ! $db_connection) {
     ob_end_clean();
     print($error_layout);
 
+    // todo: page error
     return;
 }
 
 $basename = basename(__FILE__);
 
-$current_content_type_id = $_GET[CONTENT_TYPE_QUERY];
-$current_sort_type       = $_GET[SORT_TYPE_QUERY];
-$is_sort_order_reversed  = isset($_GET[SORT_ORDER_REVERSED]);
-
-if ( ! $current_sort_type) {
+if ( ! isset($_GET[SORT_TYPE_QUERY])) {
     $url = get_sort_url(
         $basename,
         SORT_TYPE_OPTIONS[0]['value']
@@ -34,8 +31,61 @@ if ( ! $current_sort_type) {
     return;
 }
 
+$current_content_type_id = isset($_GET[CONTENT_TYPE_QUERY])
+    ? filter_input(INPUT_GET, CONTENT_TYPE_QUERY, FILTER_SANITIZE_NUMBER_INT)
+    : null;
+$current_sort_type       = filter_input(INPUT_GET, SORT_TYPE_QUERY, FILTER_SANITIZE_STRING);
+$is_sort_order_reversed  = isset($_GET[SORT_ORDER_REVERSED]);
+
 $content_types = get_content_types($db_connection);
-$post_cards    = get_posts(
+
+if (is_null($content_types)) {
+    $error_layout = include_template(
+        'error.php',
+        ['content' => 'Данные недоступны']
+    );
+    ob_end_clean();
+    print($error_layout);
+
+    // todo: page error
+    return;
+}
+
+$available_sort_types = array_map(
+    function ($option) {
+        return $option['value'];
+    },
+    SORT_TYPE_OPTIONS
+);
+
+$available_filters = array_map(
+    function ($content_type) {
+        return $content_type['id'];
+    },
+    $content_types
+);
+
+$is_sort_types_valid = array_search($current_sort_type, $available_sort_types)
+                       !== false;
+$is_filter_valid     = is_null($current_content_type_id)
+                       || array_search(
+                              $current_content_type_id,
+                              $available_filters
+                          ) !== false;
+
+if ( ! $is_sort_types_valid or ! $is_filter_valid) {
+    $error_layout = include_template(
+        'error.php',
+        ['content' => 'Ошибка фильтров']
+    );
+    ob_end_clean();
+    print($error_layout);
+
+    // todo: filters error
+    return;
+}
+
+$post_cards = get_posts(
     $db_connection,
     [
         'sort_type'         => $current_sort_type,
@@ -44,7 +94,7 @@ $post_cards    = get_posts(
     ]
 );
 
-if (is_null($content_types) or is_null($post_cards)) {
+if (is_null($post_cards)) {
     $error_layout = include_template(
         'error.php',
         ['content' => 'Данные недоступны']
@@ -52,6 +102,7 @@ if (is_null($content_types) or is_null($post_cards)) {
     ob_end_clean();
     print($error_layout);
 
+    // todo: post cards data error
     return;
 }
 
