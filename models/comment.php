@@ -1,13 +1,25 @@
 <?php
-
 /**
- * @param  mysqli  $db_connection
- * @param  int     $post_id
+ * Функция получает список комментариев к заданной публикации из базы данных.
+ * В случае успешного запроса функция возвращается массив
+ * комментариев в виде ассоциативных массивов.
+ * В случае неуспешного запроса возвращается null.
  *
- * @return array|null
+ * @param  mysqli  $db_connection ресурс соединения с базой данных
+ * @param  int     $post_id id публикации
+ *
+ * @return null | array<int, array{
+ *     id: int,
+ *     created_at: string,
+ *     content: string,
+ *     author_login: string,
+ *     author_avatar: string
+ * }>
  */
 function get_comments(mysqli $db_connection, int $post_id)
 {
+    $post_id = mysqli_real_escape_string($db_connection, $post_id);
+
     $sql = "
         SELECT 
             comments.id,

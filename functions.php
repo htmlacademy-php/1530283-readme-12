@@ -147,34 +147,51 @@ function format_relative_time(string $date): string
 }
 
 /**
- * @param  string       $query_name
- * @param  string|null  $query_value
+ * Функция проверяет установлено ли в адресной строке значение GET параметра.
  *
- * @return bool
+ * @param  string       $query_name   Название GET параметра
+ * @param  string|null  $query_value  Значение GET параметра
+ *
+ * @return bool Результат проверки
  */
 function is_query_active(string $query_name, string $query_value = null): bool
 {
-    $current_filter_id = $_GET[$query_name];
+    $current_query_value = filter_input(
+        INPUT_GET,
+        $query_name,
+        FILTER_SANITIZE_STRING
+    );
 
     if (is_null($query_value)) {
-        return is_null($current_filter_id);
+        return is_null($current_query_value);
     }
 
-    return $current_filter_id === $query_value;
+    return $current_query_value === $query_value;
 }
 
 /**
- * @param  string  $basename
- * @param  string  $sort_type
+ * Функция генерирует ссылку для сортировки публикаций по заданному полю.
+ * Поле публикации, по которму производится сортировка должно соотествовать
+ * структуре публикаций возвращаемых функицей get_posts.
+ * Смена направления сортировки производится ссылкой, соответсвующей
+ * текущему активному значения поля, по которму производится сортировка.
+ * Направление сортировки вычисляется на основе текущего значения в адресной строке.
  *
- * @return string
+ * @param  string  $basename   URL страницы без GET параметров
+ * @param  string  $sort_type  Поле публикации, по которму производится сортировка
+ *
+ * @return string Итоговый URL страницы для получения списка публикаций с учетом заданной сортировки
  */
 function get_sort_url(
     string $basename,
     string $sort_type
 ): string {
     $query_params       = $_GET;
-    $current_sort_order = $query_params[SORT_ORDER_REVERSED];
+    $current_sort_order = filter_input(
+        INPUT_GET,
+        SORT_ORDER_REVERSED,
+        FILTER_SANITIZE_STRING
+    );
 
     $query_params[SORT_TYPE_QUERY] = $sort_type;
 
@@ -189,17 +206,21 @@ function get_sort_url(
 }
 
 /**
- * @param  string      $basename
- * @param  int | null  $filter_id
+ * Функция генерирует ссылку для фильтрации публикаций по типу контента.
+ * Для генерирации ссылки, соотвествующей отсутствию фильтрации,
+ * id типа контента не передается в функцию.
  *
- * @return string
+ * @param  string      $basename         URL страницы без GET параметров
+ * @param  int | null  $content_type_id  id типа контента публикации
+ *
+ * @return string Итоговый URL страницы для получения списка публикаций с учетом фильтрации
  */
 function get_filter_url(
     string $basename,
-    int $filter_id = null
+    int $content_type_id = null
 ): string {
     $query_params                     = $_GET;
-    $query_params[CONTENT_TYPE_QUERY] = $filter_id;
+    $query_params[CONTENT_TYPE_QUERY] = $content_type_id;
     $query_string                     = http_build_query($query_params);
 
     return "/$basename?$query_string";

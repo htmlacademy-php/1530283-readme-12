@@ -31,10 +31,16 @@ if ( ! isset($_GET[SORT_TYPE_QUERY])) {
     return;
 }
 
-$current_content_type_id = isset($_GET[CONTENT_TYPE_QUERY])
-    ? filter_input(INPUT_GET, CONTENT_TYPE_QUERY, FILTER_SANITIZE_NUMBER_INT)
-    : null;
-$current_sort_type       = filter_input(INPUT_GET, SORT_TYPE_QUERY, FILTER_SANITIZE_STRING);
+$current_content_type_id = filter_input(
+    INPUT_GET,
+    CONTENT_TYPE_QUERY,
+    FILTER_SANITIZE_NUMBER_INT
+);
+$current_sort_type       = filter_input(
+    INPUT_GET,
+    SORT_TYPE_QUERY,
+    FILTER_SANITIZE_STRING
+);
 $is_sort_order_reversed  = isset($_GET[SORT_ORDER_REVERSED]);
 
 $content_types = get_content_types($db_connection);
