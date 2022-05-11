@@ -8,7 +8,8 @@
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
  * @param  array[
- *                                 'sort' => 'views_count' | null,
+ *                                 'sort_type' => 'views_count' | 'likes_count' | 'created_at' | null,
+ *                                 'sort_order' => 'asc' | 'desc' | null
  *                                 'content_type_id' => int | null] $config - параметры запроса
  *
  * @return null | array<int, array{
@@ -28,7 +29,8 @@
 function get_posts(mysqli $db_connection, $config = [])
 {
     list(
-        'sort' => $sort,
+        'sort_type' => $sort_type,
+        'sort_order' => $sort_order,
         'content_type_id' => $content_type_id
         )
         = $config;
@@ -60,8 +62,12 @@ function get_posts(mysqli $db_connection, $config = [])
 
     $sql .= " GROUP BY posts.id";
 
-    if ($sort === 'views_count') {
-        $sql .= " ORDER BY posts.views_count";
+    if (!$sort_order) {
+        $sort_order = 'DESC';
+    }
+
+    if ($sort_type) {
+        $sql .= " ORDER BY $sort_type $sort_order";
     }
 
     $result = mysqli_query($db_connection, $sql);

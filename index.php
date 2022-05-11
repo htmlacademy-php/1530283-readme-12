@@ -17,15 +17,28 @@ if ( ! isset($db_connection) or ! $db_connection) {
     return;
 }
 
-$current_content_type_id = $_GET[CONTENT_TYPE_QUERY] ? intval(
-    $_GET[CONTENT_TYPE_QUERY]
-) : null;
+$basename = basename(__FILE__);
+
+$current_content_type_id = $_GET[CONTENT_TYPE_QUERY];
+$current_sort_type       = $_GET[SORT_TYPE_QUERY];
+$current_sort_order      = $_GET[SORT_ORDER_QUERY];
+
+if ( ! $current_sort_type) {
+    $url = get_url_with_query(
+        $basename,
+        SORT_TYPE_QUERY,
+        SORT_TYPE_OPTIONS[0]['value']
+    );
+    header("Location: $url");
+
+    return;
+}
 
 $content_types = get_content_types($db_connection);
 $post_cards    = get_posts(
     $db_connection,
     [
-        'sort'            => 'views_count',
+        'sort_type'       => $current_sort_type,
         'content_type_id' => $current_content_type_id
     ]
 );
@@ -41,15 +54,28 @@ if (is_null($content_types) or is_null($post_cards)) {
     return;
 }
 
-$basename = basename(__FILE__);
+$sort_types = SORT_TYPE_OPTIONS;
+
+array_walk(
+    $sort_types,
+    function (&$sort_type) use ($basename) {
+        $value = $sort_type['value'];
+
+        $url    = get_url_with_query($basename, SORT_TYPE_QUERY, $value);
+        $active = is_query_active(SORT_TYPE_QUERY, $value);
+
+        $sort_type['url']    = $url;
+        $sort_type['active'] = $active;
+    }
+);
 
 $filters = $content_types;
 
 $empty_filter = [
     'name'   => 'Все',
     'icon'   => 'all',
-    'url'    => get_filter_url($basename, CONTENT_TYPE_QUERY),
-    'active' => is_filter_active(CONTENT_TYPE_QUERY),
+    'url'    => get_url_with_query($basename, CONTENT_TYPE_QUERY),
+    'active' => is_query_active(CONTENT_TYPE_QUERY),
 ];
 
 array_walk(
@@ -57,8 +83,8 @@ array_walk(
     function (&$filter) use ($basename) {
         $id = $filter['id'];
 
-        $url    = get_filter_url($basename, CONTENT_TYPE_QUERY, $id);
-        $active = is_filter_active(CONTENT_TYPE_QUERY, $id);
+        $url    = get_url_with_query($basename, CONTENT_TYPE_QUERY, $id);
+        $active = is_query_active(CONTENT_TYPE_QUERY, $id);
 
         $filter['url']    = $url;
         $filter['active'] = $active;
@@ -68,6 +94,7 @@ array_walk(
 $popular_filters_content = include_template(
     'partials/popular-filters.php',
     [
+        'sort_types'   => $sort_types,
         'filters'      => $filters,
         'empty_filter' => $empty_filter,
     ]

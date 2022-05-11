@@ -147,37 +147,37 @@ function format_relative_time(string $date): string
 }
 
 /**
- * @param  string    $basename
- * @param  string    $query_name
- * @param  int|null  $filter_id
+ * @param  string       $basename
+ * @param  string       $query_name
+ * @param  string|null  $query_value
  *
  * @return string
  */
-function get_filter_url(
+function get_url_with_query(
     string $basename,
     string $query_name,
-    int $filter_id = null
+    string $query_value = null
 ): string {
     $query_params              = $_GET;
-    $query_params[$query_name] = $filter_id;
+    $query_params[$query_name] = $query_value;
     $query_string              = http_build_query($query_params);
 
     return "/$basename?$query_string";
 }
 
 /**
- * @param  string    $query_name
- * @param  int|null  $filter_id
+ * @param  string       $query_name
+ * @param  string|null  $query_value
  *
  * @return bool
  */
-function is_filter_active(string $query_name, int $filter_id = null): bool
+function is_query_active(string $query_name, string $query_value = null): bool
 {
     $current_filter_id = $_GET[$query_name];
 
-    if (is_null($filter_id)) {
+    if (is_null($query_value)) {
         return is_null($current_filter_id);
     }
 
-    return intval($current_filter_id) === $filter_id;
+    return $current_filter_id === $query_value;
 }

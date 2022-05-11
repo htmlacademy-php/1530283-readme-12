@@ -2,6 +2,26 @@
 
 const CONTENT_TYPE_QUERY = 'content_type_id';
 
+const SORT_TYPE_QUERY = 'sort_type';
+
+const SORT_ORDER_QUERY = "sort_order";
+
+const SORT_TYPE_OPTIONS
+= [
+    [
+        'label' => 'Популярность',
+        'value' => 'views_count',
+    ],
+    [
+        'label' => 'Лайки',
+        'value' => 'likes_count',
+    ],
+    [
+        'label' => 'Дата',
+        'value' => 'created_at',
+    ],
+];
+
 const TEXT_SEPARATOR = ' ';
 
 const MAX_POST_CARD_TEXT_CONTENT_LENGTH = 300;
