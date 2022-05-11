@@ -7,11 +7,15 @@ require_once 'models/comment.php';
 require_once 'init/db.php';
 
 if ( ! isset($db_connection) or ! $db_connection) {
+    http_response_code(SERVER_ERROR_STATUS);
+
     $error_layout = include_template(
         'empty_layout.php',
-        ['content' => 'Данные недоступны']
+        ['content' => 'Произошла внутренняя ошибка сервера']
     );
+
     ob_end_clean();
+
     print($error_layout);
 
     return;
@@ -27,12 +31,20 @@ if ($post_id) {
 }
 
 if (is_null($post) or is_null($comments)) {
-    $error_layout = include_template(
-        'empty_layout.php',
-        ['content' => 'Данные недоступны']
+    http_response_code(NOT_FOUND_STATUS);
+
+    $page_content = include_template(
+        'partials/error.php',
+        [
+            'content' => 'Не удалось загрузить страницу'
+        ]
     );
-    ob_end_clean();
-    print($error_layout);
+
+    $layout_data['content'] = $page_content;
+
+    $layout_content = include_template('layout.php', $layout_data);
+
+    print($layout_content);
 
     return;
 }

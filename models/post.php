@@ -137,5 +137,7 @@ function get_post(mysqli $db_connection, int $id)
         return null;
     }
 
-    return mysqli_fetch_assoc($result);
+    $post = mysqli_fetch_assoc($result);
+
+    return $post['id'] ? $post : null;
 }
