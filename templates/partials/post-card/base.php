@@ -1,11 +1,11 @@
 <?php
 
+require_once 'decorators/post_card.php';
+
 list(
     'id' => $id,
     'title' => $title,
     'content_type' => $content_type,
-    'string_content' => $string_content,
-    'text_content' => $text_content,
     'author_login' => $author_login,
     'author_avatar' => $author_avatar,
     'created_at' => $created_at,
@@ -13,42 +13,6 @@ list(
     'comments_count' => $comments_count,
     )
     = $post_card;
-
-$post_content_decorators = [
-    'quote' => function () use ($text_content, $string_content) {
-        return include_template(
-            'partials/post-card/quote-content.php',
-            [
-                'text_content'   => $text_content,
-                'string_content' => $string_content,
-            ]
-        );
-    },
-    'text'  => function () use ($text_content, $string_content) {
-        return include_template(
-            'partials/post-card/text-content.php',
-            [
-                'text_content' => $text_content,
-            ]
-        );
-    },
-    'photo' => function () use ($string_content) {
-        return include_template(
-            'partials/post-card/photo-content.php',
-            [
-                'string_content' => $string_content,
-            ]
-        );
-    },
-    'link'  => function () use ($string_content) {
-        return include_template(
-            'partials/post-card/link-content.php',
-            [
-                'string_content' => $string_content,
-            ]
-        );
-    },
-];
 ?>
 <article class="popular__post post post-<?= $content_type ?>">
     <header class="post__header">
@@ -57,11 +21,7 @@ $post_content_decorators = [
         </a>
     </header>
     <div class="post__main">
-        <?php
-        if (is_callable($post_content_decorators[$content_type])): ?>
-            <?= $post_content_decorators[$content_type]() ?>
-        <?php
-        endif; ?>
+        <?= decorate_post_card_content($post_card) ?>
     </div>
     <footer class="post__footer">
         <div class="post__author">

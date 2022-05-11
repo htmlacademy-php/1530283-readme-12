@@ -6,6 +6,7 @@ require_once 'functions.php';
 require_once 'models/post.php';
 require_once 'models/content_type.php';
 require_once 'init/db.php';
+require_once 'decorators/popular.php';
 
 if ( ! isset($db_connection) or ! $db_connection) {
     http_response_code(SERVER_ERROR_STATUS);
@@ -24,7 +25,14 @@ if ( ! isset($db_connection) or ! $db_connection) {
 
 $basename = basename(__FILE__);
 
-if ( ! isset($_GET[SORT_TYPE_QUERY])) {
+
+$current_sort_type = filter_input(
+    INPUT_GET,
+    SORT_TYPE_QUERY,
+    FILTER_SANITIZE_STRING
+);
+
+if ( ! $current_sort_type) {
     $url = get_sort_url(
         $basename,
         SORT_TYPE_OPTIONS[0]['value']
@@ -40,12 +48,8 @@ $current_content_type_id = filter_input(
     CONTENT_TYPE_QUERY,
     FILTER_SANITIZE_NUMBER_INT
 );
-$current_sort_type       = filter_input(
-    INPUT_GET,
-    SORT_TYPE_QUERY,
-    FILTER_SANITIZE_STRING
-);
-$is_sort_order_reversed  = isset($_GET[SORT_ORDER_REVERSED]);
+
+$is_sort_order_reversed = isset($_GET[SORT_ORDER_REVERSED]);
 
 $content_types = get_content_types($db_connection);
 
@@ -180,39 +184,11 @@ $post_cards = get_posts(
     ]
 );
 
-$page_content = (function () use ($post_cards, $popular_filters_content) {
-    if (is_null($post_cards)) {
-        http_response_code(NOT_FOUND_STATUS);
+if (is_null($post_cards)) {
+    http_response_code(NOT_FOUND_STATUS);
+}
 
-        return include_template(
-            'popular_empty.php',
-            [
-                'popular_filters_content' => $popular_filters_content,
-                'title'                   => 'Ошибка',
-                'content'                 => 'Не удалось загрузить публикации',
-            ]
-        );
-    }
-
-    if ( ! count($post_cards)) {
-        return include_template(
-            'popular_empty.php',
-            [
-                'popular_filters_content' => $popular_filters_content,
-                'title'                   => 'Ничего не найдено',
-            ]
-        );
-    }
-
-    return include_template(
-        'popular.php',
-        [
-            'popular_filters_content' => $popular_filters_content,
-            'post_cards'              => $post_cards,
-        ]
-    );
-})();
-
+$page_content = decorate_popular_page($popular_filters_content, $post_cards);
 
 $layout_data['content'] = $page_content;
 
