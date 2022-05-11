@@ -4,7 +4,7 @@ const CONTENT_TYPE_QUERY = 'content_type_id';
 
 const SORT_TYPE_QUERY = 'sort_type';
 
-const SORT_ORDER_QUERY = "sort_order";
+const SORT_ORDER_REVERSED = "sort_order_reversed";
 
 const SORT_TYPE_OPTIONS
 = [

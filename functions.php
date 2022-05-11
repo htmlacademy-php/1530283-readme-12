@@ -147,25 +147,6 @@ function format_relative_time(string $date): string
 }
 
 /**
- * @param  string       $basename
- * @param  string       $query_name
- * @param  string|null  $query_value
- *
- * @return string
- */
-function get_url_with_query(
-    string $basename,
-    string $query_name,
-    string $query_value = null
-): string {
-    $query_params              = $_GET;
-    $query_params[$query_name] = $query_value;
-    $query_string              = http_build_query($query_params);
-
-    return "/$basename?$query_string";
-}
-
-/**
  * @param  string       $query_name
  * @param  string|null  $query_value
  *
@@ -180,4 +161,46 @@ function is_query_active(string $query_name, string $query_value = null): bool
     }
 
     return $current_filter_id === $query_value;
+}
+
+/**
+ * @param  string  $basename
+ * @param  string  $sort_type
+ *
+ * @return string
+ */
+function get_sort_url(
+    string $basename,
+    string $sort_type
+): string {
+    $query_params       = $_GET;
+    $current_sort_order = $query_params[SORT_ORDER_REVERSED];
+
+    $query_params[SORT_TYPE_QUERY] = $sort_type;
+
+    if (is_query_active(SORT_TYPE_QUERY, $sort_type)) {
+        $query_params[SORT_ORDER_REVERSED] = is_null($current_sort_order) ? ''
+            : null;
+    }
+
+    $query_string = http_build_query($query_params);
+
+    return "/$basename?$query_string";
+}
+
+/**
+ * @param  string      $basename
+ * @param  int | null  $filter_id
+ *
+ * @return string
+ */
+function get_filter_url(
+    string $basename,
+    int $filter_id = null
+): string {
+    $query_params                     = $_GET;
+    $query_params[CONTENT_TYPE_QUERY] = $filter_id;
+    $query_string                     = http_build_query($query_params);
+
+    return "/$basename?$query_string";
 }

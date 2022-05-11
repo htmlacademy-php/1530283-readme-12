@@ -21,14 +21,14 @@ $basename = basename(__FILE__);
 
 $current_content_type_id = $_GET[CONTENT_TYPE_QUERY];
 $current_sort_type       = $_GET[SORT_TYPE_QUERY];
-$current_sort_order      = $_GET[SORT_ORDER_QUERY];
+$is_sort_order_reversed  = isset($_GET[SORT_ORDER_REVERSED]);
 
 if ( ! $current_sort_type) {
-    $url = get_url_with_query(
+    $url = get_sort_url(
         $basename,
-        SORT_TYPE_QUERY,
         SORT_TYPE_OPTIONS[0]['value']
     );
+
     header("Location: $url");
 
     return;
@@ -38,8 +38,9 @@ $content_types = get_content_types($db_connection);
 $post_cards    = get_posts(
     $db_connection,
     [
-        'sort_type'       => $current_sort_type,
-        'content_type_id' => $current_content_type_id
+        'sort_type'         => $current_sort_type,
+        'is_order_reversed' => $is_sort_order_reversed,
+        'content_type_id'   => $current_content_type_id
     ]
 );
 
@@ -61,8 +62,9 @@ array_walk(
     function (&$sort_type) use ($basename) {
         $value = $sort_type['value'];
 
-        $url    = get_url_with_query($basename, SORT_TYPE_QUERY, $value);
+        $url    = get_sort_url($basename, $value);
         $active = is_query_active(SORT_TYPE_QUERY, $value);
+
 
         $sort_type['url']    = $url;
         $sort_type['active'] = $active;
@@ -74,7 +76,7 @@ $filters = $content_types;
 $empty_filter = [
     'name'   => 'Все',
     'icon'   => 'all',
-    'url'    => get_url_with_query($basename, CONTENT_TYPE_QUERY),
+    'url'    => get_filter_url($basename),
     'active' => is_query_active(CONTENT_TYPE_QUERY),
 ];
 
@@ -83,7 +85,7 @@ array_walk(
     function (&$filter) use ($basename) {
         $id = $filter['id'];
 
-        $url    = get_url_with_query($basename, CONTENT_TYPE_QUERY, $id);
+        $url    = get_filter_url($basename, $id);
         $active = is_query_active(CONTENT_TYPE_QUERY, $id);
 
         $filter['url']    = $url;
@@ -94,9 +96,10 @@ array_walk(
 $popular_filters_content = include_template(
     'partials/popular-filters.php',
     [
-        'sort_types'   => $sort_types,
-        'filters'      => $filters,
-        'empty_filter' => $empty_filter,
+        'sort_types'             => $sort_types,
+        'is_sort_order_reversed' => $is_sort_order_reversed,
+        'filters'                => $filters,
+        'empty_filter'           => $empty_filter,
     ]
 );
 
