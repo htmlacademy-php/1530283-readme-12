@@ -4,6 +4,7 @@ require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
+require_once 'models/user.php';
 require_once 'init/db.php';
 require_once 'decorators/post_details.php';
 
@@ -25,10 +26,15 @@ if ( ! isset($db_connection) or ! $db_connection) {
 $post_id  = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 $post     = null;
 $comments = null;
+$author = null;
 
 if ($post_id) {
     $post     = get_post($db_connection, $post_id);
     $comments = get_comments($db_connection, $post_id);
+}
+
+if (is_array($post) and isset($post['author_id'])) {
+    $author = get_user($db_connection, $post['author_id']);
 }
 
 $layout_data = [
@@ -39,7 +45,7 @@ $layout_data = [
     'content'       => '',
 ];
 
-if (is_null($post) or is_null($comments)) {
+if (is_null($post) or is_null($comments) or is_null($author)) {
     http_response_code(NOT_FOUND_STATUS);
 
     $page_content = include_template(
