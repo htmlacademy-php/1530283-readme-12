@@ -1,9 +1,10 @@
 <?php
-if (!isset($title)) {
+
+if ( ! isset($title)) {
     $title = 'Ошибка';
 }
 
-if (!isset($content)) {
+if ( ! isset($content)) {
     $content = 'Что-то пошло не так...';
 }
 ?>
@@ -16,12 +17,25 @@ if (!isset($content)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?></title>
     <link rel="stylesheet" href="css/main.css">
+    <style>
+        .header {
+            min-height: 10vh;
+        }
+
+        .page__main {
+            flex-grow: 1;
+        }
+
+        .page__main--empty {
+            text-align: center;
+        }
+    </style>
 </head>
 <body class="page">
 
-<header class="header" style="min-height:10vh"></header>
+<header class="header"></header>
 
-<section class="page__main" style="min-height:90vh;padding-top:10vh;text-align:center">
+<section class="page__main page__main--empty">
     <div class="container">
         <h1><?= $title ?></h1>
         <p><?= $content ?></p>
