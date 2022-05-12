@@ -8,7 +8,7 @@ require_once 'models/user.php';
 require_once 'init/db.php';
 require_once 'decorators/post_details.php';
 
-if ( ! isset($db_connection) or ! $db_connection) {
+if (!isset($db_connection) or !$db_connection) {
     http_response_code(SERVER_ERROR_STATUS);
 
     $error_layout = include_template(
@@ -23,13 +23,13 @@ if ( ! isset($db_connection) or ! $db_connection) {
     return;
 }
 
-$post_id  = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
-$post     = null;
+$post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
+$post = null;
 $comments = null;
-$author   = null;
+$author = null;
 
 if ($post_id) {
-    $post     = get_post($db_connection, $post_id);
+    $post = get_post($db_connection, $post_id);
     $comments = get_comments($db_connection, $post_id);
 }
 
@@ -38,11 +38,11 @@ if (is_array($post) and isset($post['author_id'])) {
 }
 
 $layout_data = [
-    'title'         => 'Популярное',
-    'is_auth'       => 1,
-    'user_name'     => 'Евгений',
+    'title' => 'Популярное',
+    'is_auth' => 1,
+    'user_name' => 'Евгений',
     'page_modifier' => 'publication',
-    'content'       => '',
+    'content' => '',
 ];
 
 if (is_null($post) or is_null($comments) or is_null($author)) {
@@ -64,17 +64,20 @@ if (is_null($post) or is_null($comments) or is_null($author)) {
     return;
 }
 
-$author_content = include_template('partials/post-details/author.php', [
-    'author' => $author,
-]);
+$author_content = include_template(
+    'partials/post-details/author.php',
+    [
+        'author' => $author,
+    ]
+);
 
 $page_content = include_template(
     'post-details.php',
     [
-        'post'           => $post,
-        'post_content'   => decorate_post_details_content($post),
+        'post' => $post,
+        'post_content' => decorate_post_details_content($post),
         'author_content' => $author_content,
-        'comments'       => $comments
+        'comments' => $comments
     ]
 );
 

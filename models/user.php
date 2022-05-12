@@ -43,7 +43,7 @@ function get_user(mysqli $db_connection, int $id)
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 

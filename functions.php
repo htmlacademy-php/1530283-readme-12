@@ -15,10 +15,10 @@ require_once 'constants.php';
  */
 function crop_text(string $text, int $max_length): string
 {
-    $words       = explode(TEXT_SEPARATOR, $text);
+    $words = explode(TEXT_SEPARATOR, $text);
     $words_count = count($words);
 
-    $current_word_index  = 0;
+    $current_word_index = 0;
     $current_text_length = 0;
 
     while ($current_word_index < $words_count) {
@@ -34,7 +34,7 @@ function crop_text(string $text, int $max_length): string
 
     $is_cropped = $current_word_index < $words_count;
 
-    if ( ! $is_cropped) {
+    if (!$is_cropped) {
         return $text;
     }
 
@@ -70,7 +70,7 @@ function format_iso_date_time(string $date): string
  */
 function format_relative_time(string $date): string
 {
-    $date         = date_create($date);
+    $date = date_create($date);
     $current_date = date_create();
 
     $interval = date_diff($current_date, $date);
@@ -82,8 +82,8 @@ function format_relative_time(string $date): string
         )
         = explode(TEXT_SEPARATOR, date_interval_format($interval, '%a %h %i'));
 
-    $days_total        = (int)$days_total;
-    $hours_remainder   = (int)$hours_remainder;
+    $days_total = (int)$days_total;
+    $hours_remainder = (int)$hours_remainder;
     $minutes_remainder = (int)$minutes_remainder;
 
     $weeks_total = (int)floor($days_total / DAYS_IN_WEEK);
@@ -102,34 +102,34 @@ function format_relative_time(string $date): string
             $months_total = floor($days_total / DAYS_IN_MONTH);
 
             return [
-                'unit'   => 'month',
+                'unit' => 'month',
                 'amount' => $months_total,
             ];
         }
 
         if ($weeks_total >= 1) {
             return [
-                'unit'   => 'week',
+                'unit' => 'week',
                 'amount' => $weeks_total,
             ];
         }
 
         if ($days_total >= 1) {
             return [
-                'unit'   => 'day',
+                'unit' => 'day',
                 'amount' => $days_total,
             ];
         }
 
         if ($hours_remainder >= 1) {
             return [
-                'unit'   => 'hour',
+                'unit' => 'hour',
                 'amount' => $hours_remainder,
             ];
         }
 
         return [
-            'unit'   => 'minute',
+            'unit' => 'minute',
             'amount' => $minutes_remainder,
         ];
     })();
@@ -185,7 +185,7 @@ function get_sort_url(
     string $basename,
     string $sort_type
 ): string {
-    $query_params       = $_GET;
+    $query_params = $_GET;
     $current_sort_order = filter_input(
         INPUT_GET,
         SORT_ORDER_REVERSED,
@@ -218,9 +218,9 @@ function get_content_filter_url(
     string $basename,
     int $content_type_id = null
 ): string {
-    $query_params                       = $_GET;
+    $query_params = $_GET;
     $query_params[CONTENT_FILTER_QUERY] = $content_type_id;
-    $query_string                       = http_build_query($query_params);
+    $query_string = http_build_query($query_params);
 
     return "/$basename?$query_string";
 }

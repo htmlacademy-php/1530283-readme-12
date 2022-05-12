@@ -17,7 +17,7 @@
 function is_date_valid(string $date): bool
 {
     $format_to_check = 'Y-m-d';
-    $dateTimeObj     = date_create_from_format($format_to_check, $date);
+    $dateTimeObj = date_create_from_format($format_to_check, $date);
 
     return $dateTimeObj !== false && array_sum(date_get_last_errors()) === 0;
 }
@@ -42,7 +42,7 @@ function db_get_prepare_stmt($link, $sql, $data = [])
     }
 
     if ($data) {
-        $types     = '';
+        $types = '';
         $stmt_data = [];
 
         foreach ($data as $value) {
@@ -61,7 +61,7 @@ function db_get_prepare_stmt($link, $sql, $data = [])
             }
 
             if ($type) {
-                $types       .= $type;
+                $types .= $type;
                 $stmt_data[] = $value;
             }
         }
@@ -111,7 +111,7 @@ function get_noun_plural_form(
     string $many
 ): string {
     $number = (int)$number;
-    $mod10  = $number % 10;
+    $mod10 = $number % 10;
     $mod100 = $number % 100;
 
     switch (true) {
@@ -142,10 +142,10 @@ function get_noun_plural_form(
  */
 function include_template($name, array $data = [])
 {
-    $name   = 'templates/' . $name;
+    $name = 'templates/' . $name;
     $result = '';
 
-    if ( ! is_readable($name)) {
+    if (!is_readable($name)) {
         return $result;
     }
 
@@ -180,7 +180,7 @@ function check_youtube_url($url)
     );
     restore_error_handler();
 
-    if ( ! is_array($headers)) {
+    if (!is_array($headers)) {
         return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
     }
 
@@ -203,7 +203,7 @@ function check_youtube_url($url)
 function embed_youtube_video($youtube_url)
 {
     $res = "";
-    $id  = extract_youtube_id($youtube_url);
+    $id = extract_youtube_id($youtube_url);
 
     if ($id) {
         $src = "https://www.youtube.com/embed/" . $id;
@@ -224,7 +224,7 @@ function embed_youtube_video($youtube_url)
 function embed_youtube_cover(string $youtube_url = null)
 {
     $res = "";
-    $id  = extract_youtube_id($youtube_url);
+    $id = extract_youtube_id($youtube_url);
 
     if ($id) {
         $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
@@ -276,7 +276,7 @@ function generate_random_date($index)
         ['weeks' => 4],
         ['months' => 11]
     ];
-    $dcnt   = count($deltas);
+    $dcnt = count($deltas);
 
     if ($index < 0) {
         $index = 0;
@@ -286,8 +286,8 @@ function generate_random_date($index)
         $index = $dcnt - 1;
     }
 
-    $delta    = $deltas[$index];
-    $timeval  = rand(1, current($delta));
+    $delta = $deltas[$index];
+    $timeval = rand(1, current($delta));
     $timename = key($delta);
 
     $ts = strtotime("$timeval $timename ago");

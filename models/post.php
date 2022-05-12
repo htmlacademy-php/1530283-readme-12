@@ -76,7 +76,7 @@ function get_posts(mysqli $db_connection, $config = [])
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 
@@ -135,7 +135,7 @@ function get_post(mysqli $db_connection, int $id)
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 

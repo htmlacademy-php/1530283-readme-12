@@ -12,8 +12,7 @@ const BAD_REQUEST_STATUS = 400;
 
 const NOT_FOUND_STATUS = 404;
 
-const SORT_TYPE_OPTIONS
-= [
+const SORT_TYPE_OPTIONS = [
     [
         'label' => 'Популярность',
         'value' => 'views_count',
@@ -36,46 +35,44 @@ const DAYS_IN_WEEK = 7;
 
 const DAYS_IN_MONTH = 30;
 
-const RELATIVE_TIME_UNITS
-= [
+const RELATIVE_TIME_UNITS = [
     'minute' => [
-        'one'  => 'минуту',
-        'two'  => 'минуты',
+        'one' => 'минуту',
+        'two' => 'минуты',
         'many' => 'минут',
     ],
-    'hour'   => [
-        'one'  => 'час',
-        'two'  => 'часа',
+    'hour' => [
+        'one' => 'час',
+        'two' => 'часа',
         'many' => 'часов',
     ],
-    'day'    => [
-        'one'  => 'день',
-        'two'  => 'дня',
+    'day' => [
+        'one' => 'день',
+        'two' => 'дня',
         'many' => 'дней',
     ],
-    'week'   => [
-        'one'  => 'неделю',
-        'two'  => 'недели',
+    'week' => [
+        'one' => 'неделю',
+        'two' => 'недели',
         'many' => 'недель',
     ],
-    'month'  => [
-        'one'  => 'месяц',
-        'two'  => 'месяца',
+    'month' => [
+        'one' => 'месяц',
+        'two' => 'месяца',
         'many' => 'месяцев',
     ],
 ];
 
-const POST_CARD_CONTENT_DECORATORS
-= [
+const POST_CARD_CONTENT_DECORATORS = [
     'quote' => 'decorate_post_card_quote_content',
-    'text'  => 'decorate_post_card_text_content',
+    'text' => 'decorate_post_card_text_content',
     'photo' => 'decorate_post_card_photo_content',
-    'link'  => 'decorate_post_card_link_content',
+    'link' => 'decorate_post_card_link_content',
 ];
 
 const POST_DETAILS_CONTENT_DECORATORS = [
     'quote' => 'decorate_post_details_quote_content',
-    'text'  => 'decorate_post_details_text_content',
+    'text' => 'decorate_post_details_text_content',
     'photo' => 'decorate_post_details_photo_content',
-    'link'  => 'decorate_post_details_link_content',
+    'link' => 'decorate_post_details_link_content',
 ];
