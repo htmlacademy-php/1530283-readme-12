@@ -1,6 +1,6 @@
 <?php
 
-const CONTENT_TYPE_QUERY = 'content_type_id';
+const CONTENT_FILTER_QUERY = 'content_type_id';
 
 const SORT_TYPE_QUERY = 'sort_type';
 

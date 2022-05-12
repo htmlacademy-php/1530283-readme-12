@@ -42,9 +42,9 @@ if ( ! $current_sort_type) {
     return;
 }
 
-$current_content_type_id = filter_input(
+$current_content_filter = filter_input(
     INPUT_GET,
-    CONTENT_TYPE_QUERY,
+    CONTENT_FILTER_QUERY,
     FILTER_SANITIZE_NUMBER_INT
 );
 
@@ -86,22 +86,26 @@ $available_sort_types = array_map(
     SORT_TYPE_OPTIONS
 );
 
-$available_filters = array_map(
+$available_content_filters = array_map(
     function ($content_type) {
         return $content_type['id'];
     },
     $content_types
 );
 
-$is_sort_types_valid = array_search($current_sort_type, $available_sort_types)
-                       !== false;
-$is_filter_valid     = is_null($current_content_type_id)
-                       || array_search(
-                              $current_content_type_id,
-                              $available_filters
-                          ) !== false;
+$is_sort_type_valid = array_search(
+                           $current_sort_type,
+                           $available_sort_types
+                       )
+                      !== false;
 
-$is_page_filters_invalid = ! $is_sort_types_valid or ! $is_filter_valid;
+$is_content_filter_valid = is_null($current_content_filter)
+                           || array_search(
+                                  $current_content_filter,
+                                  $available_content_filters
+                              ) !== false;
+
+$is_page_filters_invalid = ! $is_sort_type_valid or ! $is_content_filter_valid;
 
 $sort_types = SORT_TYPE_OPTIONS;
 
@@ -119,22 +123,22 @@ array_walk(
     }
 );
 
-$filters = $content_types;
+$content_filters = $content_types;
 
-$empty_filter = [
+$any_content_filter = [
     'name'   => 'Все',
     'icon'   => 'all',
-    'url'    => get_filter_url($basename),
-    'active' => is_query_active(CONTENT_TYPE_QUERY),
+    'url'    => get_content_filter_url($basename),
+    'active' => is_query_active(CONTENT_FILTER_QUERY),
 ];
 
 array_walk(
-    $filters,
+    $content_filters,
     function (&$filter) use ($basename) {
         $id = $filter['id'];
 
-        $url    = get_filter_url($basename, $id);
-        $active = is_query_active(CONTENT_TYPE_QUERY, $id);
+        $url    = get_content_filter_url($basename, $id);
+        $active = is_query_active(CONTENT_FILTER_QUERY, $id);
 
         $filter['url']    = $url;
         $filter['active'] = $active;
@@ -146,12 +150,12 @@ $popular_filters_content = include_template(
     [
         'sort_types'             => $sort_types,
         'is_sort_order_reversed' => $is_sort_order_reversed,
-        'filters'                => $filters,
-        'empty_filter'           => $empty_filter,
+        'content_filters'        => $content_filters,
+        'any_content_filter'     => $any_content_filter,
     ]
 );
 
-if ( ! $is_sort_types_valid or ! $is_filter_valid) {
+if ( ! $is_sort_type_valid or ! $is_content_filter_valid) {
     http_response_code(BAD_REQUEST_STATUS);
 
     $page_content = include_template(
@@ -179,7 +183,7 @@ $post_cards = get_posts(
     [
         'sort_type'         => $current_sort_type,
         'is_order_reversed' => $is_sort_order_reversed,
-        'content_type_id'   => $current_content_type_id
+        'content_type_id'   => $current_content_filter
     ]
 );
 

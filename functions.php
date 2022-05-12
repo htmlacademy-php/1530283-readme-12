@@ -214,13 +214,13 @@ function get_sort_url(
  *
  * @return string Итоговый URL страницы для получения списка публикаций с учетом фильтрации
  */
-function get_filter_url(
+function get_content_filter_url(
     string $basename,
     int $content_type_id = null
 ): string {
-    $query_params                     = $_GET;
-    $query_params[CONTENT_TYPE_QUERY] = $content_type_id;
-    $query_string                     = http_build_query($query_params);
+    $query_params                       = $_GET;
+    $query_params[CONTENT_FILTER_QUERY] = $content_type_id;
+    $query_string                       = http_build_query($query_params);
 
     return "/$basename?$query_string";
 }

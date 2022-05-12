@@ -6,7 +6,8 @@
             foreach ($sort_types as $sort_type): ?>
                 <li class="sorting__item">
                     <a class="sorting__link <?= $sort_type['active']
-                        ? 'sorting__link--active' : '' ?> <?= $is_sort_order_reversed
+                        ? 'sorting__link--active'
+                        : '' ?> <?= $is_sort_order_reversed
                         ? 'sorting__link--reverse' : '' ?>"
                        href="<?= $sort_type['url'] ?>">
                         <span><?= $sort_type['label'] ?></span>
@@ -22,22 +23,22 @@
     <div class="popular__filters filters">
         <b class="popular__filters-caption filters__caption">Тип контента:</b>
         <ul class="popular__filters-list filters__list">
-            <li class="popular__filters-item popular__filters-item--<?= $empty_filter['icon'] ?> filters__item filters__item--<?= $empty_filter['icon'] ?>">
-                <a class="filters__button filters__button--ellipse filters__button--all <?= $empty_filter['active']
+            <li class="popular__filters-item popular__filters-item--<?= $any_content_filter['icon'] ?> filters__item filters__item--<?= $any_content_filter['icon'] ?>">
+                <a class="filters__button filters__button--ellipse filters__button--all <?= $any_content_filter['active']
                     ? 'filters__button--active' : '' ?>"
-                   href="<?= $empty_filter['url'] ?>">
-                    <span><?= $empty_filter['name'] ?></span>
+                   href="<?= $any_content_filter['url'] ?>">
+                    <span><?= $any_content_filter['name'] ?></span>
                 </a>
             </li>
             <?php
-            foreach ($filters as $filter): ?>
+            foreach ($content_filters as $content_filter): ?>
                 <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--<?= $filter['icon'] ?> <?= $filter['active']
+                    <a class="filters__button filters__button--<?= $content_filter['icon'] ?> <?= $content_filter['active']
                         ? 'filters__button--active' : '' ?> button"
-                       href="<?= $filter['url'] ?>">
-                        <span class="visually-hidden"><?= $filter['name'] ?></span>
+                       href="<?= $content_filter['url'] ?>">
+                        <span class="visually-hidden"><?= $content_filter['name'] ?></span>
                         <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-<?= $filter['icon'] ?>"></use>
+                            <use xlink:href="#icon-filter-<?= $content_filter['icon'] ?>"></use>
                         </svg>
                     </a>
                 </li>
