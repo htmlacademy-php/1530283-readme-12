@@ -25,7 +25,6 @@ if ( ! isset($db_connection) or ! $db_connection) {
 
 $basename = basename(__FILE__);
 
-
 $current_sort_type = filter_input(
     INPUT_GET,
     SORT_TYPE_QUERY,

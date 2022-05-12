@@ -31,6 +31,14 @@ if ($post_id) {
     $comments = get_comments($db_connection, $post_id);
 }
 
+$layout_data = [
+    'title'         => 'Популярное',
+    'is_auth'       => 1,
+    'user_name'     => 'Евгений',
+    'page_modifier' => 'publication',
+    'content'       => '',
+];
+
 if (is_null($post) or is_null($comments)) {
     http_response_code(NOT_FOUND_STATUS);
 
@@ -59,15 +67,8 @@ $page_content = include_template(
     ]
 );
 
-$layout_content = include_template(
-    'layout.php',
-    [
-        'title'         => $post['title'],
-        'is_auth'       => 1,
-        'user_name'     => 'Евгений',
-        'page_modifier' => 'publication',
-        'content'       => $page_content,
-    ]
-);
+$layout_data['content'] = $page_content;
+
+$layout_content = include_template('layout.php', $layout_data);
 
 print($layout_content);
