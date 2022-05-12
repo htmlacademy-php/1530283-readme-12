@@ -12,7 +12,7 @@ if ( ! isset($db_connection) or ! $db_connection) {
     http_response_code(SERVER_ERROR_STATUS);
 
     $error_layout = include_template(
-        'empty_layout.php',
+        'empty-layout.php',
         ['content' => 'Произошла внутренняя ошибка сервера']
     );
 
@@ -155,7 +155,7 @@ if ( ! $is_sort_types_valid or ! $is_filter_valid) {
     http_response_code(BAD_REQUEST_STATUS);
 
     $page_content = include_template(
-        'popular_empty.php',
+        'popular-empty.php',
         [
             'popular_filters_content' => $popular_filters_content,
             'title'                   => 'Ошибка',

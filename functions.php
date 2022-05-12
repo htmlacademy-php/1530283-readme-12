@@ -142,8 +142,7 @@ function format_relative_time(string $date): string
         = RELATIVE_TIME_UNITS[$unit];
 
     return "$amount "
-           . get_noun_plural_form($amount, $one_unit, $two_units, $many_units)
-           . RELATIVE_TIME_POSTFIX;
+           . get_noun_plural_form($amount, $one_unit, $two_units, $many_units);
 }
 
 /**

@@ -37,7 +37,7 @@ list(
                         ) ?></b>
                     <time class="post__time" datetime="<?= format_iso_date_time(
                         $created_at
-                    ) ?>"><?= format_relative_time($created_at) ?></time>
+                    ) ?>"><?= format_relative_time($created_at) ?> назад</time>
                 </div>
             </a>
         </div>

@@ -12,7 +12,7 @@ if ( ! isset($db_connection) or ! $db_connection) {
     http_response_code(SERVER_ERROR_STATUS);
 
     $error_layout = include_template(
-        'empty_layout.php',
+        'empty-layout.php',
         ['content' => 'Произошла внутренняя ошибка сервера']
     );
 
@@ -26,7 +26,7 @@ if ( ! isset($db_connection) or ! $db_connection) {
 $post_id  = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 $post     = null;
 $comments = null;
-$author = null;
+$author   = null;
 
 if ($post_id) {
     $post     = get_post($db_connection, $post_id);
@@ -64,12 +64,17 @@ if (is_null($post) or is_null($comments) or is_null($author)) {
     return;
 }
 
+$author_content = include_template('partials/post-details/author.php', [
+    'author' => $author,
+]);
+
 $page_content = include_template(
-    'post.php',
+    'post-details.php',
     [
-        'post'     => $post,
-        'content'  => decorate_post_details_content($post),
-        'comments' => $comments
+        'post'           => $post,
+        'post_content'   => decorate_post_details_content($post),
+        'author_content' => $author_content,
+        'comments'       => $comments
     ]
 );
 

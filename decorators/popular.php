@@ -10,7 +10,7 @@
  * Ограничения:
  * 1. Функция не обрабатывает разметку секции фильтрации и сортировки,
  * т.е. принимает готовую разметку данной секции для шаблонов popular.php
- * и popular_empty.php.
+ * и popular-empty.php.
  * 2. Структура ассоциативного массива публикации должна соответствовать
  * требованиям шаблона popular.php.
  *
@@ -25,7 +25,7 @@ function decorate_popular_page(
 ): string {
     if (is_null($post_cards)) {
         return include_template(
-            'popular_empty.php',
+            'popular-empty.php',
             [
                 'popular_filters_content' => $popular_filters_content,
                 'title'                   => 'Ошибка',
@@ -36,7 +36,7 @@ function decorate_popular_page(
 
     if ( ! count($post_cards)) {
         return include_template(
-            'popular_empty.php',
+            'popular-empty.php',
             [
                 'popular_filters_content' => $popular_filters_content,
                 'title'                   => 'Ничего не найдено',
