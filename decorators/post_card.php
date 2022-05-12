@@ -112,7 +112,7 @@ function decorate_post_card_content(array $post_card): string
 {
     $content_type = $post_card['content_type'];
 
-    $decorate = POST_CARD_CONTENT_DECORATORS[$content_type];
+    $decorate = "decorate_post_card_${content_type}_content";
 
     return $decorate($post_card);
 }

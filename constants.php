@@ -62,17 +62,3 @@ const RELATIVE_TIME_UNITS = [
         'many' => 'месяцев',
     ],
 ];
-
-const POST_CARD_CONTENT_DECORATORS = [
-    'quote' => 'decorate_post_card_quote_content',
-    'text' => 'decorate_post_card_text_content',
-    'photo' => 'decorate_post_card_photo_content',
-    'link' => 'decorate_post_card_link_content',
-];
-
-const POST_DETAILS_CONTENT_DECORATORS = [
-    'quote' => 'decorate_post_details_quote_content',
-    'text' => 'decorate_post_details_text_content',
-    'photo' => 'decorate_post_details_photo_content',
-    'link' => 'decorate_post_details_link_content',
-];

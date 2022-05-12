@@ -111,7 +111,7 @@ function decorate_post_details_content(array $post): string
 {
     $content_type = $post['content_type'];
 
-    $decorate = POST_DETAILS_CONTENT_DECORATORS[$content_type];
+    $decorate = "decorate_post_details_${content_type}_content";
 
     return $decorate($post);
 }
