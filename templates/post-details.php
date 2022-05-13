@@ -62,12 +62,11 @@ list(
                         ) ?></span>
                 </div>
                 <ul class="post__tags">
-                    <li><a href="#">#nature</a></li>
-                    <li><a href="#">#globe</a></li>
-                    <li><a href="#">#photooftheday</a></li>
-                    <li><a href="#">#canon</a></li>
-                    <li><a href="#">#landscape</a></li>
-                    <li><a href="#">#щикарныйвид</a></li>
+                    <?php
+                    foreach ($hashtags as $hashtag): ?>
+                        <li><a href="#">#<?= $hashtag['name'] ?></a></li>
+                    <?php
+                    endforeach; ?>
                 </ul>
                 <div class="comments">
                     <form class="comments__form form" action="#" method="post">
@@ -98,14 +97,16 @@ list(
                     </form>
                     <div class="comments__list-wrapper">
                         <ul class="comments__list">
-                            <?php foreach ($comments as $comment): ?>
-                            <?= include_template(
-                                'partials/comment.php',
-                                [
-                                    'comment' => $comment
-                                ]
-                            ) ?>
-                            <?php endforeach; ?>
+                            <?php
+                            foreach ($comments as $comment): ?>
+                                <?= include_template(
+                                    'partials/comment.php',
+                                    [
+                                        'comment' => $comment
+                                    ]
+                                ) ?>
+                            <?php
+                            endforeach; ?>
                         </ul>
                         <a class="comments__more-link" href="#">
                             <span>Показать все комментарии</span>

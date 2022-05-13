@@ -1,5 +1,8 @@
 <?php
 
+require_once 'models/hashtag.php';
+require_once 'models/post_hashtag.php';
+
 /**
  * Функция получает список публикаций из базы данных.
  * Функция принимает ресурс соединения с базой данный
@@ -144,7 +147,7 @@ function get_post(mysqli $db_connection, int $id)
     return $post['id'] ? $post : null;
 }
 
-// todo: create post
+// todo: add phpDoc
 function create_post(mysqli $db_connection, array $post_data)
 {
     $title = mysqli_real_escape_string($db_connection, $post_data['title']);
@@ -171,7 +174,7 @@ function create_post(mysqli $db_connection, array $post_data)
             title,
             text_content,
             string_content
-        ) VALUES (1
+        ) VALUES (
             $author_id,
             $content_type_id,
             '$title',
@@ -182,13 +185,25 @@ function create_post(mysqli $db_connection, array $post_data)
 
     $result = mysqli_query($db_connection, $sql);
 
+    if (mysqli_error($db_connection))
+    {
+        var_dump(mysqli_error($db_connection));
+        exit();
+    }
+
     if (!$result) {
         return null;
     }
 
-    $id = mysqli_insert_id($db_connection);
+    $post_id = mysqli_insert_id($db_connection);
 
-    // todo: foreach tag: add hashtag => assign post_hashtag pair
+    foreach ($tags as $tag) {
+        $hashtag_id = add_hashtag($db_connection, $tag);
 
-    return $id;
+        if ($hashtag_id) {
+            create_post_hashtag($db_connection, $post_id, $hashtag_id);
+        }
+    }
+
+    return $post_id;
 }

@@ -5,6 +5,7 @@ require_once 'functions.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
 require_once 'models/user.php';
+require_once 'models/hashtag.php';
 require_once 'init/db.php';
 require_once 'decorators/post_details.php';
 
@@ -28,10 +29,12 @@ $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 $post = null;
 $comments = null;
 $author = null;
+$hashtags = null;
 
 if ($post_id) {
     $post = get_post($db_connection, $post_id);
     $comments = get_comments($db_connection, $post_id);
+    $hashtags = get_hashtags($db_connection, $post_id);
 }
 
 if (is_array($post) and isset($post['author_id'])) {
@@ -46,7 +49,8 @@ $layout_data = [
     'content' => '',
 ];
 
-$is_page_error = is_null($post) || is_null($comments) || is_null($author);
+$is_page_error = is_null($post) || is_null($comments) || is_null($author)
+                 || is_null($hashtags);
 
 if ($is_page_error) {
     http_response_code(NOT_FOUND_STATUS);
@@ -75,6 +79,7 @@ $page_content = include_template(
     [
         'post' => $post,
         'post_content' => decorate_post_details_content($post),
+        'hashtags' => $hashtags,
         'author_content' => $author_content,
         'comments' => $comments,
     ]
