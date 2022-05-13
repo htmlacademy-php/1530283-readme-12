@@ -1,12 +1,12 @@
 <div class="adding-post__input-wrapper form__textarea-wrapper">
     <label class="adding-post__label form__label"
-           for="cite-text">Текст цитаты <span
+           for="text-content">Текст цитаты <span
                 class="form__input-required">*</span></label>
     <div class="form__input-section">
         <textarea
                 class="adding-post__textarea adding-post__textarea--quote form__textarea form__input"
-                id="cite-text"
-                placeholder="Текст цитаты"></textarea>
+                id="text-content" name="text-content"
+                placeholder="Введите текст цитаты"></textarea>
         <button class="form__error-button button"
                 type="button">!<span
                     class="visually-hidden">Информация об ошибке</span>
@@ -22,12 +22,12 @@
 </div>
 <div class="adding-post__textarea-wrapper form__input-wrapper">
     <label class="adding-post__label form__label"
-           for="quote-author">Автор <span
+           for="string-content">Автор <span
                 class="form__input-required">*</span></label>
     <div class="form__input-section">
         <input class="adding-post__input form__input"
-               id="quote-author" type="text"
-               name="quote-author">
+               id="string-content" type="text"
+               name="string-content" placeholder="Введите автора цитаты">
         <button class="form__error-button button"
                 type="button">!<span
                     class="visually-hidden">Информация об ошибке</span>

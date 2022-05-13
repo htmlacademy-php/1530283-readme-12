@@ -317,15 +317,20 @@ function validate_sort_type(string $current_sort_type): bool
  *
  * Ограничения: Тип контента представляет собой ассоциативный массив,
  * содержащий ключ id.
- * @param  string  $current_content_filter  - id типа контента
- * @param  array   $content_types           - список доступных типов контента
+ *
+ * @param  string | null  $current_content_filter  - id типа контента
+ * @param  array          $content_types           - список доступных типов контента
  *
  * @return bool Результат валидации
  */
 function validate_content_filter(
-    string $current_content_filter,
+    $current_content_filter,
     array $content_types
 ): bool {
+    if (is_null($current_content_filter)) {
+        return false;
+    }
+
     $available_content_filters = array_map(
         function ($content_type) {
             return $content_type['id'];

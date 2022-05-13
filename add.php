@@ -1,34 +1,121 @@
 <?php
 
+require_once 'constants.php';
 require_once 'helpers.php';
+require_once 'functions.php';
+require_once 'models/content_type.php';
 require_once 'init/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    print($_POST['title']);
-    exit();
+if (!isset($db_connection) or !$db_connection) {
+    http_response_code(SERVER_ERROR_STATUS);
+
+    $error_layout = include_template(
+        'empty-layout.php',
+        ['content' => 'Произошла внутренняя ошибка сервера']
+    );
+
+    ob_end_clean();
+
+    print($error_layout);
+
+    return;
 }
 
+$basename = basename(__FILE__);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = $_POST['title'] ?? '';
+    $text_content = $_POST['text-content'] ?? '';
+    $string_content = $_POST['string-content'] ?? '';
+    $tags = $_POST['tags'] ?? '';
+
+    print "
+    <dl>
+    <dt>Title</dt>
+    <dd>$title</dd>
+    <dt>Text content</dt>
+    <dd>$text_content</dd>
+    <dt>String content</dt>
+    <dd>$string_content</dd>
+    <dt>Tags</dt>
+    <dd>$tags</dd>
+</dl>";
+
+    return;
+}
+
+$content_types = get_content_types($db_connection);
+
+$current_content_filter = filter_input(
+    INPUT_GET,
+    CONTENT_FILTER_QUERY,
+    FILTER_SANITIZE_NUMBER_INT
+);
+
+$is_content_filter_valid = $content_types
+                           && validate_content_filter(
+                               $current_content_filter,
+                               $content_types
+                           );
+
 $layout_data = [
-    'title' => 'Популярное',
+    'title' => 'Добавить публикацию',
     'is_auth' => 1,
     'user_name' => 'Евгений',
     'page_modifier' => 'adding-post',
     'content' => '',
 ];
 
-$content_type = 'photo';
+if (is_null($content_types) || !$is_content_filter_valid) {
+    http_response_code(NOT_FOUND_STATUS);
 
-$content_fields = include_template(
+    $page_content = include_template(
+        'partials/error.php',
+        ['content' => 'Не удалось загрузить страницу']
+    );
+
+    $layout_data['content'] = $page_content;
+
+    $layout_content = include_template('layout.php', $layout_data);
+
+    print($layout_content);
+
+    return;
+}
+
+$content_filters = get_content_filters($content_types, $basename);
+
+$content_type = $content_types[array_search(
+    $current_content_filter,
+    array_map(
+        function ($content_type) {
+            return $content_type['id'];
+        },
+        $content_types
+    )
+)]['icon'];
+
+$content_fields_content = include_template(
     "partials/add-post-form/$content_type-content-fields.php",
     []
 );
+
+$content_filters_content =
+    include_template(
+        'partials/add-post-form/content-filters.php',
+        [
+            'content_filters' => $content_filters,
+        ]
+    );
 
 $with_photo_file = $content_type === 'photo';
 
 $page_content = include_template(
     'add-post-form.php',
     [
-        'content_fields' => $content_fields,
+        'title' => ADD_POST_FORM_TITLE[$content_type],
+        'content_filters' => $content_filters_content,
+        'content_fields' => $content_fields_content,
         'with_photo_file' => $with_photo_file,
     ]
 );

@@ -5,59 +5,11 @@
     </div>
     <div class="adding-post container">
         <div class="adding-post__tabs-wrapper tabs">
-            <div class="adding-post__tabs filters">
-                <ul class="adding-post__tabs-list filters__list tabs__list">
-                    <li class="adding-post__tabs-item filters__item">
-                        <a class="adding-post__tabs-link filters__button filters__button--photo filters__button--active tabs__item tabs__item--active button">
-                            <svg class="filters__icon" width="22" height="18">
-                                <use xlink:href="#icon-filter-photo"></use>
-                            </svg>
-                            <span>Фото</span>
-                        </a>
-                    </li>
-                    <li class="adding-post__tabs-item filters__item">
-                        <a class="adding-post__tabs-link filters__button filters__button--video tabs__item button"
-                           href="#">
-                            <svg class="filters__icon" width="24" height="16">
-                                <use xlink:href="#icon-filter-video"></use>
-                            </svg>
-                            <span>Видео</span>
-                        </a>
-                    </li>
-                    <li class="adding-post__tabs-item filters__item">
-                        <a class="adding-post__tabs-link filters__button filters__button--text tabs__item button"
-                           href="#">
-                            <svg class="filters__icon" width="20" height="21">
-                                <use xlink:href="#icon-filter-text"></use>
-                            </svg>
-                            <span>Текст</span>
-                        </a>
-                    </li>
-                    <li class="adding-post__tabs-item filters__item">
-                        <a class="adding-post__tabs-link filters__button filters__button--quote tabs__item button"
-                           href="#">
-                            <svg class="filters__icon" width="21" height="20">
-                                <use xlink:href="#icon-filter-quote"></use>
-                            </svg>
-                            <span>Цитата</span>
-                        </a>
-                    </li>
-                    <li class="adding-post__tabs-item filters__item">
-                        <a class="adding-post__tabs-link filters__button filters__button--link tabs__item button"
-                           href="#">
-                            <svg class="filters__icon" width="21" height="18">
-                                <use xlink:href="#icon-filter-link"></use>
-                            </svg>
-                            <span>Ссылка</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <?= $content_filters ?>
             <div class="adding-post__tab-content">
                 <section
                         class="adding-post__photo tabs__content tabs__content--active">
-                    <!-- todo: Сделать скрытый заголовок переменным -->
-                    <h2 class="visually-hidden">Форма добавления фото</h2>
+                    <h2 class="visually-hidden"><?= $title ?></h2>
                     <form class="adding-post__form form" action="#"
                           method="post" enctype="multipart/form-data">
                         <div class="form__text-inputs-wrapper">
@@ -66,11 +18,11 @@
                                     <label class="adding-post__label form__label"
                                            for="title">Заголовок <span
                                                 class="form__input-required">*</span></label>
-<!--                                    form__input-section--error-->
+                                    <!--                                    form__input-section--error-->
                                     <div class="form__input-section">
                                         <input class="adding-post__input form__input"
                                                id="title" type="text"
-                                               name="title-t"
+                                               name="title"
                                                placeholder="Введите заголовок">
                                         <button class="form__error-button button"
                                                 type="button">!<span
@@ -148,12 +100,14 @@
                         endif; ?>
                         <div class="adding-post__buttons">
                             <button class="adding-post__submit button button--main"
-                                    type="submit">Опубликовать</button>
-                            <a class="adding-post__close" href="#">Закрыть</a>
+                                    type="submit">Опубликовать
+                            </button>
+                            <a class="adding-post__close" href="index.php">Закрыть</a>
                         </div>
                     </form>
                 </section>
             </div>
-        </div>
+        </
+        >
     </div>
 </div>
