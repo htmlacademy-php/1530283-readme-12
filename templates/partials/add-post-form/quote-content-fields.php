@@ -6,7 +6,8 @@
         <textarea
                 class="adding-post__textarea adding-post__textarea--quote form__textarea form__input"
                 id="text-content" name="text-content"
-                placeholder="Введите текст цитаты"></textarea>
+                placeholder="Введите текст цитаты"><?= $form_data['text_content']
+                                                       ?? '' ?></textarea>
         <button class="form__error-button button"
                 type="button">!<span
                     class="visually-hidden">Информация об ошибке</span>
@@ -27,7 +28,9 @@
     <div class="form__input-section">
         <input class="adding-post__input form__input"
                id="string-content" type="text"
-               name="string-content" placeholder="Введите автора цитаты">
+               name="string-content"
+               value="<?= $form_data['string_content'] ?? '' ?>"
+               placeholder="Введите автора цитаты">
         <button class="form__error-button button"
                 type="button">!<span
                     class="visually-hidden">Информация об ошибке</span>

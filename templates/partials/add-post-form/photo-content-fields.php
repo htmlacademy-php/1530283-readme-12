@@ -5,6 +5,7 @@
         <input class="adding-post__input form__input"
                id="string-content" type="text"
                name="string-content"
+               value="<?= $form_data['string_content'] ?? '' ?>"
                placeholder="Введите ссылку">
         <button class="form__error-button button"
                 type="button">!<span

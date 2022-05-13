@@ -22,26 +22,14 @@ if (!isset($db_connection) or !$db_connection) {
 }
 
 $basename = basename(__FILE__);
+$form_data = [];
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = $_POST['title'] ?? '';
-    $text_content = $_POST['text-content'] ?? '';
-    $string_content = $_POST['string-content'] ?? '';
-    $tags = $_POST['tags'] ?? '';
-
-    print "
-    <dl>
-    <dt>Title</dt>
-    <dd>$title</dd>
-    <dt>Text content</dt>
-    <dd>$text_content</dd>
-    <dt>String content</dt>
-    <dd>$string_content</dd>
-    <dt>Tags</dt>
-    <dd>$tags</dd>
-</dl>";
-
-    return;
+    $form_data['title'] = $_POST['title'] ?? '';
+    $form_data['text_content'] = $_POST['text-content'] ?? '';
+    $form_data['string_content'] = $_POST['string-content'] ?? '';
+    $form_data['tags'] = $_POST['tags'] ?? '';
 }
 
 $content_types = get_content_types($db_connection);
@@ -97,7 +85,7 @@ $content_type = $content_types[array_search(
 
 $content_fields_content = include_template(
     "partials/add-post-form/$content_type-content-fields.php",
-    []
+    ['form_data' => $form_data]
 );
 
 $content_filters_content =
@@ -114,6 +102,7 @@ $page_content = include_template(
     'add-post-form.php',
     [
         'title' => ADD_POST_FORM_TITLE[$content_type],
+        'form_data' => $form_data,
         'content_filters' => $content_filters_content,
         'content_fields' => $content_fields_content,
         'with_photo_file' => $with_photo_file,

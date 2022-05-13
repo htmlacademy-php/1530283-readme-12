@@ -23,6 +23,8 @@
                                         <input class="adding-post__input form__input"
                                                id="title" type="text"
                                                name="title"
+                                               value="<?= $form_data['title'] ??
+                                                          '' ?>"
                                                placeholder="Введите заголовок">
                                         <button class="form__error-button button"
                                                 type="button">!<span
@@ -45,6 +47,8 @@
                                         <input class="adding-post__input form__input"
                                                id="tags" type="text"
                                                name="tags"
+                                               value="<?= $form_data['tags'] ??
+                                                          '' ?>"
                                                placeholder="Введите теги">
                                         <button class="form__error-button button"
                                                 type="button">!<span

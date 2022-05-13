@@ -5,7 +5,8 @@
     <div class="form__input-section">
         <textarea class="adding-post__textarea form__textarea form__input"
                   id="text-content" name="text-content"
-                  placeholder="Введите текст публикации"></textarea>
+                  placeholder="Введите текст публикации"><?= $form_data['text_content']
+                                                             ?? '' ?></textarea>
         <button class="form__error-button button"
                 type="button">!<span
                     class="visually-hidden">Информация об ошибке</span>
