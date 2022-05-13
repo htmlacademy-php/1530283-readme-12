@@ -212,7 +212,7 @@ if ( ! isset($is_auth)) {
                         </li>
                         <li>
                             <a class="header__post-button button button--transparent"
-                               href="markup/adding-post.html">Пост</a>
+                               href="add.php">Пост</a>
                         </li>
                     </ul>
                 </nav>
