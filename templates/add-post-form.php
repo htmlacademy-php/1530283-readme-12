@@ -18,8 +18,8 @@
                                     <label class="adding-post__label form__label"
                                            for="title">Заголовок <span
                                                 class="form__input-required">*</span></label>
-                                    <!--                                    form__input-section--error-->
-                                    <div class="form__input-section">
+                                    <div class="form__input-section <?= $errors['title']
+                                        ? 'form__input-section--error' : '' ?>">
                                         <input class="adding-post__input form__input"
                                                id="title" type="text"
                                                name="title"
@@ -32,10 +32,12 @@
                                         </button>
                                         <div class="form__error-text">
                                             <h3 class="form__error-title">
-                                                Заголовок сообщения</h3>
-                                            <p class="form__error-desc">Текст
-                                                сообщения об ошибке, подробно
-                                                объясняющий, что не так.</p>
+                                                <?= $errors['title']
+                                                    ? $errors['title']['title']
+                                                    : '' ?></h3>
+                                            <p class="form__error-desc"><?= $errors['title']
+                                                    ? $errors['title']['description']
+                                                    : '' ?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -64,15 +66,24 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form__invalid-block">
-                                <b class="form__invalid-slogan">Пожалуйста,
-                                    исправьте следующие ошибки:</b>
-                                <ul class="form__invalid-list">
-                                    <li class="form__invalid-item">Заголовок.
-                                        Это поле должно быть заполнено.
-                                    </li>
-                                </ul>
-                            </div>
+                            <?php
+                            if ($invalid): ?>
+                                <div class="form__invalid-block">
+                                    <b class="form__invalid-slogan">Пожалуйста,
+                                        исправьте следующие ошибки:</b>
+                                    <ul class="form__invalid-list">
+                                        <?php
+                                        foreach ($errors as $error): ?>
+                                            <li class="form__invalid-item">
+                                                <?= $error['title'] ?>.
+                                                <?= $error['description'] ?>.
+                                            </li>
+                                        <?php
+                                        endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php
+                            endif; ?>
                         </div>
                         <?php
                         if ($with_photo_file): ?>

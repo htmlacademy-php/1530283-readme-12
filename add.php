@@ -21,17 +21,6 @@ if (!isset($db_connection) or !$db_connection) {
     return;
 }
 
-$basename = basename(__FILE__);
-$form_data = [];
-$errors = [];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $form_data['title'] = $_POST['title'] ?? '';
-    $form_data['text_content'] = $_POST['text-content'] ?? '';
-    $form_data['string_content'] = $_POST['string-content'] ?? '';
-    $form_data['tags'] = $_POST['tags'] ?? '';
-}
-
 $content_types = get_content_types($db_connection);
 
 $current_content_filter = filter_input(
@@ -45,14 +34,6 @@ $is_content_filter_valid = $content_types
                                $current_content_filter,
                                $content_types
                            );
-
-$layout_data = [
-    'title' => 'Добавить публикацию',
-    'is_auth' => 1,
-    'user_name' => 'Евгений',
-    'page_modifier' => 'adding-post',
-    'content' => '',
-];
 
 if (is_null($content_types) || !$is_content_filter_valid) {
     http_response_code(NOT_FOUND_STATUS);
@@ -71,8 +52,7 @@ if (is_null($content_types) || !$is_content_filter_valid) {
     return;
 }
 
-$content_filters = get_content_filters($content_types, $basename);
-
+// todo: create util function ?
 $content_type = $content_types[array_search(
     $current_content_filter,
     array_map(
@@ -83,9 +63,48 @@ $content_type = $content_types[array_search(
     )
 )]['icon'];
 
+$basename = basename(__FILE__);
+$form_data = [];
+$errors = [];
+$invalid = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // todo: create parser ?
+    $form_data['title'] = $_POST['title'] ?? '';
+    $form_data['text_content'] = $_POST['text-content'] ?? '';
+    $form_data['string_content'] = $_POST['string-content'] ?? '';
+    $form_data['tags'] =
+        $_POST['tags'] ? trim(preg_replace('/\s+/', TEXT_SEPARATOR, $_POST['tags'])) : '';
+
+    $errors = get_post_form_data_errors($form_data, $content_type);
+    $invalid = boolval(count($errors));
+
+    if (!$invalid) {
+        print 'Все хорошо';
+        print '<br />';
+        print_r($form_data);
+//        header('Location: index.php');
+        // todo: Временный редирект на главную при успешной валидации
+        return;
+    }
+}
+
+$layout_data = [
+    'title' => 'Добавить публикацию',
+    'is_auth' => 1,
+    'user_name' => 'Евгений',
+    'page_modifier' => 'adding-post',
+    'content' => '',
+];
+
+$content_filters = get_content_filters($content_types, $basename);
+
 $content_fields_content = include_template(
     "partials/add-post-form/$content_type-content-fields.php",
-    ['form_data' => $form_data]
+    [
+        'form_data' => $form_data,
+        'errors' => $errors,
+    ]
 );
 
 $content_filters_content =
@@ -103,6 +122,8 @@ $page_content = include_template(
     [
         'title' => ADD_POST_FORM_TITLE[$content_type],
         'form_data' => $form_data,
+        'errors' => $errors,
+        'invalid' => $invalid,
         'content_filters' => $content_filters_content,
         'content_fields' => $content_fields_content,
         'with_photo_file' => $with_photo_file,

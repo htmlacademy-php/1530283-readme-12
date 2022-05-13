@@ -343,3 +343,461 @@ function validate_content_filter(
                $available_content_filters
            ) !== false;
 }
+
+/**
+ * Функция валидирует значение заголовка формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_post_title_error(array $form_data)
+{
+    $title = $form_data['title'] ?? '';
+    $length = mb_strlen($title);
+    $error_title = 'Заголовок';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_TITLE_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать ' . MAX_TITLE_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_TITLE_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение заголовка формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Максимальная длина тега
+ *
+ * Ограничения:
+ * 1. Функкция принимает теги в виде строки разделенной пробелами.
+ * Не допускается наличие пробелов в начале и/или в конец строки, разделение
+ * тегов множественными пробелами.
+ * 2. Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_post_tags_error(array $form_data)
+{
+    $tags =
+        $form_data['tags'] ? explode(TEXT_SEPARATOR, $form_data['tags']) : [];
+    $error_title = 'Теги';
+
+    foreach ($tags as $tag) {
+        if (mb_strlen($tag) > MAX_TAG_LENGTH) {
+            return [
+                'title' => $error_title,
+                'description' => "Один из тегов превышает допустимую длину "
+                                 . MAX_TAG_LENGTH
+                                 . ' ' . get_noun_plural_form(
+                                     MAX_TAG_LENGTH,
+                                     'символ',
+                                     'символа',
+                                     'символов'
+                                 )
+            ];
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение фото ссылки формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ * 3. Корректность URL
+ * 4. Доступность фото по ссылке // todo: возможно это не здесь ?
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_photo_post_string_content_error(array $form_data)
+{
+    // todo: проверить наличие файла, в этом случае валидация игнорируется
+    $string_content = $form_data['string_content'] ?? '';
+    $length = mb_strlen($string_content);
+    $error_title = 'Ссылка из интернета';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_STRING_CONTENT_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_STRING_CONTENT_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_TITLE_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    if (!filter_var($string_content, FILTER_VALIDATE_URL)) {
+        return [
+            'title' => $error_title,
+            'description' => 'Некорректный URL',
+        ];
+    }
+
+    // todo: download file;
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение видео ссылки формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ * 3. Корректность URL
+ * 4. Доступность видео по ссылке
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_video_post_string_content_error(array $form_data)
+{
+    $string_content = $form_data['string_content'] ?? '';
+    $length = mb_strlen($string_content);
+    $error_title = 'Ссылка youtube';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_STRING_CONTENT_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_STRING_CONTENT_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_STRING_CONTENT_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    if (!filter_var($string_content, FILTER_VALIDATE_URL)) {
+        return [
+            'title' => $error_title,
+            'description' => 'Некорректный URL',
+        ];
+    }
+
+    if (check_youtube_url($string_content) !== true) {
+        return [
+            'title' => $error_title,
+            'description' => 'Видео недоступно',
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение текста поста формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_text_post_text_content_error(array $form_data)
+{
+    $text_content = $form_data['text_content'] ?? '';
+    $length = mb_strlen($text_content);
+    $error_title = 'Текст поста';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_TEXT_CONTENT_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_TEXT_CONTENT_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_TEXT_CONTENT_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение автора цитаты формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_quote_post_string_content_error(array $form_data)
+{
+    $string_content = $form_data['string_content'] ?? '';
+    $length = mb_strlen($string_content);
+    $error_title = 'Автор цитаты';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_STRING_CONTENT_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_STRING_CONTENT_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_STRING_CONTENT_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение текста цитаты формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_quote_post_text_content_error(array $form_data)
+{
+    $text_content = $form_data['text_content'] ?? '';
+    $length = mb_strlen($text_content);
+    $error_title = 'Текст цитаты';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_TEXT_CONTENT_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_TEXT_CONTENT_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_TEXT_CONTENT_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Функция валидирует значение ссылки формы создания публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Ненулевая длина
+ * 2. Максимальная длина
+ * 3. Корректность URL
+ *
+ * Ограничения:
+ * Функция возвращает только первую ошибку валидации.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_link_post_string_content_error(array $form_data)
+{
+    $string_content = $form_data['string_content'] ?? '';
+    $length = mb_strlen($string_content);
+    $error_title = 'Ссылка';
+
+    if (!$length) {
+        return [
+            'title' => $error_title,
+            'description' => 'Поле обязательно к заполнению',
+        ];
+    }
+
+    if ($length > MAX_STRING_CONTENT_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_STRING_CONTENT_LENGTH
+                             . ' ' . get_noun_plural_form(
+                                 MAX_STRING_CONTENT_LENGTH,
+                                 'символ',
+                                 'символа',
+                                 'символов'
+                             ),
+        ];
+    }
+
+    if (!filter_var($string_content, FILTER_VALIDATE_URL)) {
+        return [
+            'title' => $error_title,
+            'description' => 'Некорректный URL',
+        ];
+    }
+
+    return null;
+}
+
+/**
+ * Функция возвращает ассоциативный массив ошибок валидации формы создания
+ * публикации. Ключами массива являются значения полей формы, а значениями -
+ * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
+ * В случае отсутствия ошибок возвращается пустой массив.
+ *
+ * Ограничения:
+ * Допустимые значения типов контента - photo, link, text, quote, video.
+ *
+ * @param  array   $form_data     - ассоциативный массив полей формы и их значений
+ * @param  string  $content_type  - тип контента публикации
+ *
+ * @return array<int, array{
+ *   title: string,
+ *   description: string
+ * }> - массив ошибок валидации
+ */
+function get_post_form_data_errors(
+    array $form_data,
+    string $content_type
+): array {
+    $errors = [];
+
+    foreach ($form_data as $field => $value) {
+        $is_content_field = strpos($field, 'content') !== false;
+
+        $get_error =
+            $is_content_field ? "get_${content_type}_post_${field}_error"
+                : "get_post_${field}_error";
+
+        if (is_callable($get_error)) {
+            $error = $get_error($form_data);
+
+            if ($error) {
+                $errors[$field] = $error;
+            }
+        }
+    }
+
+    return $errors;
+}

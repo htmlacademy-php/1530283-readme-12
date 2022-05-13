@@ -1,7 +1,8 @@
 <div class="adding-post__input-wrapper form__input-wrapper">
     <label class="adding-post__label form__label"
            for="string-content">Ссылка из интернета</label>
-    <div class="form__input-section">
+    <div class="form__input-section <?= $errors['string_content']
+        ? 'form__input-section--error' : '' ?>">
         <input class="adding-post__input form__input"
                id="string-content" type="text"
                name="string-content"
@@ -12,9 +13,10 @@
                     class="visually-hidden">Информация об ошибке</span>
         </button>
         <div class="form__error-text">
-            <h3 class="form__error-title">Заголовок сообщения</h3>
-            <p class="form__error-desc">Текст сообщения об ошибке, подробно
-                объясняющий, что не так.</p>
+            <h3 class="form__error-title"><?= $errors['string_content']
+                    ? $errors['string_content']['title'] : '' ?></h3>
+            <p class="form__error-desc"><?= $errors['string_content']
+                    ? $errors['string_content']['description'] : '' ?></p>
         </div>
     </div>
 </div>

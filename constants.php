@@ -68,5 +68,13 @@ const ADD_POST_FORM_TITLE = [
     'quote' => 'Форма добавления цитаты',
     'video' => 'Форма добавления видео',
     'text' => 'Форма добавления текста',
-    'photo' => 'Форма добавления photo',
+    'photo' => 'Форма добавления фото',
 ];
+
+const MAX_TITLE_LENGTH = 255;
+
+const MAX_TAG_LENGTH = 255;
+
+const MAX_STRING_CONTENT_LENGTH = 255;
+
+const MAX_TEXT_CONTENT_LENGTH = 1000;
