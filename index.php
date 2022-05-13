@@ -75,6 +75,7 @@ if (is_null($content_types)) {
     $layout_content = include_template('layout.php', $layout_data);
 
     print($layout_content);
+
     return;
 }
 

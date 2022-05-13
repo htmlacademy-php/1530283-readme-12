@@ -24,6 +24,7 @@ if (!isset($db_connection) or !$db_connection) {
 }
 
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
+
 $post = null;
 $comments = null;
 $author = null;
@@ -45,14 +46,14 @@ $layout_data = [
     'content' => '',
 ];
 
-if (is_null($post) or is_null($comments) or is_null($author)) {
+$is_page_error = is_null($post) || is_null($comments) || is_null($author);
+
+if ($is_page_error) {
     http_response_code(NOT_FOUND_STATUS);
 
     $page_content = include_template(
         'partials/error.php',
-        [
-            'content' => 'Не удалось загрузить страницу'
-        ]
+        ['content' => 'Не удалось загрузить страницу']
     );
 
     $layout_data['content'] = $page_content;
@@ -66,9 +67,7 @@ if (is_null($post) or is_null($comments) or is_null($author)) {
 
 $author_content = include_template(
     'partials/post-details/author.php',
-    [
-        'author' => $author,
-    ]
+    ['author' => $author]
 );
 
 $page_content = include_template(
@@ -77,7 +76,7 @@ $page_content = include_template(
         'post' => $post,
         'post_content' => decorate_post_details_content($post),
         'author_content' => $author_content,
-        'comments' => $comments
+        'comments' => $comments,
     ]
 );
 
