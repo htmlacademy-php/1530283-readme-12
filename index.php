@@ -75,74 +75,24 @@ if (is_null($content_types)) {
     $layout_content = include_template('layout.php', $layout_data);
 
     print($layout_content);
-
     return;
 }
 
-$available_sort_types = array_map(
-    function ($option) {
-        return $option['value'];
-    },
-    SORT_TYPE_OPTIONS
-);
-
-$available_content_filters = array_map(
-    function ($content_type) {
-        return $content_type['id'];
-    },
-    $content_types
-);
-
-$is_sort_type_valid = array_search(
-                          $current_sort_type,
-                          $available_sort_types
-                      ) !== false;
-
+$is_sort_type_valid = validate_sort_type($current_sort_type);
 $is_content_filter_valid = is_null($current_content_filter)
-                           || array_search(
-                                  $current_content_filter,
-                                  $available_content_filters
-                              ) !== false;
+                           || validate_content_filter(
+                               $current_content_filter,
+                               $content_types
+                           );
 
-$is_page_filters_invalid = !$is_sort_type_valid or !$is_content_filter_valid;
-
-$sort_types = SORT_TYPE_OPTIONS;
-
-array_walk(
-    $sort_types,
-    function (&$sort_type) use ($basename) {
-        $value = $sort_type['value'];
-
-        $url = get_sort_url($basename, $value);
-        $active = is_query_active(SORT_TYPE_QUERY, $value);
-
-
-        $sort_type['url'] = $url;
-        $sort_type['active'] = $active;
-    }
-);
-
-$content_filters = $content_types;
-
+$sort_types = get_sort_types($basename);
+$content_filters = get_content_filters($content_types, $basename);
 $any_content_filter = [
     'name' => 'Все',
     'icon' => 'all',
     'url' => get_content_filter_url($basename),
     'active' => is_query_active(CONTENT_FILTER_QUERY),
 ];
-
-array_walk(
-    $content_filters,
-    function (&$filter) use ($basename) {
-        $id = $filter['id'];
-
-        $url = get_content_filter_url($basename, $id);
-        $active = is_query_active(CONTENT_FILTER_QUERY, $id);
-
-        $filter['url'] = $url;
-        $filter['active'] = $active;
-    }
-);
 
 $popular_filters_content = include_template(
     'partials/popular-filters.php',
@@ -174,7 +124,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
 
     print($layout_content);
 
-    exit();
+    return;
 }
 
 $post_cards = get_posts(

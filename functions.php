@@ -224,3 +224,117 @@ function get_content_filter_url(
 
     return "/$basename?$query_string";
 }
+
+/**
+ * Функция возвращает массив фильтров публикаций по типу контента.
+ * Фильтр представляет собой ассоциативный массив аналогичный типу контента,
+ * дполненный полями url и active.
+ *
+ * @param  array   $content_types  список типов контента
+ * @param  string  $basename       URL страницы без GET параметров
+ *
+ * @return array Массив фильтров публикаций по типу контента
+ */
+function get_content_filters(array $content_types, string $basename): array
+{
+    $content_filters = $content_types;
+
+    array_walk(
+        $content_filters,
+        function (&$filter) use ($basename) {
+            $id = $filter['id'];
+
+            $url = get_content_filter_url($basename, $id);
+            $active = is_query_active(CONTENT_FILTER_QUERY, $id);
+
+            $filter['url'] = $url;
+            $filter['active'] = $active;
+        }
+    );
+
+    return $content_filters;
+}
+
+/**
+ * Функция возвращает массив типов сортировки публикаций.
+ * Тип сортировки представляет собой ассоциативный массив аналогичный
+ * элементами в массиве SORT_TYPE_OPTIONS дополненный полями url и active.
+ *
+ * @param  string  $basename  URL страницы без GET параметров
+ *
+ * @return array Массив типов сортировки публикаций
+ */
+function get_sort_types(string $basename): array
+{
+    $sort_types = SORT_TYPE_OPTIONS;
+
+    array_walk(
+        $sort_types,
+        function (&$sort_type) use ($basename) {
+            $value = $sort_type['value'];
+
+            $url = get_sort_url($basename, $value);
+            $active = is_query_active(SORT_TYPE_QUERY, $value);
+
+
+            $sort_type['url'] = $url;
+            $sort_type['active'] = $active;
+        }
+    );
+
+    return $sort_types;
+}
+
+/**
+ * Функция валидирует переданное значение типа сортировки.
+ * Валидные значения типов сортировки перечислены в ключах value в массиве
+ * SORT_TYPE_OPTIONS.
+ * Результат функции - true - если значение валидно, false - если не валидно.
+ *
+ * @param  string  $current_sort_type  - тип сортировки
+ *
+ * @return bool Результат валидации
+ */
+function validate_sort_type(string $current_sort_type): bool
+{
+    $available_sort_types = array_map(
+        function ($option) {
+            return $option['value'];
+        },
+        SORT_TYPE_OPTIONS
+    );
+
+    return array_search(
+               $current_sort_type,
+               $available_sort_types
+           ) !== false;
+}
+
+/**
+ * Функция валидирует переданное значение фильтра по типу контента.
+ * Валидация осуществляется на основе переданного массива достпуных фильтров.
+ * Результат функции - true - если значение валидно, false - если не валидно.
+ *
+ * Ограничения: Тип контента представляет собой ассоциативный массив,
+ * содержащий ключ id.
+ * @param  string  $current_content_filter  - id типа контента
+ * @param  array   $content_types           - список доступных типов контента
+ *
+ * @return bool Результат валидации
+ */
+function validate_content_filter(
+    string $current_content_filter,
+    array $content_types
+): bool {
+    $available_content_filters = array_map(
+        function ($content_type) {
+            return $content_type['id'];
+        },
+        $content_types
+    );
+
+    return array_search(
+               $current_content_filter,
+               $available_content_filters
+           ) !== false;
+}
