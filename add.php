@@ -4,6 +4,7 @@ require_once 'constants.php';
 require_once 'helpers.php';
 require_once 'functions.php';
 require_once 'models/content_type.php';
+require_once 'models/post.php';
 require_once 'init/db.php';
 
 if (!isset($db_connection) or !$db_connection) {
@@ -67,27 +68,7 @@ $basename = basename(__FILE__);
 $form_data = [];
 $errors = [];
 $invalid = false;
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // todo: create parser ?
-    $form_data['title'] = $_POST['title'] ?? '';
-    $form_data['text_content'] = $_POST['text-content'] ?? '';
-    $form_data['string_content'] = $_POST['string-content'] ?? '';
-    $form_data['tags'] =
-        $_POST['tags'] ? trim(preg_replace('/\s+/', TEXT_SEPARATOR, $_POST['tags'])) : '';
-
-    $errors = get_post_form_data_errors($form_data, $content_type);
-    $invalid = boolval(count($errors));
-
-    if (!$invalid) {
-        print 'Все хорошо';
-        print '<br />';
-        print_r($form_data);
-//        header('Location: index.php');
-        // todo: Временный редирект на главную при успешной валидации
-        return;
-    }
-}
+$db_error = false;
 
 $layout_data = [
     'title' => 'Добавить публикацию',
@@ -96,6 +77,47 @@ $layout_data = [
     'page_modifier' => 'adding-post',
     'content' => '',
 ];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // todo: create parser ?
+    $form_data['title'] = $_POST['title'] ?? '';
+    $form_data['text_content'] = $_POST['text-content'] ?? '';
+    $form_data['string_content'] = $_POST['string-content'] ?? '';
+    $form_data['tags'] =
+        $_POST['tags'] ? trim(
+            preg_replace('/\s+/', TEXT_SEPARATOR, strtolower($_POST['tags']))
+        ) : '';
+
+    $errors = get_post_form_data_errors($form_data, $content_type);
+    $invalid = boolval(count($errors));
+
+    if (!$invalid) {
+        $form_data['author_id'] = 1;
+        $form_data['content_type_id'] = $current_content_filter;
+
+        $created_post_id = create_post($db_connection, $form_data);
+
+        if ($created_post_id) {
+            header("Location: post.php?post_id=$created_post_id");
+            return;
+        } else {
+            http_response_code(SERVER_ERROR_STATUS);
+
+            $page_content = include_template(
+                'partials/error.php',
+                ['content' => 'Не удалось создать публикацию']
+            );
+
+            $layout_data['content'] = $page_content;
+
+            $layout_content = include_template('layout.php', $layout_data);
+
+            print($layout_content);
+
+            return;
+        }
+    }
+}
 
 $content_filters = get_content_filters($content_types, $basename);
 

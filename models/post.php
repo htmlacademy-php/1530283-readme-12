@@ -143,3 +143,52 @@ function get_post(mysqli $db_connection, int $id)
 
     return $post['id'] ? $post : null;
 }
+
+// todo: create post
+function create_post(mysqli $db_connection, array $post_data)
+{
+    $title = mysqli_real_escape_string($db_connection, $post_data['title']);
+    $string_content =
+        mysqli_real_escape_string($db_connection, $post_data['string_content']);
+    $text_content =
+        mysqli_real_escape_string($db_connection, $post_data['text_content']);
+    $author_id =
+        mysqli_real_escape_string($db_connection, $post_data['author_id']);
+    $content_type_id =
+        mysqli_real_escape_string(
+            $db_connection,
+            $post_data['content_type_id']
+        );
+    $tags = $post_data['tags'] ? explode(
+        TEXT_SEPARATOR,
+        mysqli_real_escape_string($db_connection, $post_data['tags'])
+    ) : [];
+
+    $sql = "
+        INSERT INTO posts (
+            author_id,
+            content_type_id,
+            title,
+            text_content,
+            string_content
+        ) VALUES (1
+            $author_id,
+            $content_type_id,
+            '$title',
+            '$text_content',
+            '$string_content'
+        )
+    ";
+
+    $result = mysqli_query($db_connection, $sql);
+
+    if (!$result) {
+        return null;
+    }
+
+    $id = mysqli_insert_id($db_connection);
+
+    // todo: foreach tag: add hashtag => assign post_hashtag pair
+
+    return $id;
+}
