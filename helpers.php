@@ -163,9 +163,9 @@ function include_template($name, array $data = [])
  *
  * @param  string  $url  ссылка на видео
  *
- * @return string Ошибку если валидация не прошла
+ * @return bool Результат проверки
  */
-function check_youtube_url($url)
+function check_youtube_url(string $url): bool
 {
     $id = extract_youtube_id($url);
 
@@ -181,16 +181,40 @@ function check_youtube_url($url)
     restore_error_handler();
 
     if (!is_array($headers)) {
-        return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
+        return false;
     }
 
     $err_flag = strpos($headers[0], '200') ? 200 : 404;
 
     if ($err_flag !== 200) {
-        return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
+        return false;
     }
 
     return true;
+}
+
+/**
+ * Функция проверяет доступна ли ссылка
+ *
+ * @param  string  $url  ссылка на ресурс
+ *
+ * @return bool Результат проверки
+ */
+function check_url(string $url): bool
+{
+    set_error_handler(
+        function () {
+        },
+        E_WARNING
+    );
+    $headers = get_headers($url);
+    restore_error_handler();
+
+    if (!is_array($headers)) {
+        return false;
+    }
+
+    return strpos($headers[0], '200') !== false;
 }
 
 /**

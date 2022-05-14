@@ -1,6 +1,7 @@
 <?php
 
 require_once 'constants.php';
+require_once 'helpers.php';
 
 /**
  * Функция обрезает текст с учетом максимально заданнной длины, сохраняя целостность слов.
@@ -492,7 +493,12 @@ function get_photo_post_string_content_error(array $form_data)
         ];
     }
 
-    // todo: download file;
+    if (!check_url($string_content)) {
+        return [
+            'title' => $error_title,
+            'description' => 'Ссылка недоступна',
+        ];
+    }
 
     return null;
 }
@@ -551,7 +557,7 @@ function get_video_post_string_content_error(array $form_data)
         ];
     }
 
-    if (check_youtube_url($string_content) !== true) {
+    if (!check_youtube_url($string_content)) {
         return [
             'title' => $error_title,
             'description' => 'Видео недоступно',
