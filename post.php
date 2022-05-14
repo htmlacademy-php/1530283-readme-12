@@ -7,7 +7,6 @@ require_once 'models/comment.php';
 require_once 'models/user.php';
 require_once 'models/hashtag.php';
 require_once 'init/db.php';
-require_once 'decorators/post_details.php';
 
 if (!isset($db_connection) or !$db_connection) {
     http_response_code(SERVER_ERROR_STATUS);
@@ -74,11 +73,21 @@ $author_content = include_template(
     ['author' => $author]
 );
 
+$content_type = $post['content_type'];
+
+$post_details_content = include_template(
+    "partials/post-details/$content_type-content.php",
+    [
+        'text_content' => $post['text_content'] ?? '',
+        'string_content' => $post['string_content'] ?? '',
+    ]
+);
+
 $page_content = include_template(
     'post-details.php',
     [
         'post' => $post,
-        'post_content' => decorate_post_details_content($post),
+        'post_content' => $post_details_content,
         'hashtags' => $hashtags,
         'author_content' => $author_content,
         'comments' => $comments,

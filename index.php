@@ -3,10 +3,10 @@
 require_once 'constants.php';
 require_once 'helpers.php';
 require_once 'functions.php';
+require_once 'decorators.php';
 require_once 'models/post.php';
 require_once 'models/content_type.php';
 require_once 'init/db.php';
-require_once 'decorators/popular.php';
 
 if (!isset($db_connection) or !$db_connection) {
     http_response_code(SERVER_ERROR_STATUS);

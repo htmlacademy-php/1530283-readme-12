@@ -1,6 +1,6 @@
 <?php
 
-require_once 'decorators/post_card.php';
+require_once 'decorators.php';
 
 list(
     'id' => $id,
