@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form_data['string_content'] = $_POST['string-content'] ?? '';
     $form_data['tags'] =
         $_POST['tags'] ? trim(
-            preg_replace('/\s+/', TEXT_SEPARATOR, strtolower($_POST['tags']))
+            preg_replace('/\s+/', TEXT_SEPARATOR, mb_strtolower($_POST['tags']))
         ) : '';
 
     $errors = get_post_form_data_errors($form_data, $content_type);
@@ -99,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($created_post_id) {
             header("Location: post.php?post_id=$created_post_id");
+
             return;
         } else {
             http_response_code(SERVER_ERROR_STATUS);

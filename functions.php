@@ -8,8 +8,8 @@ require_once 'constants.php';
  * Длина обрезанного текста рассчитывается без учета добавленного многоточия.
  * Ограничения: Длина первого слова исходного текста не должна превышать максимальную длину.
  *
- * @param  string  $text        Исходный текст
- * @param  int     $max_length  Максимальная длина текста
+ * @param  string  $text  Исходный текст
+ * @param  int  $max_length  Максимальная длина текста
  *
  * @return string Обрезанный текст
  */
@@ -148,7 +148,7 @@ function format_relative_time(string $date): string
 /**
  * Функция проверяет установлено ли в адресной строке значение GET параметра.
  *
- * @param  string       $query_name   Название GET параметра
+ * @param  string  $query_name  Название GET параметра
  * @param  string|null  $query_value  Значение GET параметра
  *
  * @return bool Результат проверки
@@ -176,7 +176,7 @@ function is_query_active(string $query_name, string $query_value = null): bool
  * текущему активному значения поля, по которму производится сортировка.
  * Направление сортировки вычисляется на основе текущего значения в адресной строке.
  *
- * @param  string  $basename   URL страницы без GET параметров
+ * @param  string  $basename  URL страницы без GET параметров
  * @param  string  $sort_type  Поле публикации, по которму производится сортировка
  *
  * @return string Итоговый URL страницы для получения списка публикаций с учетом заданной сортировки
@@ -209,7 +209,7 @@ function get_sort_url(
  * Для генерирации ссылки, соотвествующей отсутствию фильтрации,
  * id типа контента не передается в функцию.
  *
- * @param  string      $basename         URL страницы без GET параметров
+ * @param  string  $basename  URL страницы без GET параметров
  * @param  int | null  $content_type_id  id типа контента публикации
  *
  * @return string Итоговый URL страницы для получения списка публикаций с учетом фильтрации
@@ -230,8 +230,8 @@ function get_content_filter_url(
  * Фильтр представляет собой ассоциативный массив аналогичный типу контента,
  * дполненный полями url и active.
  *
- * @param  array   $content_types  список типов контента
- * @param  string  $basename       URL страницы без GET параметров
+ * @param  array  $content_types  список типов контента
+ * @param  string  $basename  URL страницы без GET параметров
  *
  * @return array Массив фильтров публикаций по типу контента
  */
@@ -319,7 +319,7 @@ function validate_sort_type(string $current_sort_type): bool
  * содержащий ключ id.
  *
  * @param  string | null  $current_content_filter  - id типа контента
- * @param  array          $content_types           - список доступных типов контента
+ * @param  array  $content_types  - список доступных типов контента
  *
  * @return bool Результат валидации
  */
@@ -378,7 +378,8 @@ function get_post_title_error(array $form_data)
     if ($length > MAX_TITLE_LENGTH) {
         return [
             'title' => $error_title,
-            'description' => 'Длина поля не должна превышать ' . MAX_TITLE_LENGTH
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_TITLE_LENGTH
                              . ' ' . get_noun_plural_form(
                                  MAX_TITLE_LENGTH,
                                  'символ',
@@ -769,7 +770,7 @@ function get_link_post_string_content_error(array $form_data)
  * Ограничения:
  * Допустимые значения типов контента - photo, link, text, quote, video.
  *
- * @param  array   $form_data     - ассоциативный массив полей формы и их значений
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
  * @param  string  $content_type  - тип контента публикации
  *
  * @return array<int, array{

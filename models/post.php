@@ -13,10 +13,11 @@ require_once 'models/post_hashtag.php';
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  array[
- *                                 'sort_type' => 'views_count' | 'likes_count' | 'created_at' | null,
- *                                 'is_order_reversed' => bool | null,
- *                                 'content_type_id' => int | null] $config параметры запроса
+ * @param  array{
+ *     sort_type: 'views_count' | 'likes_count' | 'created_at' | null,
+ *     is_order_reversed: bool | null,
+ *     content_type_id: int | null
+ * } $config - параметры запроса
  *
  * @return null | array<int, array{
  *     id: int,
@@ -92,8 +93,8 @@ function get_posts(mysqli $db_connection, $config = [])
  * в виде ассоциативного массива.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  int     $id             id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $id  - id публикации
  *
  * return null | array{
  *     id: int,
@@ -147,7 +148,28 @@ function get_post(mysqli $db_connection, int $id)
     return $post['id'] ? $post : null;
 }
 
-// todo: add phpDoc
+/**
+ * Функция добавляет публикацию в базу данных.
+ * Функция возвращает id созданной публикации.
+ * В случае неуспешного создания возвращается null.
+ *
+ * Ограничения:
+ * Теги должны быть представлены в виде единой строки, разделенной
+ * одинарными пробелами. Пробелы в начале и конце строки не допускаются.
+ * Строка должна быть приведена к нижнему регистру.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  array{
+ *     title: string,
+ *     string_content: string,
+ *     text_content: string,
+ *     author_id: int,
+ *     content_type_id: int,
+ *     tags: string;
+ * }  $post_data - данные для добавления публикации
+ *
+ * @return int | null id созданной публикации
+ */
 function create_post(mysqli $db_connection, array $post_data)
 {
     $title = mysqli_real_escape_string($db_connection, $post_data['title']);
@@ -185,12 +207,6 @@ function create_post(mysqli $db_connection, array $post_data)
 
     $result = mysqli_query($db_connection, $sql);
 
-    if (mysqli_error($db_connection))
-    {
-        var_dump(mysqli_error($db_connection));
-        exit();
-    }
-
     if (!$result) {
         return null;
     }
@@ -198,11 +214,7 @@ function create_post(mysqli $db_connection, array $post_data)
     $post_id = mysqli_insert_id($db_connection);
 
     foreach ($tags as $tag) {
-        $hashtag_id = add_hashtag($db_connection, $tag);
-
-        if ($hashtag_id) {
-            create_post_hashtag($db_connection, $post_id, $hashtag_id);
-        }
+        add_hashtag_to_post($db_connection, $tag, $post_id);
     }
 
     return $post_id;

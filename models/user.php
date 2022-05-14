@@ -7,7 +7,7 @@
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  int     $id             id пользователя
+ * @param  int  $id  id пользователя
  *
  * return null | array{
  *     id: int,
