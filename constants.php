@@ -71,6 +71,15 @@ const ADD_POST_FORM_TITLE = [
     'photo' => 'Форма добавления фото',
 ];
 
+const MAX_PHOTO_FILE_MB_SIZE = 10;
+
+const ALLOWED_PHOTO_FILE_TYPES = [
+    'image/jpg',
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+];
+
 const MAX_TITLE_LENGTH = 255;
 
 const MAX_TAG_LENGTH = 255;

@@ -1,5 +1,7 @@
 <?php
 
+require_once 'constants.php';
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -215,6 +217,33 @@ function check_url(string $url): bool
     }
 
     return strpos($headers[0], '200') !== false;
+}
+
+// todo: add phpDoc
+/**
+ *
+ *
+ * @param  string  $url  ссылка на ресурс
+ *
+ * @return bool Результат проверки
+ */
+function check_photo_url(string $url): bool
+{
+    set_error_handler(
+        function () {
+        },
+        E_WARNING
+    );
+    $headers = get_headers($url, true);
+    restore_error_handler();
+
+    if (!is_array($headers) || !isset($headers['Content-Type'])) {
+        return false;
+    }
+
+    $mime_type = $headers['Content-Type'];
+
+    return array_search($mime_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
 }
 
 /**

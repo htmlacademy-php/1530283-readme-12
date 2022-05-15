@@ -64,11 +64,14 @@ $content_type = $content_types[array_search(
     )
 )]['icon'];
 
+$is_photo_content_type = $content_type === 'photo';
+
 $basename = basename(__FILE__);
-$form_data = [];
+$form_data = [
+    'author_id' => 1,
+    'content_type_id' => $current_content_filter,
+];
 $errors = [];
-$invalid = false;
-$db_error = false;
 
 $layout_data = [
     'title' => 'Добавить публикацию',
@@ -79,21 +82,60 @@ $layout_data = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // todo: create parser ?
+    var_dump($_FILES['photo-file']);
+
+    $with_file = isset($_FILES['photo-file'])
+                 && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
+
     $form_data['title'] = $_POST['title'] ?? '';
     $form_data['text_content'] = $_POST['text-content'] ?? '';
-    $form_data['string_content'] = $_POST['string-content'] ?? '';
+    $form_data['string_content'] =
+        !$with_file ? $_POST['string-content'] ?? '' : '';
     $form_data['tags'] =
         $_POST['tags'] ? trim(
             preg_replace('/\s+/', TEXT_SEPARATOR, mb_strtolower($_POST['tags']))
         ) : '';
+    $form_data['photo_file'] =
+        $with_file ? $_FILES['photo-file'] : null;
 
     $errors = get_post_form_data_errors($form_data, $content_type);
-    $invalid = boolval(count($errors));
 
-    if (!$invalid) {
-        $form_data['author_id'] = 1;
-        $form_data['content_type_id'] = $current_content_filter;
+    if (count($errors)) {
+        if ($with_file && !$errors['photo_file']) {
+            $errors['photo_file'] = [
+                'title' => 'Файл фото',
+                'description' => 'Загрузите файл еще раз'
+            ];
+        }
+    }
+
+    $photo_url = '';
+
+    if (!count($errors) && $is_photo_content_type) {
+        // todo: загрузка файла
+        $photo_url =
+            $with_file ? false : download_file($form_data['string_content']);
+
+        if (!$photo_url) {
+            if ($with_file) {
+                $errors['photo_file'] = [
+                    'title' => 'Файл фото',
+                    'description' => 'Не удалось загрузить файл'
+                ];
+            } else {
+                $errors['photo_file'] = [
+                    'title' => 'Ссылка из интернета',
+                    'description' => 'Не удалось загрузить файл по ссылке'
+                ];
+            }
+        }
+    }
+
+    if (!count($errors)) {
+        if ($is_photo_content_type) {
+            $form_data['string_content'] = $photo_url;
+            // todo: добавить название загруженного файла в поле 'string_content'
+        }
 
         $created_post_id = create_post($db_connection, $form_data);
 
@@ -101,22 +143,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: post.php?post_id=$created_post_id");
 
             return;
-        } else {
-            http_response_code(SERVER_ERROR_STATUS);
-
-            $page_content = include_template(
-                'partials/error.php',
-                ['content' => 'Не удалось создать публикацию']
-            );
-
-            $layout_data['content'] = $page_content;
-
-            $layout_content = include_template('layout.php', $layout_data);
-
-            print($layout_content);
-
-            return;
         }
+
+        // todo: удалить загруженный файл ?
+
+        http_response_code(SERVER_ERROR_STATUS);
+
+        $page_content = include_template(
+            'partials/error.php',
+            ['content' => 'Не удалось создать публикацию']
+        );
+
+        $layout_data['content'] = $page_content;
+
+        $layout_content = include_template('layout.php', $layout_data);
+
+        print($layout_content);
+
+        return;
     }
 }
 
@@ -138,18 +182,16 @@ $content_filters_content =
         ]
     );
 
-$with_photo_file = $content_type === 'photo';
-
 $page_content = include_template(
     'add-post-form.php',
     [
         'title' => ADD_POST_FORM_TITLE[$content_type],
         'form_data' => $form_data,
         'errors' => $errors,
-        'invalid' => $invalid,
+        'invalid' => boolval(count($errors)),
         'content_filters' => $content_filters_content,
         'content_fields' => $content_fields_content,
-        'with_photo_file' => $with_photo_file,
+        'with_photo_file' => $is_photo_content_type,
     ]
 );
 

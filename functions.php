@@ -438,6 +438,50 @@ function get_post_tags_error(array $form_data)
     return null;
 }
 
+// todo: fix phpDoc
+/**
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return null | array{
+ *     title: string,
+ *     description: string,
+ * } - Ошибка валидации (при наличии)
+ */
+function get_post_photo_file_error(array $form_data)
+{
+    if (!$form_data['photo_file']) {
+        return null;
+    }
+
+    $error_title = 'Файл фото';
+
+    $file = $form_data['photo_file'];
+
+    $file_type = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file['tmp_name']);
+    $is_valid_type =
+        array_search($file_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
+
+    if (!$is_valid_type) {
+        return [
+            'title' => $error_title,
+            'description' => 'Некорретный тип файла',
+        ];
+    }
+
+    $max_bytes_size = 1024 * 1024 * MAX_PHOTO_FILE_MB_SIZE;
+
+    if ($file['size'] > $max_bytes_size) {
+        return [
+            'title' => $error_title,
+            'description' => 'Превышен допустимый размер файла '
+                             . MAX_PHOTO_FILE_MB_SIZE
+                             . 'Мб',
+        ];
+    }
+
+    return null;
+}
+
 /**
  * Функция валидирует значение фото ссылки формы создания публикации и
  * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
@@ -446,10 +490,13 @@ function get_post_tags_error(array $form_data)
  * 1. Ненулевая длина
  * 2. Максимальная длина
  * 3. Корректность URL
- * 4. Доступность фото по ссылке // todo: возможно это не здесь ?
+ * 4. Доступность ссылки
+ * 5. Корректный формат фото по сссылке
  *
  * Ограничения:
- * Функция возвращает только первую ошибку валидации.
+ * 1. Функция возвращает только первую ошибку валидации.
+ * 2. В случае передачи в форма файла изоброжения,
+ * валидация ссылки не проводится.
  *
  * @param  array  $form_data  - ассоциативный массив полей формы и их значений
  *
@@ -460,7 +507,10 @@ function get_post_tags_error(array $form_data)
  */
 function get_photo_post_string_content_error(array $form_data)
 {
-    // todo: проверить наличие файла, в этом случае валидация игнорируется
+    if ($form_data['photo_file']) {
+        return null;
+    }
+
     $string_content = $form_data['string_content'] ?? '';
     $length = mb_strlen($string_content);
     $error_title = 'Ссылка из интернета';
@@ -468,7 +518,7 @@ function get_photo_post_string_content_error(array $form_data)
     if (!$length) {
         return [
             'title' => $error_title,
-            'description' => 'Поле обязательно к заполнению',
+            'description' => 'Введите ссылку, либо загрузите файл',
         ];
     }
 
@@ -497,6 +547,13 @@ function get_photo_post_string_content_error(array $form_data)
         return [
             'title' => $error_title,
             'description' => 'Ссылка недоступна',
+        ];
+    }
+
+    if (!check_photo_url($string_content)) {
+        return [
+            'title' => $error_title,
+            'description' => 'Некорретный тип файла',
         ];
     }
 
@@ -807,4 +864,40 @@ function get_post_form_data_errors(
     }
 
     return $errors;
+}
+
+// todo: add phpDoc
+/**
+ * @param  string  $extension
+ *
+ * @return string
+ */
+function get_random_file_name(string $extension = 'tmp'): string
+{
+    return md5(rand()) . ".$extension";
+}
+
+// todo: add phpDoc
+/**
+ * @param  string  $url
+ * @param  string  $destination
+ *
+ * @return string | false
+ */
+function download_file(string $url, string $destination = 'uploads')
+{
+    $filter_content = file_get_contents($url);
+
+    if (!$filter_content) {
+        return false;
+    }
+
+    $original_file_name = basename($url);
+    $extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
+    $file_name = get_random_file_name($extension);
+    $file_path = "$destination/$file_name";
+
+    $result = file_put_contents($file_path, $filter_content);
+
+    return $result ? $file_path : false;
 }
