@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Шаблон контента карточки публикации фото для страницы 'Популярное'
+ *
+ * @var string $string_content - строковый контент публикации
+ */
+
 $string_content = isset($string_content) ? strip_tags($string_content) : '';
 ?>
 

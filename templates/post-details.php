@@ -2,6 +2,16 @@
 
 require_once 'helpers.php';
 
+/**
+ * Шаблон основного контента страницы просмотра публикации.
+ *
+ * @var array $post - ассоциативный массив с данными публикации
+ * @var string $post_content - разметка секции контента публикации
+ * @var string $author_content - разметка секции автора публикации
+ * @var array $comments - массив с комментариями к публикации
+ * @var array $hashtags - массив с хэштегами к публикации
+ */
+
 list(
     'id' => $id,
     'title' => $title,

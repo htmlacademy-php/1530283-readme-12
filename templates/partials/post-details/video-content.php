@@ -2,6 +2,12 @@
 
 require_once 'helpers.php';
 
+/**
+ * Шаблон контента публикации видео для страницы просмотра публикации
+ *
+ * @var string $string_content - строковый контент публикации
+ */
+
 $string_content = strip_tags($string_content);
 ?>
 

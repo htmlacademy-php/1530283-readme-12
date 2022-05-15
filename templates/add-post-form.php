@@ -1,3 +1,17 @@
+<?php
+/**
+ * Шаблон основного контента страницы добаления публикации
+ *
+ * @var string $content_filters - разметка секции табов по типу контента
+ * @var bool $content_fields - разметка полей контента публикации
+ * @var string $title - скрытый заголовок формы
+ * @var array $form_data - ассоциативный массив с данными полей формы
+ * @var array $errors - ассоциативный массив с данными ошибок полей формы
+ * @var bool $invalid - валидность формы
+ * @var bool $with_photo_file - наличие секции для загрузки файла фото
+ */
+?>
+
 <div class="page__main-section">
     <div class="container">
         <h1 class="page__title page__title--adding-post">Добавить

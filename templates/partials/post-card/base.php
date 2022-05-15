@@ -2,6 +2,12 @@
 
 require_once 'decorators.php';
 
+/**
+ * Шаблон карточки публикации для страницы 'Популярное'
+ *
+ * @var array $post_card - ассоциативный массив с данными публикации
+ */
+
 list(
     'id' => $id,
     'title' => $title,

@@ -2,6 +2,12 @@
 
 require_once 'helpers.php';
 
+/**
+ * Шаблон секции автора публикации для страницы просмотра публикации.
+ *
+ * @var array $author - ассоциативный массив с данными автора публикации
+ */
+
 list(
     'login' => $user_name,
     'avatar_url' => $avatar_url,

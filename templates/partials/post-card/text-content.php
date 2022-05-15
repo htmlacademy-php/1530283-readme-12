@@ -3,6 +3,12 @@
 require_once 'constants.php';
 require_once 'functions.php';
 
+/**
+ * Шаблон контента карточки публикации текста для страницы 'Популярное'
+ *
+ * @var string $text_content - текстовый контент публикации
+ */
+
 $text_content = isset($text_content) ? htmlspecialchars($text_content) : '';
 $cropped_text_content = crop_text(
     $text_content,

@@ -2,6 +2,13 @@
 
 require_once 'helpers.php';
 
+/**
+ * Шаблон контента карточки публикации видео для страницы 'Популярное'
+ *
+ * @var string $id - id публикации
+ * @var string $string_content - строковый контент публикации
+ */
+
 $string_content = isset($string_content) ? strip_tags($string_content) : '';
 ?>
 

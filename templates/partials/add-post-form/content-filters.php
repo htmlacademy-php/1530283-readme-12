@@ -1,3 +1,11 @@
+<?php
+/**
+ * Шаблон секции табов по типу контента для страницы добавления публикации
+ *
+ * @var array $content_filters - массив с данными для табов по типу контента
+ */
+?>
+
 <div class="adding-post__tabs filters">
     <ul class="adding-post__tabs-list filters__list tabs__list">
         <?php

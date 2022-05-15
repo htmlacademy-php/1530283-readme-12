@@ -1,16 +1,13 @@
 <?php
-
-if ( ! isset($title)) {
-    $title = 'Заголовок';
-}
-
-if ( ! isset($user_name)) {
-    $user_name = 'Аноним';
-}
-
-if ( ! isset($is_auth)) {
-    $is_auth = 0;
-}
+/**
+ * Шаблон страниц сайта для зарегистрированных пользователей.
+ *
+ * @var string $title - заголовок страницы
+ * @var string $content - разметка основного контента страницы
+ * @var string | null $page_modifier - модификатор основного контейнера страницы
+ * @var string $user_name - имя пользователя
+ * @var int $is_auth - статус авторизации страницы
+ */
 ?>
 <!DOCTYPE html>
 <html lang="ru">

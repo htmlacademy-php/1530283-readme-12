@@ -1,3 +1,11 @@
+<?php
+/**
+ * Шаблон полей контента для формы добавления публикации ссылки.
+ *
+ * @var array $form_data - ассоциативный массив с данными полей формы
+ * @var array $errors - ассоциативный массив с данными ошибок полей формы
+ */
+?>
 <div class="adding-post__textarea-wrapper form__input-wrapper">
     <label class="adding-post__label form__label"
            for="string-content">Ссылка <span
