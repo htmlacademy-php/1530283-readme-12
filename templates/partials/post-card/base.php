@@ -1,6 +1,6 @@
 <?php
 
-require_once 'decorators.php';
+require_once 'utils/decorators.php';
 
 /**
  * Шаблон карточки публикации для страницы 'Популярное'

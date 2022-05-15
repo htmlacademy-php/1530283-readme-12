@@ -1,9 +1,9 @@
 <?php
 
-require_once 'constants.php';
-require_once 'helpers.php';
-require_once 'functions.php';
-require_once 'decorators.php';
+require_once 'utils/constants.php';
+require_once 'utils/helpers.php';
+require_once 'utils/functions.php';
+require_once 'utils/decorators.php';
 require_once 'models/post.php';
 require_once 'models/content_type.php';
 require_once 'init/db.php';

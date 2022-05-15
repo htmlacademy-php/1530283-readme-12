@@ -1,8 +1,9 @@
 <?php
 
-require_once 'constants.php';
-require_once 'helpers.php';
-require_once 'functions.php';
+require_once 'utils/constants.php';
+require_once 'utils/helpers.php';
+require_once 'utils/functions.php';
+require_once 'utils/post-form-validators.php';
 require_once 'models/content_type.php';
 require_once 'models/post.php';
 require_once 'init/db.php';
@@ -82,8 +83,6 @@ $layout_data = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    var_dump($_FILES['photo-file']);
-
     $with_file = isset($_FILES['photo-file'])
                  && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
 

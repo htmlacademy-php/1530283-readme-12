@@ -1,6 +1,6 @@
 <?php
 
-require_once 'helpers.php';
+require_once 'utils/helpers.php';
 
 /**
  * Шаблон секции автора публикации для страницы просмотра публикации.

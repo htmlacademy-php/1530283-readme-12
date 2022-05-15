@@ -1,7 +1,7 @@
 <?php
 
-require_once 'helpers.php';
-require_once 'functions.php';
+require_once 'utils/helpers.php';
+require_once 'utils/functions.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
 require_once 'models/user.php';

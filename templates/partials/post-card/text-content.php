@@ -1,7 +1,7 @@
 <?php
 
-require_once 'constants.php';
-require_once 'functions.php';
+require_once 'utils/constants.php';
+require_once 'utils/functions.php';
 
 /**
  * Шаблон контента карточки публикации текста для страницы 'Популярное'

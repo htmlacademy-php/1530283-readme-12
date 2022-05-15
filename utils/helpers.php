@@ -1,6 +1,6 @@
 <?php
 
-require_once 'constants.php';
+require_once 'utils/constants.php';
 
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
