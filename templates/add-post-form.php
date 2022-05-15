@@ -10,6 +10,7 @@
  * @var bool $invalid - валидность формы
  * @var bool $with_photo_file - наличие секции для загрузки файла фото
  */
+
 ?>
 
 <div class="page__main-section">
@@ -102,18 +103,15 @@
                         <?php
                         if ($with_photo_file): ?>
                             <div class="adding-post__input-file-container form__input-container form__input-container--file">
-                                <div class="adding-post__input-file-wrapper form__input-file-wrapper">
-                                    <div class="adding-post__file-zone adding-post__file-zone--photo form__file-zone dropzone">
-                                        <input class="adding-post__input-file form__input-file"
-                                               id="photo-file"
-                                               type="file"
-                                               name="photo-file"
-                                               title=" ">
-                                        <div class="form__file-zone-text">
-                                            <span>Перетащите фото сюда</span>
-                                        </div>
-                                    </div>
-                                    <button class="adding-post__input-file-button form__input-file-button form__input-file-button--photo button"
+                                <input class="visually-hidden"
+                                       id="photo-file"
+                                       type="file"
+                                       name="photo-file"
+                                       title=" ">
+                                <div class="adding-post__input-file-wrapper form__input-file-wrapper"
+                                     style="position: relative; display: inline-block">
+                                    <button id="upload-button"
+                                            class="adding-post__input-file-button form__input-file-button form__input-file-button--photo button"
                                             type="button">
                                         <span>Выбрать фото</span>
                                         <svg class="adding-post__attach-icon form__attach-icon"
@@ -123,6 +121,31 @@
                                     </button>
                                 </div>
                                 <div class="adding-post__file adding-post__file--photo form__file dropzone-previews">
+                                    <div id="upload-preview-container"
+                                         class="dz-preview dz-file-preview">
+                                        <div class="adding-post__image-wrapper form__file-wrapper">
+                                            <img id="upload-preview-image"
+                                                 class="form__image"
+                                                 src=""
+                                                 alt="" data-dz-thumbnail></div>
+                                        <div class="adding-post__file-data form__file-data">
+                                            <span id="upload-file-name"
+                                                  class="adding-post__file-name form__file-name dz-filename"
+                                                  data-dz-name>Имя файла</span>
+                                            <button id="upload-remove-button"
+                                                    class="adding-post__delete-button form__delete-button button"
+                                                    type="button"
+                                                    data-dz-remove>
+                                                <span>Удалить</span>
+                                                <svg class="adding-post__delete-icon form__delete-icon"
+                                                     xmlns="http://www.w3.org/2000/svg"
+                                                     viewBox="0 0 18 18"
+                                                     width="12" height="12">
+                                                    <path d="M18 1.3L16.7 0 9 7.7 1.3 0 0 1.3 7.7 9 0 16.7 1.3 18 9 10.3l7.7 7.7 1.3-1.3L10.3 9z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         <?php
