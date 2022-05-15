@@ -460,10 +460,10 @@ function get_post_photo_file_error(array $form_data)
     }
 
     $error_title = 'Файл фото';
-
     $file = $form_data['photo_file'];
 
-    $file_type = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file['tmp_name']);
+    $file_info = finfo_open(FILEINFO_MIME_TYPE);
+    $file_type = finfo_file($file_info, $file['tmp_name']);
     $is_valid_type =
         array_search($file_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
 
@@ -875,7 +875,7 @@ function get_post_form_data_errors(
 /**
  * Функция генерирует случайное имя файла.
  *
- * @param  string  $extension - расширение файла ('tmp' - по умолчанию)
+ * @param  string  $extension  - расширение файла ('tmp' - по умолчанию)
  *
  * @return string имя файла с расширением
  */
@@ -890,8 +890,8 @@ function get_random_file_name(string $extension = 'tmp'): string
  * Функция возвращает путь к сохраненному файлу.
  * В случае ошибки сохранения функция возвращает false.
  *
- * @param  string  $url - ссылка на файл
- * @param  string  $destination - путь к месту сохранения файла ('uploads' -
+ * @param  string  $url  - ссылка на файл
+ * @param  string  $destination  - путь к месту сохранения файла ('uploads' -
  * по умолчанию)
  *
  * @return string | false - путь к сохраненному файлу
@@ -912,4 +912,25 @@ function download_file(string $url, string $destination = 'uploads')
     $result = file_put_contents($file_path, $filter_content);
 
     return $result ? $file_path : false;
+}
+
+/**
+ * Функция сохраняет
+ *
+ * @param  array  $temp_file
+ * @param  string  $destination  - путь к месту сохранения файла ('uploads' -
+ * по умолчанию)
+ *
+ * @return string | false - путь к сохраненному файлу
+ */
+function save_file(array $temp_file, string $destination = 'uploads')
+{
+    $extension = pathinfo($temp_file['name'], PATHINFO_EXTENSION);
+    $file_name = get_random_file_name($extension);
+    $relative_path = "$destination/$file_name";
+    $absolute_path = __DIR__ . "/$relative_path";
+
+    $result = move_uploaded_file($temp_file['tmp_name'], $absolute_path);
+
+    return $result ? $relative_path : false;
 }

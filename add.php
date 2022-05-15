@@ -112,9 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $photo_url = '';
 
     if (!count($errors) && $is_photo_content_type) {
-        // todo: загрузка файла
         $photo_url =
-            $with_file ? false : download_file($form_data['string_content']);
+            $with_file
+                ? save_file($form_data['photo_file'])
+                : download_file($form_data['string_content']);
 
         if (!$photo_url) {
             if ($with_file) {
@@ -143,8 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             return;
         }
-
-        // todo: удалить загруженный файл ?
 
         http_response_code(SERVER_ERROR_STATUS);
 
