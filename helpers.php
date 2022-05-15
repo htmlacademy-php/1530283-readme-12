@@ -200,7 +200,7 @@ function check_youtube_url(string $url): bool
  *
  * @param  string  $url  ссылка на ресурс
  *
- * @return bool Результат проверки
+ * @return bool результат проверки
  */
 function check_url(string $url): bool
 {
@@ -219,13 +219,12 @@ function check_url(string $url): bool
     return strpos($headers[0], '200') !== false;
 }
 
-// todo: add phpDoc
 /**
- *
+ * Функция проверяет типа корректность типа файла для фото по ссылке.
  *
  * @param  string  $url  ссылка на ресурс
  *
- * @return bool Результат проверки
+ * @return bool результат проверки
  */
 function check_photo_url(string $url): bool
 {

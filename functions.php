@@ -438,8 +438,14 @@ function get_post_tags_error(array $form_data)
     return null;
 }
 
-// todo: fix phpDoc
 /**
+ * Функция валидирует загруженный файл фото для публикации и
+ * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
+ * описание ошибки. Если значение валидно, функция возвращает null.
+ * Валидируемые критерии:
+ * 1. Корректный формат файла
+ * 2. Максимальный размер файла
+ *
  * @param  array  $form_data  - ассоциативный массив полей формы и их значений
  *
  * @return null | array{
@@ -491,11 +497,11 @@ function get_post_photo_file_error(array $form_data)
  * 2. Максимальная длина
  * 3. Корректность URL
  * 4. Доступность ссылки
- * 5. Корректный формат фото по сссылке
+ * 5. Корректный формат файла по ссылке
  *
  * Ограничения:
  * 1. Функция возвращает только первую ошибку валидации.
- * 2. В случае передачи в форма файла изоброжения,
+ * 2. В случае передачи загрузки через форму файла фото,
  * валидация ссылки не проводится.
  *
  * @param  array  $form_data  - ассоциативный массив полей формы и их значений
@@ -866,23 +872,29 @@ function get_post_form_data_errors(
     return $errors;
 }
 
-// todo: add phpDoc
 /**
- * @param  string  $extension
+ * Функция генерирует случайное имя файла.
  *
- * @return string
+ * @param  string  $extension - расширение файла ('tmp' - по умолчанию)
+ *
+ * @return string имя файла с расширением
  */
 function get_random_file_name(string $extension = 'tmp'): string
 {
     return md5(rand()) . ".$extension";
 }
 
-// todo: add phpDoc
 /**
- * @param  string  $url
- * @param  string  $destination
+ * Функция сохраняет файл перданный по ссылке.
+ * Имя генерируется случайными образом.
+ * Функция возвращает путь к сохраненному файлу.
+ * В случае ошибки сохранения функция возвращает false.
  *
- * @return string | false
+ * @param  string  $url - ссылка на файл
+ * @param  string  $destination - путь к месту сохранения файла ('uploads' -
+ * по умолчанию)
+ *
+ * @return string | false - путь к сохраненному файлу
  */
 function download_file(string $url, string $destination = 'uploads')
 {

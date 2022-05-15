@@ -134,7 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!count($errors)) {
         if ($is_photo_content_type) {
             $form_data['string_content'] = $photo_url;
-            // todo: добавить название загруженного файла в поле 'string_content'
         }
 
         $created_post_id = create_post($db_connection, $form_data);
