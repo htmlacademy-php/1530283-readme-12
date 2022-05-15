@@ -152,10 +152,10 @@ function get_post_photo_file_error(array $form_data)
  * описание ошибки. Если значение валидно, функция возвращает null.
  * Валидируемые критерии:
  * 1. Ненулевая длина
- * 2. Максимальная длина
- * 3. Корректность URL
- * 4. Доступность ссылки
- * 5. Корректный формат файла по ссылке
+ * 2. Корректность URL
+ * 3. Доступность ссылки
+ * 4. Корректный формат файла по ссылке
+ * 5. Максимальный размера файла по ссылке
  *
  * Ограничения:
  * 1. Функция возвращает только первую ошибку валидации.
@@ -186,20 +186,6 @@ function get_photo_post_string_content_error(array $form_data)
         ];
     }
 
-    if ($length > MAX_STRING_CONTENT_LENGTH) {
-        return [
-            'title' => $error_title,
-            'description' => 'Длина поля не должна превышать '
-                             . MAX_STRING_CONTENT_LENGTH
-                             . ' ' . get_noun_plural_form(
-                                 MAX_TITLE_LENGTH,
-                                 'символ',
-                                 'символа',
-                                 'символов'
-                             ),
-        ];
-    }
-
     if (!filter_var($string_content, FILTER_VALIDATE_URL)) {
         return [
             'title' => $error_title,
@@ -218,6 +204,18 @@ function get_photo_post_string_content_error(array $form_data)
         return [
             'title' => $error_title,
             'description' => 'Некорретный тип файла',
+        ];
+    }
+
+    $file_size = get_url_size($string_content);
+    $max_bytes_size = 1024 * 1024 * MAX_PHOTO_FILE_MB_SIZE;
+
+    if ($file_size > $max_bytes_size) {
+        return [
+            'title' => $error_title,
+            'description' => 'Превышен допустимый размер файла '
+                             . MAX_PHOTO_FILE_MB_SIZE
+                             . 'Мб',
         ];
     }
 

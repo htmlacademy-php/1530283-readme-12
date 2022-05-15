@@ -54,7 +54,6 @@ if (is_null($content_types) || !$is_content_filter_valid) {
     return;
 }
 
-// todo: create util function ?
 $content_type = $content_types[array_search(
     $current_content_filter,
     array_map(

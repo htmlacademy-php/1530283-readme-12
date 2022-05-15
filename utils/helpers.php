@@ -246,6 +246,30 @@ function check_photo_url(string $url): bool
 }
 
 /**
+ * Функция возвращает в байтах размера файла по ссылке.
+ * В случае недоступности ссылки возвращается 0.
+ * @param  string  $url
+ *
+ * @return int Размер файла
+ */
+function get_url_size(string $url): int
+{
+    set_error_handler(
+        function () {
+        },
+        E_WARNING
+    );
+    $headers = get_headers($url, true);
+    restore_error_handler();
+
+    if (!is_array($headers) || !isset($headers['Content-Length'])) {
+        return 0;
+    }
+
+    return $headers['Content-Length'];
+}
+
+/**
  * Возвращает код iframe для вставки youtube видео на страницу
  *
  * @param  string  $youtube_url  Ссылка на youtube видео
