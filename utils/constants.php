@@ -71,7 +71,7 @@ const ADD_POST_FORM_TITLE = [
     'photo' => 'Форма добавления фото',
 ];
 
-const MAX_PHOTO_FILE_MB_SIZE = 10;
+const MAX_PHOTO_FILE_SIZE = 1024 * 1024 * 10;
 
 const ALLOWED_PHOTO_FILE_TYPES = [
     'image/jpg',

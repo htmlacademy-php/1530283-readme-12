@@ -371,3 +371,14 @@ function generate_random_date($index)
 
     return $dt;
 }
+
+/**
+ * Функция конвертирует байты в мегабайты.
+ *
+ * @param  int  $bytes - значение в байтах
+ *
+ * @return int - значение в мегабайтах
+ */
+function convert_to_megabytes(int $bytes): int {
+    return $bytes / (1024 * 1024);
+}

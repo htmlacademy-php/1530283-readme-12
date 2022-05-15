@@ -132,13 +132,11 @@ function get_post_photo_file_error(array $form_data)
         ];
     }
 
-    $max_bytes_size = 1024 * 1024 * MAX_PHOTO_FILE_MB_SIZE;
-
-    if ($file['size'] > $max_bytes_size) {
+    if ($file['size'] > MAX_PHOTO_FILE_SIZE) {
         return [
             'title' => $error_title,
             'description' => 'Превышен допустимый размер файла '
-                             . MAX_PHOTO_FILE_MB_SIZE
+                             . convert_to_megabytes(MAX_PHOTO_FILE_SIZE)
                              . 'Мб',
         ];
     }
@@ -208,13 +206,12 @@ function get_photo_post_string_content_error(array $form_data)
     }
 
     $file_size = get_url_size($string_content);
-    $max_bytes_size = 1024 * 1024 * MAX_PHOTO_FILE_MB_SIZE;
 
-    if ($file_size > $max_bytes_size) {
+    if ($file_size > MAX_PHOTO_FILE_SIZE) {
         return [
             'title' => $error_title,
             'description' => 'Превышен допустимый размер файла '
-                             . MAX_PHOTO_FILE_MB_SIZE
+                             . convert_to_megabytes(MAX_PHOTO_FILE_SIZE)
                              . 'Мб',
         ];
     }
