@@ -32,6 +32,10 @@
             font-size: 1.5rem;
             flex-grow: 1;
         }
+
+        .post-link__info-wrapper {
+            align-items: center;
+        }
     </style>
 </head>
 <body class="page">
