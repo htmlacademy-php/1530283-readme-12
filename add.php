@@ -14,53 +14,8 @@ require_once 'init/db.php';
 
 check_db_connection($db_connection);
 
-$content_types = get_content_types($db_connection);
-
-if (!$content_types) {
-    http_response_code(NOT_FOUND_STATUS);
-
-    $page_content = include_template(
-        'partials/error.php',
-        ['content' => 'Не удалось загрузить страницу']
-    );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layout.php', $layout_data);
-
-    print($layout_content);
-
-    exit();
-}
-
-$current_content_id = filter_input(
-    INPUT_GET,
-    CONTENT_FILTER_QUERY,
-    FILTER_SANITIZE_NUMBER_INT
-);
-$current_content_type = null;
-
-if ($current_content_id) {
-    $current_content_type_data = get_content_type($db_connection, $current_content_id);
-    $current_content_type = $current_content_type_data ? $current_content_type_data['type'] : null;
-}
-
-$basename = basename(__FILE__);
-
-if (!$current_content_type) {
-    $default_content_type_id = $content_types[0]['id'];
-    $redirect_url = "$basename?content_type_id=$default_content_type_id";
-
-    header("Location: $redirect_url");
-
-    exit();
-}
-
-$is_photo_content_type = $current_content_type === 'photo';
-
 $form_data = [
     'author_id' => 1,
-    'content_type_id' => $current_content_id,
 ];
 $errors = [];
 
@@ -76,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $with_file = isset($_FILES['photo-file'])
                  && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
 
+    $form_data['content_type_id'] = $_POST['content-type-id'] ?? '';
     $form_data['title'] = $_POST['title'] ?? '';
     $form_data['text_content'] = $_POST['text-content'] ?? '';
     $form_data['string_content'] =
@@ -87,7 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form_data['photo_file'] =
         $with_file ? $_FILES['photo-file'] : null;
 
-    $errors = get_post_form_data_errors($form_data, $current_content_type);
+    $content_type_data = $form_data['content_type_id'] ? get_content_type(
+        $db_connection,
+        $form_data['content_type_id']
+    ) : null;
+    $content_type = $content_type_data && $content_type_data['type']
+        ? $content_type_data['type'] : null;
+
+    $errors = $content_type
+        ? get_post_form_data_errors($form_data, $content_type)
+        : [
+            [
+                'title' => 'Тип контента',
+                'description' => 'Некорректный тип'
+            ]
+        ];
 
     if (count($errors)) {
         if ($with_file && !$errors['photo_file']) {
@@ -98,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $is_photo_content_type = $content_type === 'photo';
     $photo_url = '';
 
     if (!count($errors) && $is_photo_content_type) {
@@ -113,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'description' => 'Не удалось загрузить файл'
                 ];
             } else {
-                $errors['photo_file'] = [
+                $errors['string_content'] = [
                     'title' => 'Ссылка из интернета',
                     'description' => 'Не удалось загрузить файл по ссылке'
                 ];
@@ -150,6 +121,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
+
+
+$content_types = get_content_types($db_connection);
+
+if (!$content_types) {
+    http_response_code(NOT_FOUND_STATUS);
+
+    $page_content = include_template(
+        'partials/error.php',
+        ['content' => 'Не удалось загрузить страницу']
+    );
+
+    $layout_data['content'] = $page_content;
+
+    $layout_content = include_template('layout.php', $layout_data);
+
+    print($layout_content);
+
+    exit();
+}
+
+$current_content_id = filter_input(
+    INPUT_GET,
+    CONTENT_FILTER_QUERY,
+    FILTER_SANITIZE_NUMBER_INT
+);
+$current_content_type = null;
+
+if ($current_content_id) {
+    $current_content_type_data =
+        get_content_type($db_connection, $current_content_id);
+    $current_content_type =
+        $current_content_type_data ? $current_content_type_data['type'] : null;
+}
+
+$basename = basename(__FILE__);
+
+if (!$current_content_type) {
+    $default_content_type_id = $content_types[0]['id'];
+    $redirect_url = "$basename?content_type_id=$default_content_type_id";
+
+    header("Location: $redirect_url");
+
+    exit();
+}
+
+$form_data['content_type_id'] = $current_content_id;
+
+$is_photo_content_type = $current_content_type === 'photo';
 
 $content_tabs = get_content_filters($content_types, $basename);
 
