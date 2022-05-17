@@ -57,7 +57,6 @@ $content_type = $content_types[array_search(
 
 $is_photo_content_type = $content_type === 'photo';
 
-$basename = basename(__FILE__);
 $form_data = [
     'author_id' => 1,
     'content_type_id' => $current_content_filter,
@@ -131,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($created_post_id) {
             header("Location: post.php?post_id=$created_post_id");
 
-            return;
+            exit();
         }
 
         http_response_code(SERVER_ERROR_STATUS);
@@ -147,9 +146,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         print($layout_content);
 
-        return;
+        exit();
     }
 }
+
+$basename = basename(__FILE__);
 
 $content_filters = get_content_filters($content_types, $basename);
 
