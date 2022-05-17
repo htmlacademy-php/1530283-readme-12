@@ -16,19 +16,7 @@ check_db_connection($db_connection);
 
 $content_types = get_content_types($db_connection);
 
-$current_content_id = filter_input(
-    INPUT_GET,
-    CONTENT_FILTER_QUERY,
-    FILTER_SANITIZE_NUMBER_INT
-);
-
-$is_content_filter_valid = $content_types
-                           && validate_content_filter(
-                               $current_content_id,
-                               $content_types
-                           );
-
-if (is_null($content_types) || !$is_content_filter_valid) {
+if (!$content_types) {
     http_response_code(NOT_FOUND_STATUS);
 
     $page_content = include_template(
@@ -42,18 +30,31 @@ if (is_null($content_types) || !$is_content_filter_valid) {
 
     print($layout_content);
 
-    return;
+    exit();
 }
 
-$current_content_type = $content_types[array_search(
-    $current_content_id,
-    array_map(
-        function ($content_type) {
-            return $content_type['id'];
-        },
-        $content_types
-    )
-)]['type'];
+$current_content_id = filter_input(
+    INPUT_GET,
+    CONTENT_FILTER_QUERY,
+    FILTER_SANITIZE_NUMBER_INT
+);
+$current_content_type = null;
+
+if ($current_content_id) {
+    $current_content_type_data = get_content_type($db_connection, $current_content_id);
+    $current_content_type = $current_content_type_data ? $current_content_type_data['type'] : null;
+}
+
+$basename = basename(__FILE__);
+
+if (!$current_content_type) {
+    $default_content_type_id = $content_types[0]['id'];
+    $redirect_url = "$basename?content_type_id=$default_content_type_id";
+
+    header("Location: $redirect_url");
+
+    exit();
+}
 
 $is_photo_content_type = $current_content_type === 'photo';
 
@@ -149,8 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
-
-$basename = basename(__FILE__);
 
 $content_tabs = get_content_filters($content_types, $basename);
 
