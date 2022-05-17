@@ -65,7 +65,7 @@ function get_posts(mysqli $db_connection, $config = [])
             posts.views_count,
             users.login AS author_login,
             users.avatar_url AS author_avatar,
-            content_types.icon AS content_type,
+            content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count
         FROM posts
@@ -126,7 +126,7 @@ function get_post(mysqli $db_connection, int $id)
             posts.author_id,
             users.login AS author_login,
             users.avatar_url AS author_avatar,
-            content_types.icon AS content_type,
+            content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count
         FROM posts

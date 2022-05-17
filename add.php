@@ -16,7 +16,7 @@ check_db_connection($db_connection);
 
 $content_types = get_content_types($db_connection);
 
-$current_content_filter = filter_input(
+$current_content_id = filter_input(
     INPUT_GET,
     CONTENT_FILTER_QUERY,
     FILTER_SANITIZE_NUMBER_INT
@@ -24,7 +24,7 @@ $current_content_filter = filter_input(
 
 $is_content_filter_valid = $content_types
                            && validate_content_filter(
-                               $current_content_filter,
+                               $current_content_id,
                                $content_types
                            );
 
@@ -45,21 +45,21 @@ if (is_null($content_types) || !$is_content_filter_valid) {
     return;
 }
 
-$content_type = $content_types[array_search(
-    $current_content_filter,
+$current_content_type = $content_types[array_search(
+    $current_content_id,
     array_map(
         function ($content_type) {
             return $content_type['id'];
         },
         $content_types
     )
-)]['icon'];
+)]['type'];
 
-$is_photo_content_type = $content_type === 'photo';
+$is_photo_content_type = $current_content_type === 'photo';
 
 $form_data = [
     'author_id' => 1,
-    'content_type_id' => $current_content_filter,
+    'content_type_id' => $current_content_id,
 ];
 $errors = [];
 
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $form_data['photo_file'] =
         $with_file ? $_FILES['photo-file'] : null;
 
-    $errors = get_post_form_data_errors($form_data, $content_type);
+    $errors = get_post_form_data_errors($form_data, $current_content_type);
 
     if (count($errors)) {
         if ($with_file && !$errors['photo_file']) {
@@ -152,32 +152,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $basename = basename(__FILE__);
 
-$content_filters = get_content_filters($content_types, $basename);
+$content_tabs = get_content_filters($content_types, $basename);
 
 $content_fields_content = include_template(
-    "partials/add-post-form/$content_type-content-fields.php",
+    "partials/add-post-form/$current_content_type-content-fields.php",
     [
         'form_data' => $form_data,
         'errors' => $errors,
     ]
 );
 
-$content_filters_content =
+$content_tabs_content =
     include_template(
-        'partials/add-post-form/content-filters.php',
+        'partials/add-post-form/content-tabs.php',
         [
-            'content_filters' => $content_filters,
+            'content_tabs' => $content_tabs,
         ]
     );
 
 $page_content = include_template(
     'add-post-form.php',
     [
-        'title' => ADD_POST_FORM_TITLE[$content_type],
+        'title' => ADD_POST_FORM_TITLE[$current_content_type],
         'form_data' => $form_data,
         'errors' => $errors,
         'invalid' => boolval(count($errors)),
-        'content_filters' => $content_filters_content,
+        'content_tabs' => $content_tabs_content,
         'content_fields' => $content_fields_content,
         'with_photo_file' => $is_photo_content_type,
     ]

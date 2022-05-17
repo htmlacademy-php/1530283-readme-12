@@ -9,6 +9,7 @@
  * для снятия фильтров по типу контента
  * @var array $content_filters - массив с фильтрами по типу контента
  */
+
 ?>
 
 <div class="popular__filters-wrapper">
@@ -36,23 +37,25 @@
     <div class="popular__filters filters">
         <b class="popular__filters-caption filters__caption">Тип контента:</b>
         <ul class="popular__filters-list filters__list">
-            <li class="popular__filters-item popular__filters-item--<?= $any_content_filter['icon'] ?> filters__item filters__item--<?= $any_content_filter['icon'] ?>">
+            <li class="popular__filters-item popular__filters-item--<?= $any_content_filter['type'] ?> filters__item filters__item--<?= $any_content_filter['icon'] ?>">
                 <a class="filters__button filters__button--ellipse filters__button--all <?= $any_content_filter['active']
                     ? 'filters__button--active' : '' ?>"
-                   href="<?= $any_content_filter['url'] ?>">
-                    <span><?= $any_content_filter['name'] ?></span>
+                <?= !$any_content_filter['active']
+                    ? 'href="' . $any_content_filter['url'] . '"' : '' ?> >
+                <span><?= $any_content_filter['name'] ?></span>
                 </a>
             </li>
             <?php
             foreach ($content_filters as $content_filter): ?>
                 <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--<?= $content_filter['icon'] ?> <?= $content_filter['active']
+                    <a class="filters__button filters__button--<?= $content_filter['type'] ?> <?= $content_filter['active']
                         ? 'filters__button--active' : '' ?> button"
-                       href="<?= $content_filter['url'] ?>">
-                        <span class="visually-hidden"><?= $content_filter['name'] ?></span>
-                        <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-<?= $content_filter['icon'] ?>"></use>
-                        </svg>
+                        <?= !$content_filter['active']
+                            ? 'href="' . $content_filter['url'] . '"' : '' ?> >
+                    <span class="visually-hidden"><?= $content_filter['name'] ?></span>
+                    <svg class="filters__icon" width="22" height="18">
+                        <use xlink:href="#icon-filter-<?= $content_filter['type'] ?>"></use>
+                    </svg>
                     </a>
                 </li>
             <?php

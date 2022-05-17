@@ -10,7 +10,7 @@
  *
  * @return null | array<int, array{
  *     id: int,
- *     icon: string,
+ *     type: string,
  *     name: string
  * }>
  */
@@ -19,7 +19,7 @@ function get_content_types(mysqli $db_connection)
     $sql = "
         SELECT
             content_types.id,
-            content_types.icon,
+            content_types.type,
             content_types.name
         FROM content_types
     ";

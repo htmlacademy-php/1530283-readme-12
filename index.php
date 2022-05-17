@@ -30,7 +30,7 @@ if (!$current_sort_type) {
 
     header("Location: $url");
 
-    return;
+    exit();
 }
 
 $current_content_filter = filter_input(
@@ -81,7 +81,7 @@ $sort_types = get_sort_types($basename);
 $content_filters = get_content_filters($content_types, $basename);
 $any_content_filter = [
     'name' => 'Все',
-    'icon' => 'all',
+    'type' => 'all',
     'url' => get_content_filter_url($basename),
     'active' => is_query_active(CONTENT_FILTER_QUERY),
 ];

@@ -8,8 +8,8 @@ USE readme;
 
 CREATE TABLE content_types(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
-    name varchar(255) NOT NULL UNIQUE,
-    icon varchar(255) NOT NULL UNIQUE
+    type varchar(255) NOT NULL UNIQUE,
+    name varchar(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE users(

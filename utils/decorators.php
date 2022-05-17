@@ -22,7 +22,7 @@
  */
 function decorate_popular_page(
     string $popular_filters_content,
-    array $post_cards
+    $post_cards
 ): string {
     if (is_null($post_cards)) {
         return include_template(
