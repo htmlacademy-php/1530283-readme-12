@@ -1,5 +1,7 @@
 <?php
 
+require_once 'utils/constants.php';
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -17,7 +19,7 @@
 function is_date_valid(string $date): bool
 {
     $format_to_check = 'Y-m-d';
-    $dateTimeObj     = date_create_from_format($format_to_check, $date);
+    $dateTimeObj = date_create_from_format($format_to_check, $date);
 
     return $dateTimeObj !== false && array_sum(date_get_last_errors()) === 0;
 }
@@ -42,7 +44,7 @@ function db_get_prepare_stmt($link, $sql, $data = [])
     }
 
     if ($data) {
-        $types     = '';
+        $types = '';
         $stmt_data = [];
 
         foreach ($data as $value) {
@@ -61,7 +63,7 @@ function db_get_prepare_stmt($link, $sql, $data = [])
             }
 
             if ($type) {
-                $types       .= $type;
+                $types .= $type;
                 $stmt_data[] = $value;
             }
         }
@@ -97,10 +99,10 @@ function db_get_prepare_stmt($link, $sql, $data = [])
  *     );
  * Результат: "Я поставил таймер на 5 минут"
  *
- * @param  int     $number  Число, по которому вычисляем форму множественного числа
- * @param  string  $one     Форма единственного числа: яблоко, час, минута
- * @param  string  $two     Форма множественного числа для 2, 3, 4: яблока, часа, минуты
- * @param  string  $many    Форма множественного числа для остальных чисел
+ * @param  int  $number  Число, по которому вычисляем форму множественного числа
+ * @param  string  $one  Форма единственного числа: яблоко, час, минута
+ * @param  string  $two  Форма множественного числа для 2, 3, 4: яблока, часа, минуты
+ * @param  string  $many  Форма множественного числа для остальных чисел
  *
  * @return string Рассчитанная форма множественнго числа
  */
@@ -111,7 +113,7 @@ function get_noun_plural_form(
     string $many
 ): string {
     $number = (int)$number;
-    $mod10  = $number % 10;
+    $mod10 = $number % 10;
     $mod100 = $number % 100;
 
     switch (true) {
@@ -136,16 +138,16 @@ function get_noun_plural_form(
  * Подключает шаблон, передает туда данные и возвращает итоговый HTML контент
  *
  * @param  string  $name  Путь к файлу шаблона относительно папки templates
- * @param  array   $data  Ассоциативный массив с данными для шаблона
+ * @param  array  $data  Ассоциативный массив с данными для шаблона
  *
  * @return string Итоговый HTML
  */
 function include_template($name, array $data = [])
 {
-    $name   = 'templates/' . $name;
+    $name = 'templates/' . $name;
     $result = '';
 
-    if ( ! is_readable($name)) {
+    if (!is_readable($name)) {
         return $result;
     }
 
@@ -163,9 +165,9 @@ function include_template($name, array $data = [])
  *
  * @param  string  $url  ссылка на видео
  *
- * @return string Ошибку если валидация не прошла
+ * @return bool Результат проверки
  */
-function check_youtube_url($url)
+function check_youtube_url(string $url): bool
 {
     $id = extract_youtube_id($url);
 
@@ -180,17 +182,91 @@ function check_youtube_url($url)
     );
     restore_error_handler();
 
-    if ( ! is_array($headers)) {
-        return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
+    if (!is_array($headers)) {
+        return false;
     }
 
     $err_flag = strpos($headers[0], '200') ? 200 : 404;
 
     if ($err_flag !== 200) {
-        return "Видео по такой ссылке не найдено. Проверьте ссылку на видео";
+        return false;
     }
 
     return true;
+}
+
+/**
+ * Функция проверяет доступна ли ссылка
+ *
+ * @param  string  $url  ссылка на ресурс
+ *
+ * @return bool результат проверки
+ */
+function check_url(string $url): bool
+{
+    set_error_handler(
+        function () {
+        },
+        E_WARNING
+    );
+    $headers = get_headers($url);
+    restore_error_handler();
+
+    if (!is_array($headers)) {
+        return false;
+    }
+
+    return strpos($headers[0], '200') !== false;
+}
+
+/**
+ * Функция проверяет типа корректность типа файла для фото по ссылке.
+ *
+ * @param  string  $url  ссылка на ресурс
+ *
+ * @return bool результат проверки
+ */
+function check_photo_url(string $url): bool
+{
+    set_error_handler(
+        function () {
+        },
+        E_WARNING
+    );
+    $headers = get_headers($url, true);
+    restore_error_handler();
+
+    if (!is_array($headers) || !isset($headers['Content-Type'])) {
+        return false;
+    }
+
+    $mime_type = $headers['Content-Type'];
+
+    return array_search($mime_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
+}
+
+/**
+ * Функция возвращает в байтах размера файла по ссылке.
+ * В случае недоступности ссылки возвращается 0.
+ * @param  string  $url
+ *
+ * @return int Размер файла
+ */
+function get_url_size(string $url): int
+{
+    set_error_handler(
+        function () {
+        },
+        E_WARNING
+    );
+    $headers = get_headers($url, true);
+    restore_error_handler();
+
+    if (!is_array($headers) || !isset($headers['Content-Length'])) {
+        return 0;
+    }
+
+    return $headers['Content-Length'];
 }
 
 /**
@@ -203,7 +279,7 @@ function check_youtube_url($url)
 function embed_youtube_video($youtube_url)
 {
     $res = "";
-    $id  = extract_youtube_id($youtube_url);
+    $id = extract_youtube_id($youtube_url);
 
     if ($id) {
         $src = "https://www.youtube.com/embed/" . $id;
@@ -224,7 +300,7 @@ function embed_youtube_video($youtube_url)
 function embed_youtube_cover(string $youtube_url = null)
 {
     $res = "";
-    $id  = extract_youtube_id($youtube_url);
+    $id = extract_youtube_id($youtube_url);
 
     if ($id) {
         $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
@@ -276,7 +352,7 @@ function generate_random_date($index)
         ['weeks' => 4],
         ['months' => 11]
     ];
-    $dcnt   = count($deltas);
+    $dcnt = count($deltas);
 
     if ($index < 0) {
         $index = 0;
@@ -286,12 +362,23 @@ function generate_random_date($index)
         $index = $dcnt - 1;
     }
 
-    $delta    = $deltas[$index];
-    $timeval  = rand(1, current($delta));
+    $delta = $deltas[$index];
+    $timeval = rand(1, current($delta));
     $timename = key($delta);
 
     $ts = strtotime("$timeval $timename ago");
     $dt = date('Y-m-d H:i:s', $ts);
 
     return $dt;
+}
+
+/**
+ * Функция конвертирует байты в мегабайты.
+ *
+ * @param  int  $bytes - значение в байтах
+ *
+ * @return int - значение в мегабайтах
+ */
+function convert_to_megabytes(int $bytes): int {
+    return $bytes / (1024 * 1024);
 }

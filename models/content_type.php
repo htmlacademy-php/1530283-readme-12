@@ -26,7 +26,7 @@ function get_content_types(mysqli $db_connection)
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 

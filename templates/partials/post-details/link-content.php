@@ -1,6 +1,12 @@
 <?php
 
-$string_content = strip_tags($string_content);
+/**
+ * Шаблон контента публикации ссылки для страницы просмотра публикации
+ *
+ * @var string $string_content - строковый контент публикации
+ */
+
+$string_content = isset($string_content) ? strip_tags($string_content) : '';
 ?>
 
 <div class="post__main">

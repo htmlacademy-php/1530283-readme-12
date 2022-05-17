@@ -1,16 +1,13 @@
 <?php
-
-if ( ! isset($title)) {
-    $title = 'Заголовок';
-}
-
-if ( ! isset($user_name)) {
-    $user_name = 'Аноним';
-}
-
-if ( ! isset($is_auth)) {
-    $is_auth = 0;
-}
+/**
+ * Шаблон страниц сайта для зарегистрированных пользователей.
+ *
+ * @var string $title - заголовок страницы
+ * @var string $content - разметка основного контента страницы
+ * @var string | null $page_modifier - модификатор основного контейнера страницы
+ * @var string $user_name - имя пользователя
+ * @var int $is_auth - статус авторизации страницы
+ */
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -34,6 +31,10 @@ if ( ! isset($is_auth)) {
             text-align: center;
             font-size: 1.5rem;
             flex-grow: 1;
+        }
+
+        .post-link__info-wrapper {
+            align-items: center;
         }
     </style>
 </head>
@@ -212,7 +213,7 @@ if ( ! isset($is_auth)) {
                         </li>
                         <li>
                             <a class="header__post-button button button--transparent"
-                               href="markup/adding-post.html">Пост</a>
+                               href="add.php?content_type_id=1">Пост</a>
                         </li>
                     </ul>
                 </nav>
@@ -293,8 +294,6 @@ if ( ! isset($is_auth)) {
         </div>
     </div>
 </footer>
-<script src="/libs/dropzone.js"></script>
-<script src="/js/dropzone-settings.js"></script>
-<script src="/js/main.js"></script>
+<script src="/js/upload-photo.js" type="module"></script>
 </body>
 </html>

@@ -1,6 +1,12 @@
 <?php
 
-require_once 'helpers.php';
+require_once 'utils/helpers.php';
+
+/**
+ * Шаблон секции автора публикации для страницы просмотра публикации.
+ *
+ * @var array $author - ассоциативный массив с данными автора публикации
+ */
 
 list(
     'login' => $user_name,
@@ -20,7 +26,7 @@ $user_name = strip_tags($user_name);
             <a class="post-details__avatar-link user__avatar-link"
                href="#">
                 <img class="post-details__picture user__picture"
-                     src="/img/<?= $avatar_url ?>"
+                     src="/<?= $avatar_url ?>"
                      alt="Аватар пользователя">
             </a>
         </div>

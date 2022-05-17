@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Шаблон контента публикации цитаты для страницы просмотра публикации
+ *
+ * @var string $text_content - текстовый контент публикации
+ * @var string $string_content - строковый контент публикации
+ */
+
 $text_content   = htmlspecialchars($text_content);
 $string_content = htmlspecialchars($string_content);
 ?>

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Шаблон контента публикации текста для страницы просмотра публикации
+ *
+ * @var string $text_content - текстовый контент публикации
+ */
+
 $text_content = htmlspecialchars($text_content);
 ?>
 

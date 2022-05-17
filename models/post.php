@@ -1,5 +1,8 @@
 <?php
 
+require_once 'models/hashtag.php';
+require_once 'models/post_hashtag.php';
+
 /**
  * Функция получает список публикаций из базы данных.
  * Функция принимает ресурс соединения с базой данный
@@ -10,10 +13,11 @@
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  array[
- *                                 'sort_type' => 'views_count' | 'likes_count' | 'created_at' | null,
- *                                 'is_order_reversed' => bool | null,
- *                                 'content_type_id' => int | null] $config параметры запроса
+ * @param  array{
+ *     sort_type: 'views_count' | 'likes_count' | 'created_at' | null,
+ *     is_order_reversed: bool | null,
+ *     content_type_id: int | null
+ * } $config - параметры запроса
  *
  * @return null | array<int, array{
  *     id: int,
@@ -76,7 +80,7 @@ function get_posts(mysqli $db_connection, $config = [])
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 
@@ -89,8 +93,8 @@ function get_posts(mysqli $db_connection, $config = [])
  * в виде ассоциативного массива.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  int     $id             id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $id  - id публикации
  *
  * return null | array{
  *     id: int,
@@ -135,11 +139,83 @@ function get_post(mysqli $db_connection, int $id)
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 
     $post = mysqli_fetch_assoc($result);
 
     return $post['id'] ? $post : null;
+}
+
+/**
+ * Функция добавляет публикацию в базу данных.
+ * Функция возвращает id созданной публикации.
+ * В случае неуспешного создания возвращается null.
+ *
+ * Ограничения:
+ * Теги должны быть представлены в виде единой строки, разделенной
+ * одинарными пробелами. Пробелы в начале и конце строки не допускаются.
+ * Строка должна быть приведена к нижнему регистру.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  array{
+ *     title: string,
+ *     string_content: string,
+ *     text_content: string,
+ *     author_id: int,
+ *     content_type_id: int,
+ *     tags: string;
+ * }  $post_data - данные для добавления публикации
+ *
+ * @return int | null id созданной публикации
+ */
+function create_post(mysqli $db_connection, array $post_data)
+{
+    $title = mysqli_real_escape_string($db_connection, $post_data['title']);
+    $string_content =
+        mysqli_real_escape_string($db_connection, $post_data['string_content']);
+    $text_content =
+        mysqli_real_escape_string($db_connection, $post_data['text_content']);
+    $author_id =
+        mysqli_real_escape_string($db_connection, $post_data['author_id']);
+    $content_type_id =
+        mysqli_real_escape_string(
+            $db_connection,
+            $post_data['content_type_id']
+        );
+    $tags = $post_data['tags'] ? explode(
+        TEXT_SEPARATOR,
+        mysqli_real_escape_string($db_connection, $post_data['tags'])
+    ) : [];
+
+    $sql = "
+        INSERT INTO posts (
+            author_id,
+            content_type_id,
+            title,
+            text_content,
+            string_content
+        ) VALUES (
+            $author_id,
+            $content_type_id,
+            '$title',
+            '$text_content',
+            '$string_content'
+        )
+    ";
+
+    $result = mysqli_query($db_connection, $sql);
+
+    if (!$result) {
+        return null;
+    }
+
+    $post_id = mysqli_insert_id($db_connection);
+
+    foreach ($tags as $tag) {
+        add_hashtag_to_post($db_connection, $tag, $post_id);
+    }
+
+    return $post_id;
 }

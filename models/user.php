@@ -7,7 +7,7 @@
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  int     $id             id пользователя
+ * @param  int  $id  id пользователя
  *
  * return null | array{
  *     id: int,
@@ -43,7 +43,7 @@ function get_user(mysqli $db_connection, int $id)
 
     $result = mysqli_query($db_connection, $sql);
 
-    if ( ! $result) {
+    if (!$result) {
         return null;
     }
 

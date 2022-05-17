@@ -1,3 +1,16 @@
+<?php
+/**
+ * Шаблон секции сортировки и фильтрации карточки публикации
+ * страницы 'Популярное'.
+ *
+ * @var array $sort_types - массив с типами сортировки
+ * @var bool $is_sort_order_reversed - обратное направление сортировки
+ * @var array $any_content_filter - ассоциативный массив с данными
+ * для снятия фильтров по типу контента
+ * @var array $content_filters - массив с фильтрами по типу контента
+ */
+?>
+
 <div class="popular__filters-wrapper">
     <div class="popular__sorting sorting">
         <b class="popular__sorting-caption sorting__caption">Сортировка:</b>

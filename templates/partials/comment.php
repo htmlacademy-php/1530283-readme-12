@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Шаблон комментария на странице просмотра публикации.
+ *
+ * @var array $comment - ассоциативный массив комментария
+ */
+
 list(
     'content' => $content,
     'created_at' => $created_at,
