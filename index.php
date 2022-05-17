@@ -8,20 +8,11 @@ require_once 'models/post.php';
 require_once 'models/content_type.php';
 require_once 'init/db.php';
 
-if (!isset($db_connection) or !$db_connection) {
-    http_response_code(SERVER_ERROR_STATUS);
+/**
+ * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ */
 
-    $error_layout = include_template(
-        'empty-layout.php',
-        ['content' => 'Произошла внутренняя ошибка сервера']
-    );
-
-    ob_end_clean();
-
-    print($error_layout);
-
-    return;
-}
+check_db_connection($db_connection);
 
 $basename = basename(__FILE__);
 
