@@ -37,7 +37,7 @@
     };
 
     const onFileInputNodeChange = (evt) => {
-        const { files } = evt.target;
+        const {files} = evt.target;
         const [file] = files;
 
         if (!file) {
