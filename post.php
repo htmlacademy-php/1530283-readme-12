@@ -52,7 +52,7 @@ if ($is_page_error) {
 
     $layout_data['content'] = $page_content;
 
-    $layout_content = include_template('layout.php', $layout_data);
+    $layout_content = include_template('layouts/user.php', $layout_data);
 
     print($layout_content);
 
@@ -87,6 +87,6 @@ $page_content = include_template(
 
 $layout_data['content'] = $page_content;
 
-$layout_content = include_template('layout.php', $layout_data);
+$layout_content = include_template('layouts/user.php', $layout_data);
 
 print($layout_content);

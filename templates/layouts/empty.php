@@ -8,11 +8,11 @@
  * - по умолчанию)
  */
 
-if ( ! isset($title)) {
+if (!isset($title)) {
     $title = 'Ошибка';
 }
 
-if ( ! isset($content)) {
+if (!isset($content)) {
     $content = 'Что-то пошло не так...';
 }
 ?>

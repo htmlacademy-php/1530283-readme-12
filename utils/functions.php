@@ -430,7 +430,7 @@ function check_db_connection($db_connection)
         http_response_code(SERVER_ERROR_STATUS);
 
         $error_layout = include_template(
-            'empty-layout.php',
+            'layouts/empty.php',
             ['content' => 'Произошла внутренняя ошибка сервера']
         );
 

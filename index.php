@@ -63,7 +63,7 @@ if (is_null($content_types)) {
 
     $layout_data['content'] = $page_content;
 
-    $layout_content = include_template('layout.php', $layout_data);
+    $layout_content = include_template('layouts/user.php', $layout_data);
 
     print($layout_content);
 
@@ -112,7 +112,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
 
     $layout_data['content'] = $page_content;
 
-    $layout_content = include_template('layout.php', $layout_data);
+    $layout_content = include_template('layouts/user.php', $layout_data);
 
     print($layout_content);
 
@@ -136,6 +136,6 @@ $page_content = decorate_popular_page($popular_filters_content, $post_cards);
 
 $layout_data['content'] = $page_content;
 
-$layout_content = include_template('layout.php', $layout_data);
+$layout_content = include_template('layouts/user.php', $layout_data);
 
 print($layout_content);
