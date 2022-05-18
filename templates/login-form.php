@@ -64,24 +64,12 @@
                     </div>
                 </div>
             </div>
-            <?php
-            if ($invalid): ?>
-                <div class="form__invalid-block">
-                    <b class="form__invalid-slogan">Пожалуйста,
-                        исправьте следующие ошибки:</b>
-                    <ul class="form__invalid-list">
-                        <?php
-                        foreach ($errors as $error): ?>
-                            <li class="form__invalid-item">
-                                <?= $error['title'] ?>.
-                                <?= $error['description'] ?>.
-                            </li>
-                        <?php
-                        endforeach; ?>
-                    </ul>
-                </div>
-            <?php
-            endif; ?>
+            <?= $invalid ? include_template(
+                'partials/form-invalid-block.php',
+                [
+                    'errors' => $errors
+                ]
+            ) : '' ?>
         </div>
         <button class="login__submit button button--main" type="submit">
             Отправить
