@@ -1,12 +1,11 @@
 <?php
 /**
- * Шаблон страниц сайта для зарегистрированных пользователей.
+ * Шаблон страниц сайта для незарегистрированных пользователей.
  *
  * @var string $title - заголовок страницы
  * @var string $content - разметка основного контента страницы
  * @var string | null $page_modifier - модификатор основного контейнера страницы
  * @var string $basename - название текущего домена
- * @var string $user_name - имя пользователя
  */
 
 ?>
@@ -36,6 +35,11 @@
 
         .post-link__info-wrapper {
             align-items: center;
+        }
+
+        .header__nav-wrapper {
+            margin-left: auto;
+            flex-grow: 0;
         }
     </style>
 </head>
@@ -122,112 +126,26 @@
                 micro blogging
             </p>
         </div>
-        <form class="header__search-form form" action="#" method="get">
-            <div class="header__search">
-                <label class="visually-hidden">Поиск</label>
-                <input class="header__search-input form__input" type="search">
-                <button class="header__search-button button" type="submit">
-                    <svg class="header__search-icon" width="18" height="18">
-                        <use xlink:href="#icon-search"></use>
-                    </svg>
-                    <span class="visually-hidden">Начать поиск</span>
-                </button>
-            </div>
-        </form>
         <div class="header__nav-wrapper">
             <nav class="header__nav">
-                <ul class="header__my-nav">
-                    <li class="header__my-page header__my-page--popular">
-                        <a class="header__page-link
-                            <?= $basename === 'index.php'
-                            ? 'header__page-link--active'
-                            : '' ?>"
-                            <?= $basename !== 'index.php'
-                                ? 'href="index.php"'
-                                : '' ?>
-                           title="Популярный контент">
-                            <span class="visually-hidden">Популярный контент</span>
-                        </a>
-                    </li>
-                    <li class="header__my-page header__my-page--feed">
-                        <a class="header__page-link
-                            <?= $basename === 'feed.php'
-                            ? 'header__page-link--active'
-                            : '' ?>"
-                            <?= $basename !== 'feed.php'
-                                ? 'href="feed.php"'
-                                : '' ?>
-                           title="Моя лента">
-                            <span class="visually-hidden">Моя лента</span>
-                        </a>
-                    </li>
-                    <li class="header__my-page header__my-page--messages">
-                        <a class="header__page-link
-                            <?= $basename === 'messages.php'
-                            ? 'header__page-link--active'
-                            : '' ?>"
-                            <?= $basename !== 'messages.php'
-                                ? 'href="messages.php"'
-                                : '' ?>
-                           title="Личные сообщения">
-                            <span class="visually-hidden">Личные сообщения</span>
-                        </a>
-                    </li>
-                </ul>
                 <ul class="header__user-nav">
-                    <li class="header__profile">
-                        <a class="header__profile-link" href="#">
-                            <div class="header__avatar-wrapper">
-                                <img class="header__profile-avatar"
-                                     src="img/userpic-medium.jpg"
-                                     alt="Аватар профиля">
-                            </div>
-                            <div class="header__profile-name">
-                                    <span>
-                                        <?= $user_name ?>
-                                    </span>
-                                <svg class="header__link-arrow" width="10"
-                                     height="6">
-                                    <use xlink:href="#icon-arrow-right-ad"></use>
-                                </svg>
-                            </div>
-                        </a>
-                        <div class="header__tooltip-wrapper">
-                            <div class="header__profile-tooltip">
-                                <ul class="header__profile-nav">
-                                    <li class="header__profile-nav-item">
-                                        <a class="header__profile-nav-link"
-                                           href="#">
-                              <span class="header__profile-nav-text">
-                                Мой профиль
-                              </span>
-                                        </a>
-                                    </li>
-                                    <li class="header__profile-nav-item">
-                                        <a class="header__profile-nav-link"
-                                           href="#">
-                              <span class="header__profile-nav-text">
-                                Сообщения
-                                <i class="header__profile-indicator">2</i>
-                              </span>
-                                        </a>
-                                    </li>
-
-                                    <li class="header__profile-nav-item">
-                                        <a class="header__profile-nav-link"
-                                           href="#">
-                              <span class="header__profile-nav-text">
-                                Выход
-                              </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    <li class="header__authorization">
+                        <a class="header__user-button <?= $basename
+                                                          === 'login.php'
+                            ? 'header__user-button--active'
+                            : '' ?> header__authorization-button button"
+                            <?= $basename !== 'login.php' ? 'href="login.php"'
+                                : '' ?>
+                        >Вход</a>
                     </li>
                     <li>
-                        <a class="header__post-button button button--transparent"
-                           href="add.php">Пост</a>
+                        <a class="header__user-button <?= $basename
+                                                          === 'registration.php'
+                            ? 'header__user-button--active'
+                            : '' ?> header__register-button button" <?= $basename
+                                                                        !== 'registration.php'
+                            ? 'href="registration.php"'
+                            : '' ?>>Регистрация</a>
                     </li>
                 </ul>
             </nav>
@@ -279,20 +197,6 @@
                 </p>
             </div>
             <div class="footer__my-info">
-                <ul class="footer__my-pages">
-                    <li class="footer__my-page footer__my-page--feed">
-                        <a class="footer__page-link" href="feed.php">Моя
-                            лента</a>
-                    </li>
-                    <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="index.php">Популярный
-                            контент</a>
-                    </li>
-                    <li class="footer__my-page footer__my-page--messages">
-                        <a class="footer__page-link"
-                           href="messages.php">Личные сообщения</a>
-                    </li>
-                </ul>
                 <div class="footer__copyright">
                     <a class="footer__copyright-link" href="#">
                         <span>Разработано HTML Academy</span>

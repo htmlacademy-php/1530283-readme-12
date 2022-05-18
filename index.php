@@ -48,6 +48,7 @@ $layout_data = [
     'is_auth' => 1,
     'user_name' => 'Евгений',
     'page_modifier' => 'popular',
+    'basename' => $basename,
     'content' => '',
 ];
 
