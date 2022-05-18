@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         !count($errors) && $with_file ? save_file($form_data['avatar_file'])
             : '';
 
-    if ($with_file ?? !$photo_url) {
+    if ($with_file && !$photo_url) {
         $errors['avatar_file'] = [
             'title' => 'Файл фото',
             'description' => 'Не удалось загрузить файл'

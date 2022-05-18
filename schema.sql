@@ -17,7 +17,7 @@ CREATE TABLE users(
     created_at timestamp DEFAULT current_timestamp,
     email varchar(255) NOT NULL UNIQUE,
     login varchar(255) NOT NULL,
-    password_hash varchar(255) NOT NULL,
+    password_hash char(60) NOT NULL,
     avatar_url varchar(255)
 );
 

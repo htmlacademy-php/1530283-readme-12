@@ -130,7 +130,7 @@ function get_registration_password_error(array $form_data)
 {
     $password = $form_data['password'] ?? '';
     $password_repeat = $form_data['password_repeat'] ?? '';
-    $length = mb_strlen($password);
+    $length = strlen($password);
     $error_title = 'Пароль';
 
     if (!$length) {
@@ -140,7 +140,14 @@ function get_registration_password_error(array $form_data)
         ];
     }
 
-    // todo: check max length
+    if ($length > MAX_PASSWORD_BYTES_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_PASSWORD_BYTES_LENGTH
+                             . ' ' . 'байт',
+        ];
+    }
 
     if ($password_repeat && $password_repeat !== $password) {
         return [
@@ -175,7 +182,7 @@ function get_registration_password_repeat_error(array $form_data)
 {
     $password = $form_data['password'] ?? '';
     $password_repeat = $form_data['password_repeat'] ?? '';
-    $length = mb_strlen($password_repeat);
+    $length = strlen($password_repeat);
     $error_title = 'Повтор пароля';
 
     if (!$length) {
@@ -185,7 +192,14 @@ function get_registration_password_repeat_error(array $form_data)
         ];
     }
 
-    // todo: check max length
+    if ($length > MAX_PASSWORD_BYTES_LENGTH) {
+        return [
+            'title' => $error_title,
+            'description' => 'Длина поля не должна превышать '
+                             . MAX_PASSWORD_BYTES_LENGTH
+                             . ' ' . 'байт',
+        ];
+    }
 
     if ($password && $password_repeat !== $password) {
         return [

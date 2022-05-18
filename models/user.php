@@ -101,10 +101,16 @@ function create_user(mysqli $db_connection, array $user_data)
     return $user_id ? intval($user_id) : null;
 }
 
-// todo: add phpDoc
+
 /**
+ * Функция проверяет наличие в базе данных пользователя с заданным email.
+ * В случае наличия пользователя вовзращается true, при отсутсвии пользователя,
+ * либо при ошибке запроса возвращается false.
+ *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
  * @param  string  $email  -  проверяемый email
+ *
+ * @return bool результат проверки
  */
 function check_email_existence(mysqli $db_connection, string $email): bool
 {
