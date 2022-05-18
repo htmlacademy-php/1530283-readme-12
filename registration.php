@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
     }
 
-    $is_email_busy = check_email_existence($db_connection, $form_data['email']);
+    $is_email_busy = get_user_by_email($db_connection, $form_data['email']);
 
     if ($is_email_busy) {
         $errors['email'] = [
@@ -70,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $form_data['avatar_url'] = $photo_url;
         }
 
-        // todo: create password_hash
-        $form_data['password_hash'] = password_hash($form_data['password'], PASSWORD_BCRYPT);
+        $form_data['password_hash'] =
+            password_hash($form_data['password'], PASSWORD_BCRYPT);
 
         $created_user_id = create_user($db_connection, $form_data);
 

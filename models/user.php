@@ -101,34 +101,44 @@ function create_user(mysqli $db_connection, array $user_data)
     return $user_id ? intval($user_id) : null;
 }
 
-
 /**
- * Функция проверяет наличие в базе данных пользователя с заданным email.
- * В случае наличия пользователя вовзращается true, при отсутсвии пользователя,
- * либо при ошибке запроса возвращается false.
+ * Функция получает пользователя из базы данных по заданному email.
+ * В случае успешного запроса функция возвращает пользователя
+ * в виде ассоциативного массива.
+ * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
- * @param  string  $email  -  проверяемый email
+ * @param  string  $email  -  email пользователя
  *
- * @return bool результат проверки
+ * @return null | array{
+ *    id: int,
+ *    email: string,
+ *    password_hash: string
+ * } - данные пользователя
  */
-function check_email_existence(mysqli $db_connection, string $email): bool
+function get_user_by_email(mysqli $db_connection, string $email)
 {
     $email = mysqli_real_escape_string($db_connection, $email);
 
-    $sql = "SELECT id FROM users WHERE email = '$email'";
+    $sql = "
+        SELECT
+               id,
+               email,
+               login,
+               created_at,
+               avatar_url,
+               password_hash
+        FROM users
+        WHERE email = '$email'
+    ";
 
     $result = mysqli_query($db_connection, $sql);
 
     if (!$result) {
-        return false;
+        return null;
     }
 
     $user = mysqli_fetch_assoc($result);
 
-    if (!$user) {
-        return false;
-    }
-
-    return boolval($user['id']);
+    return $user['id'] ? $user : null;
 }

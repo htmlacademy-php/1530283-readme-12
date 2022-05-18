@@ -109,7 +109,7 @@ function get_posts(mysqli $db_connection, $config = [])
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
- * }
+ * } - данные публикации
  */
 function get_post(mysqli $db_connection, int $id)
 {
