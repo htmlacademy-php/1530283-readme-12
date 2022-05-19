@@ -174,18 +174,6 @@ function get_post(mysqli $db_connection, int $id)
  */
 function create_post(mysqli $db_connection, array $post_data)
 {
-    $title = mysqli_real_escape_string($db_connection, $post_data['title']);
-    $string_content =
-        mysqli_real_escape_string($db_connection, $post_data['string_content']);
-    $text_content =
-        mysqli_real_escape_string($db_connection, $post_data['text_content']);
-    $author_id =
-        mysqli_real_escape_string($db_connection, $post_data['author_id']);
-    $content_type_id =
-        mysqli_real_escape_string(
-            $db_connection,
-            $post_data['content_type_id']
-        );
     $tags = $post_data['tags'] ? explode(
         TEXT_SEPARATOR,
         mysqli_real_escape_string($db_connection, $post_data['tags'])
@@ -198,22 +186,30 @@ function create_post(mysqli $db_connection, array $post_data)
             title,
             text_content,
             string_content
-        ) VALUES (
-            $author_id,
-            $content_type_id,
-            '$title',
-            '$text_content',
-            '$string_content'
-        )
+        ) VALUES (?, ?, ?, ?, ?)
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        'iisss',
+        $post_data['author_id'],
+        $post_data['content_type_id'],
+        $post_data['title'],
+        $post_data['text_content'],
+        $post_data['string_content']
+    );
+    mysqli_stmt_execute($statement);
 
-    if (!$result) {
+    if (mysqli_error($db_connection)) {
         return null;
     }
 
     $post_id = mysqli_insert_id($db_connection);
+
+    if (!$post_id) {
+        return null;
+    }
 
     foreach ($tags as $tag) {
         add_hashtag_to_post($db_connection, $tag, $post_id);

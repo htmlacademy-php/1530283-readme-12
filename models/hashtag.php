@@ -94,11 +94,13 @@ function create_hashtag(mysqli $db_connection, string $name)
 {
     $name = mysqli_real_escape_string($db_connection, $name);
 
-    $sql = "INSERT INTO hashtags (name) VALUES ('$name')";
+    $sql = "INSERT INTO hashtags (name) VALUES (?)";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 's', $name);
+    mysqli_stmt_execute($statement);
 
-    if (!$result) {
+    if (mysqli_error($db_connection)) {
         return null;
     }
 

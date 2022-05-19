@@ -21,7 +21,6 @@ $errors = [];
 
 $layout_data = [
     'title' => 'Добавить публикацию',
-    'is_auth' => 1,
     'user_name' => 'Евгений',
     'page_modifier' => 'adding-post',
     'content' => '',

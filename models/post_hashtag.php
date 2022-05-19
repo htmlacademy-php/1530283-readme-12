@@ -17,20 +17,11 @@ function create_post_hashtag(
     int $post_id,
     int $hashtag_id
 ): bool {
-    $post_id = mysqli_real_escape_string($db_connection, $post_id);
-    $hashtag_id = mysqli_real_escape_string($db_connection, $hashtag_id);
+    $sql = "INSERT INTO posts_hashtags (post_id, hashtag_id) VALUES (?, ?)";
 
-    $sql = "
-        INSERT INTO posts_hashtags (
-            post_id,
-            hashtag_id)
-        VALUES (
-            '$post_id',
-            '$hashtag_id'
-        );
-    ";
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'ss', $post_id, $hashtag_id);
+    mysqli_stmt_execute($statement);
 
-    $result = mysqli_query($db_connection, $sql);
-
-    return boolval($result);
+    return !mysqli_error($db_connection);
 }
