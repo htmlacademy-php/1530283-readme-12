@@ -39,20 +39,11 @@ function get_posts(mysqli $db_connection, $config = [])
         $db_connection,
         $config['sort_type']
     ) : null;
-
-    $content_type_id = $config['content_type_id'] ? mysqli_real_escape_string(
-        $db_connection,
-        $config['content_type_id']
-    ) : null;
-
+    $content_type_id = $config['content_type_id'] ?? '';
     $is_order_reversed = $config['is_order_reversed'] ?? false;
 
+    $filter_sql = $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
     $order_direction_sql = $is_order_reversed ? 'ASC' : 'DESC';
-
-    $filter_sql = $content_type_id
-        ? "WHERE content_types.id = $content_type_id"
-        : '';
-
     $sort_sql = $sort_type ? "ORDER BY $sort_type $order_direction_sql" : '';
 
     $sql = "
@@ -78,7 +69,14 @@ function get_posts(mysqli $db_connection, $config = [])
         $sort_sql
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+
+    if ($filter_sql) {
+        mysqli_stmt_bind_param($statement, 'i', $content_type_id);
+    }
+
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
