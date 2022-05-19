@@ -113,8 +113,6 @@ function get_posts(mysqli $db_connection, $config = [])
  */
 function get_post(mysqli $db_connection, int $id)
 {
-    $id = mysqli_real_escape_string($db_connection, $id);
-
     $sql = "
         SELECT
             posts.id,
@@ -134,10 +132,14 @@ function get_post(mysqli $db_connection, int $id)
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
-        WHERE posts.id = $id
+        WHERE posts.id = ?
+        GROUP BY posts.id
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;

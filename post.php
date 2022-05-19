@@ -32,7 +32,7 @@ if (is_array($post) and isset($post['author_id'])) {
 }
 
 $layout_data = [
-    'title' => 'Популярное',
+    'title' => 'Просмотр поста',
     'is_auth' => 1,
     'user_name' => 'Евгений',
     'page_modifier' => 'publication',
@@ -85,6 +85,7 @@ $page_content = include_template(
     ]
 );
 
+$layout_data['title'] = $post['title'];
 $layout_data['content'] = $page_content;
 
 $layout_content = include_template('layouts/user.php', $layout_data);
