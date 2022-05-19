@@ -11,26 +11,27 @@ require_once 'models/post_hashtag.php';
  * приведенную к нижнему регистру.
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
- * @param  string  $name  - название хэштега
+ * @param  string  $hashtag_name  - название хэштега
  *
  * @return null | array{
  *     id: int,
  *     name: string
  * } - хэштег
  */
-function get_hashtag(mysqli $db_connection, string $name)
+function get_hashtag(mysqli $db_connection, string $hashtag_name)
 {
-    $name = mysqli_real_escape_string($db_connection, $name);
-
     $sql = "
         SELECT
             id,
             name
         FROM hashtags
-        WHERE name = '$name'
+        WHERE name = ?
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 's', $hashtag_name);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
@@ -56,8 +57,6 @@ function get_hashtag(mysqli $db_connection, string $name)
  */
 function get_hashtags(mysqli $db_connection, int $post_id)
 {
-    $post_id = mysqli_real_escape_string($db_connection, $post_id);
-
     $sql = "
         SELECT
             id,
@@ -65,10 +64,13 @@ function get_hashtags(mysqli $db_connection, int $post_id)
         FROM hashtags
         JOIN posts_hashtags
             ON hashtags.id = posts_hashtags.hashtag_id
-        WHERE posts_hashtags.post_id = $post_id
+        WHERE posts_hashtags.post_id = ?
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 's', $post_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;

@@ -7,7 +7,7 @@
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
- * @param  int  $id  - id пользователя
+ * @param  int  $user_id  - id пользователя
  *
  * return null | array{
  *     id: int,
@@ -19,10 +19,8 @@
  *     posts_count: int,
  * }
  */
-function get_user(mysqli $db_connection, int $id)
+function get_user(mysqli $db_connection, int $user_id)
 {
-    $id = mysqli_real_escape_string($db_connection, $id);
-
     $sql = "
         SELECT
             users.id,
@@ -37,11 +35,14 @@ function get_user(mysqli $db_connection, int $id)
                 ON users.id = subscriptions.observable_id
             LEFT JOIN posts
                 ON users.id = posts.author_id
-        WHERE users.id = $id
+        WHERE users.id = ?
         GROUP BY users.id
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 's', $user_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
@@ -69,30 +70,27 @@ function get_user(mysqli $db_connection, int $id)
  */
 function create_user(mysqli $db_connection, array $user_data)
 {
-    $email = mysqli_real_escape_string($db_connection, $user_data['email']);
-    $login =
-        mysqli_real_escape_string($db_connection, $user_data['login']);
-    $password_hash =
-        mysqli_real_escape_string($db_connection, $user_data['password_hash']);
-    $avatar_url = $user_data['avatar_url'];
-
     $sql = "
         INSERT INTO users (
             email,
             login,
             password_hash,
             avatar_url
-        ) VALUES (
-            '$email',
-            '$login',
-            '$password_hash',
-            '$avatar_url'
-        )
+        ) VALUES (?, ?, ?, ?)
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        'ssss',
+        $user_data['email'],
+        $user_data['login'],
+        $user_data['password_hash'],
+        $user_data['avatar_url'],
+    );
+    mysqli_stmt_execute($statement);
 
-    if (!$result) {
+    if (mysqli_error($db_connection)) {
         return null;
     }
 
@@ -108,7 +106,7 @@ function create_user(mysqli $db_connection, array $user_data)
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
- * @param  string  $email  -  email пользователя
+ * @param  string  $user_email  -  email пользователя
  *
  * @return null | array{
  *    id: int,
@@ -116,10 +114,8 @@ function create_user(mysqli $db_connection, array $user_data)
  *    password_hash: string
  * } - данные пользователя
  */
-function get_user_by_email(mysqli $db_connection, string $email)
+function get_user_by_email(mysqli $db_connection, string $user_email)
 {
-    $email = mysqli_real_escape_string($db_connection, $email);
-
     $sql = "
         SELECT
                id,
@@ -129,10 +125,13 @@ function get_user_by_email(mysqli $db_connection, string $email)
                avatar_url,
                password_hash
         FROM users
-        WHERE email = '$email'
+        WHERE email = ?
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 's', $user_email);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;

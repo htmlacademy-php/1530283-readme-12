@@ -40,7 +40,7 @@ function get_content_types(mysqli $db_connection)
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $id - id типа контента
+ * @param  int  $content_type_id - id типа контента
  *
  * @return null | array{
  *     id: int,
@@ -48,20 +48,21 @@ function get_content_types(mysqli $db_connection)
  *     name: string
  * } - данные типа контента
  */
-function get_content_type(mysqli $db_connection, int $id)
+function get_content_type(mysqli $db_connection, int $content_type_id)
 {
-    $id = mysqli_real_escape_string($db_connection, $id);
-
     $sql = "
         SELECT
             content_types.id,
             content_types.type,
             content_types.name
         FROM content_types
-        WHERE id = $id
+        WHERE id = ?
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $content_type_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
