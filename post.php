@@ -8,20 +8,11 @@ require_once 'models/user.php';
 require_once 'models/hashtag.php';
 require_once 'init/db.php';
 
-if (!isset($db_connection) or !$db_connection) {
-    http_response_code(SERVER_ERROR_STATUS);
+/**
+ * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ */
 
-    $error_layout = include_template(
-        'empty-layout.php',
-        ['content' => 'Произошла внутренняя ошибка сервера']
-    );
-
-    ob_end_clean();
-
-    print($error_layout);
-
-    return;
-}
+check_db_connection($db_connection);
 
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -41,7 +32,7 @@ if (is_array($post) and isset($post['author_id'])) {
 }
 
 $layout_data = [
-    'title' => 'Популярное',
+    'title' => 'Просмотр поста',
     'is_auth' => 1,
     'user_name' => 'Евгений',
     'page_modifier' => 'publication',
@@ -61,7 +52,7 @@ if ($is_page_error) {
 
     $layout_data['content'] = $page_content;
 
-    $layout_content = include_template('layout.php', $layout_data);
+    $layout_content = include_template('layouts/user.php', $layout_data);
 
     print($layout_content);
 
@@ -94,8 +85,9 @@ $page_content = include_template(
     ]
 );
 
+$layout_data['title'] = $post['title'];
 $layout_data['content'] = $page_content;
 
-$layout_content = include_template('layout.php', $layout_data);
+$layout_content = include_template('layouts/user.php', $layout_data);
 
 print($layout_content);

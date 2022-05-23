@@ -416,3 +416,28 @@ function save_file(array $temp_file, string $destination = 'uploads')
 
     return $result ? $relative_path : false;
 }
+
+/**
+ * Функиця проверяет наличие ресурса соединения с базой данных.
+ * В случае отсутствия установленного соединения рендерит шаблон с отображением
+ * сообщения об ошибке сервера и досрочно выходит из сценария.
+ *
+ * @param  mysqli | false | null  $db_connection  - ресурс соединения с базой данных
+ */
+function check_db_connection($db_connection)
+{
+    if (!isset($db_connection) or !$db_connection) {
+        http_response_code(SERVER_ERROR_STATUS);
+
+        $error_layout = include_template(
+            'layouts/empty.php',
+            ['content' => 'Произошла внутренняя ошибка сервера']
+        );
+
+        ob_end_clean();
+
+        print($error_layout);
+
+        exit();
+    }
+}

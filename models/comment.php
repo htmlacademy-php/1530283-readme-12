@@ -19,8 +19,6 @@
  */
 function get_comments(mysqli $db_connection, int $post_id)
 {
-    $post_id = mysqli_real_escape_string($db_connection, $post_id);
-
     $sql = "
         SELECT 
             comments.id,
@@ -31,10 +29,13 @@ function get_comments(mysqli $db_connection, int $post_id)
         FROM comments
             JOIN users
                 ON comments.author_id = users.id
-        WHERE comments.post_id = $post_id
+        WHERE comments.post_id = ?
     ";
 
-    $result = mysqli_query($db_connection, $sql);
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $post_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;

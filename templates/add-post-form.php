@@ -2,7 +2,7 @@
 /**
  * Шаблон основного контента страницы добаления публикации
  *
- * @var string $content_filters - разметка секции табов по типу контента
+ * @var string $content_tabs - разметка секции табов по типу контента
  * @var bool $content_fields - разметка полей контента публикации
  * @var string $title - скрытый заголовок формы
  * @var array $form_data - ассоциативный массив с данными полей формы
@@ -20,13 +20,17 @@
     </div>
     <div class="adding-post container">
         <div class="adding-post__tabs-wrapper tabs">
-            <?= $content_filters ?>
+            <?= $content_tabs ?>
             <div class="adding-post__tab-content">
                 <section
                         class="adding-post__photo tabs__content tabs__content--active">
                     <h2 class="visually-hidden"><?= $title ?></h2>
                     <form class="adding-post__form form" action="#"
                           method="post" enctype="multipart/form-data">
+                        <input class="adding-post__input form__input"
+                               type="hidden" name="content-type-id"
+                               value="<?= $form_data['content_type_id'] ??
+                                          '' ?>">
                         <div class="form__text-inputs-wrapper">
                             <div class="form__text-inputs">
                                 <div class="adding-post__input-wrapper form__input-wrapper">
@@ -81,24 +85,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <?php
-                            if ($invalid): ?>
-                                <div class="form__invalid-block">
-                                    <b class="form__invalid-slogan">Пожалуйста,
-                                        исправьте следующие ошибки:</b>
-                                    <ul class="form__invalid-list">
-                                        <?php
-                                        foreach ($errors as $error): ?>
-                                            <li class="form__invalid-item">
-                                                <?= $error['title'] ?>.
-                                                <?= $error['description'] ?>.
-                                            </li>
-                                        <?php
-                                        endforeach; ?>
-                                    </ul>
-                                </div>
-                            <?php
-                            endif; ?>
+                            <?= $invalid ? include_template(
+                                'partials/form-invalid-block.php',
+                                [
+                                    'errors' => $errors
+                                ]
+                            ) : '' ?>
                         </div>
                         <?php
                         if ($with_photo_file): ?>

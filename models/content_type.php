@@ -10,7 +10,7 @@
  *
  * @return null | array<int, array{
  *     id: int,
- *     icon: string,
+ *     type: string,
  *     name: string
  * }>
  */
@@ -19,7 +19,7 @@ function get_content_types(mysqli $db_connection)
     $sql = "
         SELECT
             content_types.id,
-            content_types.icon,
+            content_types.type,
             content_types.name
         FROM content_types
     ";
@@ -31,4 +31,44 @@ function get_content_types(mysqli $db_connection)
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Функиция возвращает данные типа контента из базы данных.
+ * В случае успешного запроса функция возвращает данные в виде
+ * ассоциативного массива.
+ * В случае неуспешного запроса возвращается null.
+ *
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param  int  $content_type_id - id типа контента
+ *
+ * @return null | array{
+ *     id: int,
+ *     type: string,
+ *     name: string
+ * } - данные типа контента
+ */
+function get_content_type(mysqli $db_connection, int $content_type_id)
+{
+    $sql = "
+        SELECT
+            content_types.id,
+            content_types.type,
+            content_types.name
+        FROM content_types
+        WHERE id = ?
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $content_type_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return null;
+    }
+
+    $content_type = mysqli_fetch_assoc($result);
+
+    return $content_type['id'] ? $content_type : null;
 }

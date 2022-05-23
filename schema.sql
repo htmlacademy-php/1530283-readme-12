@@ -8,8 +8,8 @@ USE readme;
 
 CREATE TABLE content_types(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
-    name varchar(255) NOT NULL UNIQUE,
-    icon varchar(255) NOT NULL UNIQUE
+    type varchar(255) NOT NULL UNIQUE,
+    name varchar(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE users(
@@ -17,7 +17,7 @@ CREATE TABLE users(
     created_at timestamp DEFAULT current_timestamp,
     email varchar(255) NOT NULL UNIQUE,
     login varchar(255) NOT NULL,
-    password_hash varchar(255) NOT NULL,
+    password_hash char(60) NOT NULL,
     avatar_url varchar(255)
 );
 

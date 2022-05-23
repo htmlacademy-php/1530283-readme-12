@@ -8,20 +8,11 @@ require_once 'models/post.php';
 require_once 'models/content_type.php';
 require_once 'init/db.php';
 
-if (!isset($db_connection) or !$db_connection) {
-    http_response_code(SERVER_ERROR_STATUS);
+/**
+ * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ */
 
-    $error_layout = include_template(
-        'empty-layout.php',
-        ['content' => 'Произошла внутренняя ошибка сервера']
-    );
-
-    ob_end_clean();
-
-    print($error_layout);
-
-    return;
-}
+check_db_connection($db_connection);
 
 $basename = basename(__FILE__);
 
@@ -39,7 +30,7 @@ if (!$current_sort_type) {
 
     header("Location: $url");
 
-    return;
+    exit();
 }
 
 $current_content_filter = filter_input(
@@ -57,6 +48,7 @@ $layout_data = [
     'is_auth' => 1,
     'user_name' => 'Евгений',
     'page_modifier' => 'popular',
+    'basename' => $basename,
     'content' => '',
 ];
 
@@ -72,7 +64,7 @@ if (is_null($content_types)) {
 
     $layout_data['content'] = $page_content;
 
-    $layout_content = include_template('layout.php', $layout_data);
+    $layout_content = include_template('layouts/user.php', $layout_data);
 
     print($layout_content);
 
@@ -90,7 +82,7 @@ $sort_types = get_sort_types($basename);
 $content_filters = get_content_filters($content_types, $basename);
 $any_content_filter = [
     'name' => 'Все',
-    'icon' => 'all',
+    'type' => 'all',
     'url' => get_content_filter_url($basename),
     'active' => is_query_active(CONTENT_FILTER_QUERY),
 ];
@@ -121,7 +113,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
 
     $layout_data['content'] = $page_content;
 
-    $layout_content = include_template('layout.php', $layout_data);
+    $layout_content = include_template('layouts/user.php', $layout_data);
 
     print($layout_content);
 
@@ -145,6 +137,6 @@ $page_content = decorate_popular_page($popular_filters_content, $post_cards);
 
 $layout_data['content'] = $page_content;
 
-$layout_content = include_template('layout.php', $layout_data);
+$layout_content = include_template('layouts/user.php', $layout_data);
 
 print($layout_content);

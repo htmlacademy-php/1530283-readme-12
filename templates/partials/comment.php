@@ -18,7 +18,7 @@ list(
     <div class="comments__avatar">
         <a class="user__avatar-link" href="#">
             <img class="comments__picture"
-                 src="img/<?= $author_avatar ?>"
+                 src="/<?= $author_avatar ?>"
                  alt="Аватар пользователя">
         </a>
     </div>

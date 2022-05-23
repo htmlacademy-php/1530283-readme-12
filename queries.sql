@@ -1,5 +1,5 @@
 # создает список типов контента для поста
-INSERT INTO content_types (name, icon) VALUES
+INSERT INTO content_types (name, type) VALUES
    ('Картинка', 'photo'),
    ('Видео', 'video'),
    ('Текст', 'text'),
@@ -8,16 +8,16 @@ INSERT INTO content_types (name, icon) VALUES
 
 # создает трех пользователей
 INSERT INTO users (email, login, password_hash, avatar_url) VALUES
-    ('ivan_ivanov@mail.com', 'user_ivan', 'user_ivan_password_hash', 'userpic-larisa-small.jpg'),
-    ('petr_petrov@mail.com', 'user_petr', 'user_petr_password_hash', 'userpic.jpg'),
-    ('sidr_sidorov@mail.com', 'user_sidr', 'user_sidr_password_hash', 'userpic-mark.jpg');
+    ('ivan_ivanov@mail.com', 'user_ivan', 'user_ivan_password_hash', 'img/userpic-larisa-small.jpg'),
+    ('petr_petrov@mail.com', 'user_petr', 'user_petr_password_hash', 'img/userpic.jpg'),
+    ('sidr_sidorov@mail.com', 'user_sidr', 'user_sidr_password_hash', 'img/userpic-mark.jpg');
 
 # создает существующий список постов
 INSERT INTO posts (author_id, content_type_id, title, text_content, string_content, views_count) VALUES
     (1, 4, 'Цитата', 'Мы в жизни любим только раз, а после ищем лишь похожих', 'Неизвестный автор', 3),
     (2, 3, 'Игра престолов', 'Не могу дождаться начала финального сезона своего любимого сериала!', '', 0),
-    (3, 1, 'Наконец, обработал фотки!', '', 'rock-medium.jpg', 2),
-    (1, 1, 'Моя мечта', '', 'coast-medium.jpg', 10),
+    (3, 1, 'Наконец, обработал фотки!', '', 'img/rock-medium.jpg', 2),
+    (1, 1, 'Моя мечта', '', 'img/coast-medium.jpg', 10),
     (2, 5, 'Лучшие курсы', '', 'www.htmlacademy.ru', 5);
 
 # создает пару комментариев к разным постам

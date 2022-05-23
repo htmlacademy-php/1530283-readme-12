@@ -80,6 +80,12 @@ const ALLOWED_PHOTO_FILE_TYPES = [
     'image/gif',
 ];
 
+const MAX_EMAIL_LENGTH = 255;
+
+const MAX_LOGIN_LENGTH = 255;
+
+const MAX_PASSWORD_BYTES_LENGTH = 72;
+
 const MAX_TITLE_LENGTH = 255;
 
 const MAX_TAG_LENGTH = 255;
