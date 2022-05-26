@@ -34,7 +34,7 @@ list(
             <a class="post__author-link" href="#" title="Автор">
                 <div class="post__avatar-wrapper">
                     <img class="post__author-avatar"
-                         src="/<?= $author_avatar ?>"
+                         src="/<?= $author_avatar ?? 'img/icon-input-user.svg' ?>"
                          alt="Аватар пользователя">
                 </div>
                 <div class="post__info">
