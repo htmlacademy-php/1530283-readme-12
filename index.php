@@ -1,15 +1,39 @@
 <?php
 
 require_once 'utils/helpers.php';
+require_once 'utils/functions.php';
+require_once 'utils/login-form-validators.php';
+require_once 'models/user.php';
+require_once 'init/db.php';
+
+/**
+ * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ */
 
 session_start();
-
 $user = $_SESSION['user'] ?? null;
 
-if (!$user) {
-    $layout_content = include_template('layouts/welcome.php', []);
+check_db_connection($db_connection);
 
-    // todo: handle POST request
+if (!$user) {
+    $form_data = [];
+    $errors = [];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        list(
+            'form_data' => $form_data,
+            'errors' => $errors,
+            ) = handle_login_form($db_connection);
+    }
+
+    $layout_content = include_template(
+        'layouts/welcome.php',
+        [
+
+            'form_data' => $form_data,
+            'errors' => $errors,
+        ]
+    );
 
     print($layout_content);
 
