@@ -6,7 +6,7 @@
  * @var string $content - разметка основного контента страницы
  * @var string | null $page_modifier - модификатор основного контейнера страницы
  * @var string $basename - название текущего домена
- * @var string $user_name - имя пользователя
+ * @var array $user - ассоциативный массив с данными пользователя
  */
 
 ?>
@@ -139,11 +139,11 @@
                 <ul class="header__my-nav">
                     <li class="header__my-page header__my-page--popular">
                         <a class="header__page-link
-                            <?= $basename === 'index.php'
+                            <?= $basename === 'popular.php'
                             ? 'header__page-link--active'
                             : '' ?>"
-                            <?= $basename !== 'index.php'
-                                ? 'href="index.php"'
+                            <?= $basename !== 'popular.php'
+                                ? 'href="popular.php"'
                                 : '' ?>
                            title="Популярный контент">
                             <span class="visually-hidden">Популярный контент</span>
@@ -151,11 +151,11 @@
                     </li>
                     <li class="header__my-page header__my-page--feed">
                         <a class="header__page-link
-                            <?= $basename === 'feed.php'
+                            <?= $basename === 'index.php'
                             ? 'header__page-link--active'
                             : '' ?>"
-                            <?= $basename !== 'feed.php'
-                                ? 'href="feed.php"'
+                            <?= $basename !== 'index.php'
+                                ? 'href="index.php"'
                                 : '' ?>
                            title="Моя лента">
                             <span class="visually-hidden">Моя лента</span>
@@ -179,12 +179,12 @@
                         <a class="header__profile-link" href="#">
                             <div class="header__avatar-wrapper">
                                 <img class="header__profile-avatar"
-                                     src="img/userpic-medium.jpg"
+                                     src="<?= $user['avatar_url'] ?? 'img/icon-input-user.svg' ?>"
                                      alt="Аватар профиля">
                             </div>
                             <div class="header__profile-name">
                                     <span>
-                                        <?= $user_name ?>
+                                        <?= $user['login'] ?>
                                     </span>
                                 <svg class="header__link-arrow" width="10"
                                      height="6">
@@ -215,7 +215,7 @@
 
                                     <li class="header__profile-nav-item">
                                         <a class="header__profile-nav-link"
-                                           href="#">
+                                           href="logout.php">
                               <span class="header__profile-nav-text">
                                 Выход
                               </span>
@@ -281,11 +281,11 @@
             <div class="footer__my-info">
                 <ul class="footer__my-pages">
                     <li class="footer__my-page footer__my-page--feed">
-                        <a class="footer__page-link" href="feed.php">Моя
+                        <a class="footer__page-link" href="index.php">Моя
                             лента</a>
                     </li>
                     <li class="footer__my-page footer__my-page--popular">
-                        <a class="footer__page-link" href="index.php">Популярный
+                        <a class="footer__page-link" href="popular.php">Популярный
                             контент</a>
                     </li>
                     <li class="footer__my-page footer__my-page--messages">

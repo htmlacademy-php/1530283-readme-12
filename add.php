@@ -12,6 +12,8 @@ require_once 'init/db.php';
  * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
  */
 
+$user = check_user();
+
 check_db_connection($db_connection);
 
 $form_data = [
@@ -21,7 +23,7 @@ $errors = [];
 
 $layout_data = [
     'title' => 'Добавить публикацию',
-    'user_name' => 'Евгений',
+    'user' => $user,
     'page_modifier' => 'adding-post',
     'content' => '',
 ];

@@ -10,6 +10,10 @@ require_once 'init/db.php';
  * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
  */
 
+session_start();
+
+check_guest();
+
 check_db_connection($db_connection);
 
 $basename = basename(__FILE__);
@@ -48,8 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!count($errors)) {
+        unset($user['password_hash']);
+        $_SESSION['user'] = $user;
         header('Location: index.php');
-
         exit();
     }
 }

@@ -12,6 +12,8 @@ require_once 'init/db.php';
  * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
  */
 
+$user = check_user();
+
 check_db_connection($db_connection);
 
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
@@ -33,8 +35,7 @@ if (is_array($post) and isset($post['author_id'])) {
 
 $layout_data = [
     'title' => 'Просмотр поста',
-    'is_auth' => 1,
-    'user_name' => 'Евгений',
+    'user' => $user,
     'page_modifier' => 'publication',
     'content' => '',
 ];

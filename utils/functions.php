@@ -441,3 +441,40 @@ function check_db_connection($db_connection)
         exit();
     }
 }
+
+/**
+ * Функция вовзвращает данные о пользователе из сессии.
+ * Данные представлены в виде ассоциативного массива.
+ * В случае отсутствия данных происходит перенаправление на контроллер index.php
+ * и досрочный выход из сценария.
+ *
+ * @return array | null - данные о пользователе
+ */
+function check_user() {
+    session_start();
+
+    $user = $_SESSION['user'];
+
+    if (!$user) {
+        header('Location: index.php');
+
+        exit();
+    }
+
+    return $user;
+}
+
+/**
+ * Функция проверят наличие данных о пользователе в сессии.
+ * В случае наличия данных происходит перенаправление на контроллер index.php
+ * и досрочный выход из сценария.
+ */
+function check_guest() {
+    session_start();
+
+    if (isset($_SESSION['user'])) {
+        header('Location: index.php');
+
+        exit();
+    }
+}
