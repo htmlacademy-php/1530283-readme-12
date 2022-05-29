@@ -25,7 +25,6 @@ $layout_data = [
     'title' => 'Добавить публикацию',
     'user' => $user,
     'page_modifier' => 'adding-post',
-    'content' => '',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -226,7 +225,7 @@ $page_content = include_template(
         'invalid_block_content' => $invalid_block_content,
         'content_tabs' => $content_tabs_content,
         'content_fields' => $content_fields_content,
-        'with_photo_file' => $is_photo_content_type,
+        'with_photo_file' => $is_photo_content_type
     ]
 );
 

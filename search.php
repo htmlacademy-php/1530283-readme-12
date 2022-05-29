@@ -17,17 +17,33 @@ $layout_data = [
     'query' => $query,
 ];
 
-$query_content = include_template('pages/search/query.php', [
-    'query' => $query,
-]);
+$query_content = include_template(
+    'pages/search/query.php',
+    [
+        'query' => $query,
+    ]
+);
 
 // todo: temp posts
 $posts = get_posts($db_connection);
 
-$page_content = include_template('pages/search/page.php', [
-    'query_content' => $query_content,
-    'post_cards' => $posts
-]);
+// todo: check if $posts is null // array;
+
+$page_content = count($posts)
+    ? include_template(
+        'pages/search/page.php',
+        [
+            'query_content' => $query_content,
+            'post_cards' => $posts
+        ]
+    )
+    : include_template(
+        'pages/search/page-empty.php',
+        [
+            'query_content' => $query_content,
+            'back_url' => $_SERVER['HTTP_REFERER'],
+        ]
+    );
 
 $layout_data['content'] = $page_content;
 
