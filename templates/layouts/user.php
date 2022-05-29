@@ -182,7 +182,7 @@
                             <div class="header__avatar-wrapper">
                                 <img class="header__profile-avatar"
                                      src="<?= $user['avatar_url'] ??
-                                              'img/icon-input-user.svg' ?>"
+                                              AVATAR_PLACEHOLDER ?>"
                                      alt="Аватар профиля">
                             </div>
                             <div class="header__profile-name">

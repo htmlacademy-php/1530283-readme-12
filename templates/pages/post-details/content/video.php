@@ -12,5 +12,7 @@ $string_content = strip_tags($string_content);
 ?>
 
 <div class="post-details__image-wrapper post-photo__image-wrapper">
-    <?= embed_youtube_video($string_content); ?>
+    <iframe width="760" height="400"
+            src="<?= get_youtube_iframe_url($string_content) ?>"
+            frameborder="0"></iframe>
 </div>

@@ -26,7 +26,7 @@ $user_name = strip_tags($user_name);
             <a class="post-details__avatar-link user__avatar-link"
                href="#">
                 <img class="post-details__picture user__picture"
-                     src="/<?= $avatar_url ?? 'img/icon-input-user.svg' ?>"
+                     src="/<?= $avatar_url ?? AVATAR_PLACEHOLDER ?>"
                      alt="Аватар пользователя">
             </a>
         </div>

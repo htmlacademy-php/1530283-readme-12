@@ -27,7 +27,7 @@ list(
         </a>
     </header>
     <div class="post__main">
-        <?= decorate_popular_post_card_content($post_card) ?>
+        <?= decorate_post_card_content($post_card, 'popular') ?>
     </div>
     <footer class="post__footer">
         <div class="post__author">

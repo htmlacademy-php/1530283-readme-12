@@ -70,17 +70,10 @@ list(
                             'просмотров'
                         ) ?></span>
                 </div>
-                <ul class="post__tags">
-                    <?php
-                    foreach ($post['hashtags'] as $hashtag): ?>
-                        <li>
-                            <a href="<?= 'search.php?query=' . urlencode(
-                                "#$hashtag"
-                            ) ?>">#<?= htmlspecialchars($hashtag) ?></a>
-                        </li>
-                    <?php
-                    endforeach; ?>
-                </ul>
+                <?= include_template(
+                    'common/post-card/hashtags.php',
+                    ['hashtags' => $post['hashtags']]
+                ) ?>
                 <div class="comments">
                     <form class="comments__form form" action="#" method="post">
                         <div class="comments__my-avatar">

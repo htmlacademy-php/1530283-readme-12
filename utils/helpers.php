@@ -270,45 +270,31 @@ function get_url_size(string $url): int
 }
 
 /**
- * Возвращает код iframe для вставки youtube видео на страницу
+ * Возвращает ссылку для вставки iframe с youtube видео
  *
  * @param  string  $youtube_url  Ссылка на youtube видео
  *
- * @return string
+ * @return string - ссылка
  */
-function embed_youtube_video($youtube_url)
+function get_youtube_iframe_url(string $youtube_url): string
 {
-    $res = "";
     $id = extract_youtube_id($youtube_url);
 
-    if ($id) {
-        $src = "https://www.youtube.com/embed/" . $id;
-        $res = '<iframe width="760" height="400" src="' . $src
-               . '" frameborder="0"></iframe>';
-    }
-
-    return $res;
+    return "https://www.youtube.com/embed/$id";
 }
 
 /**
- * Возвращает img-тег с обложкой видео для вставки на страницу
+ * Возвращает ссылку на изображение превью youtube видео
  *
- * @param  string|null  $youtube_url  Ссылка на youtube видео
+ * @param  string  $youtube_url  Ссылка на youtube видео
  *
- * @return string
+ * @return string - ссылка
  */
-function embed_youtube_cover(string $youtube_url = null)
+function get_youtube_cover_url(string $youtube_url): string
 {
-    $res = "";
     $id = extract_youtube_id($youtube_url);
 
-    if ($id) {
-        $src = sprintf("https://img.youtube.com/vi/%s/mqdefault.jpg", $id);
-        $res = '<img alt="youtube cover" width="320" height="120" src="' . $src
-               . '" />';
-    }
-
-    return $res;
+    return "https://img.youtube.com/vi/$id/mqdefault.jpg";
 }
 
 /**

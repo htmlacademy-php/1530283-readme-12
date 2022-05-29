@@ -3,6 +3,8 @@
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
+require_once 'models/post.php';
+require_once 'init/db.php';
 
 $user = check_user();
 
@@ -19,8 +21,12 @@ $query_content = include_template('pages/search/query.php', [
     'query' => $query,
 ]);
 
+// todo: temp posts
+$posts = get_posts($db_connection);
+
 $page_content = include_template('pages/search/page.php', [
     'query_content' => $query_content,
+    'post_cards' => $posts
 ]);
 
 $layout_data['content'] = $page_content;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Функция возвращает разметку контента страницы с карточками
  * популярных публикаций сгенерированных из переданного массива публикаций.
@@ -64,19 +65,25 @@ function decorate_popular_page(
  * и/или строковый контент (text_content и/или string_content) в зависимости
  * от типа контента.
  *
- * @param  array  $post_card  Данные публикации в виде ассоциативного массива
+ * @param  array  $post_card - данные публикации в виде ассоциативного массива
+ * @param string | null $page - название страницы (опционально)
  *
  * @return string Разметка контента карточки публикации
  */
-function decorate_popular_post_card_content(array $post_card): string
-{
+function decorate_post_card_content(
+    array $post_card,
+    string $page = null
+): string {
     $id = $post_card['id'];
     $content_type = $post_card['content_type'];
     $text_content = $post_card['text_content'] ?? '';
     $string_content = $post_card['string_content'] ?? '';
 
+    $template_path = $page ? "pages/$page/post-card/content/$content_type.php"
+        : "common/post-card/content/$content_type.php";
+
     return include_template(
-        "pages/popular/post-card/content/$content_type.php",
+        $template_path,
         [
             'id' => $id,
             'text_content' => $text_content,
@@ -84,3 +91,5 @@ function decorate_popular_post_card_content(array $post_card): string
         ]
     );
 }
+
+
