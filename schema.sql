@@ -107,4 +107,4 @@ CREATE TABLE messages(
         ON DELETE CASCADE
 );
 
-CREATE INDEX post_text_content_index ON posts(text_content);
+CREATE FULLTEXT INDEX post_full_text_index ON posts(title, string_content, text_content);
