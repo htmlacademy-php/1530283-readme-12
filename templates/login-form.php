@@ -33,11 +33,12 @@
                                     class="visually-hidden">Информация об ошибке</span>
                         </button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок
-                                сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об
-                                ошибке,
-                                подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?= $errors['email']
+                                    ? $errors['email']['title']
+                                    : '' ?></h3>
+                            <p class="form__error-desc"><?= $errors['email']
+                                    ? $errors['email']['description']
+                                    : '' ?></p>
                         </div>
                     </div>
                 </div>
@@ -55,11 +56,12 @@
                                 type="button">!<span class="visually-hidden">Информация об ошибке</span>
                         </button>
                         <div class="form__error-text">
-                            <h3 class="form__error-title">Заголовок
-                                сообщения</h3>
-                            <p class="form__error-desc">Текст сообщения об
-                                ошибке,
-                                подробно объясняющий, что не так.</p>
+                            <h3 class="form__error-title"><?= $errors['password']
+                                    ? $errors['password']['title']
+                                    : '' ?></h3>
+                            <p class="form__error-desc"><?= $errors['password']
+                                    ? $errors['password']['description']
+                                    : '' ?></p>
                         </div>
                     </div>
                 </div>

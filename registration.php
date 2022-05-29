@@ -12,6 +12,8 @@ require_once 'init/db.php';
 
 check_db_connection($db_connection);
 
+check_guest();
+
 $basename = basename(__FILE__);
 
 $form_data = [];

@@ -441,3 +441,98 @@ function check_db_connection($db_connection)
         exit();
     }
 }
+
+/**
+ * Функция вовзвращает данные о пользователе из сессии.
+ * Данные представлены в виде ассоциативного массива.
+ * В случае отсутствия данных происходит перенаправление на контроллер index.php
+ * и досрочный выход из сценария.
+ *
+ * @return array | null - данные о пользователе
+ */
+function check_user()
+{
+    session_start();
+
+    $user = $_SESSION['user'];
+
+    if (!$user) {
+        header('Location: index.php');
+
+        exit();
+    }
+
+    return $user;
+}
+
+/**
+ * Функция проверят наличие данных о пользователе в сессии.
+ * В случае наличия данных происходит перенаправление на контроллер index.php
+ * и досрочный выход из сценария.
+ */
+function check_guest()
+{
+    session_start();
+
+    if (isset($_SESSION['user'])) {
+        header('Location: index.php');
+
+        exit();
+    }
+}
+
+/**
+ * Функция обрабабатыват данные формы аутентификации.
+ * В случае успешной аутентификации происходит
+ * перенаправление на контроллер index.php и досрочный выход из сценария.
+ * В случае некорректных данных, либо ошибки аутентификации,
+ * возвращает ассоциативный массив с данными формы и ошибками валидации.
+ *
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ *
+ * @return array - данные формы и данные ошибок валидации
+ */
+function handle_login_form(mysqli $db_connection)
+{
+    $form_data = [];
+
+    $form_data['email'] = $_POST['email'] ?? '';
+    $form_data['password'] = $_POST['password'] ?? '';
+
+    $errors = get_login_form_data_errors($form_data);
+
+    $user = !count($errors) ? get_user_by_email(
+        $db_connection,
+        $form_data['email']
+    ) : null;
+
+    $is_password_correct = $user
+                           && password_verify(
+                               $form_data['password'],
+                               $user['password_hash']
+                           );
+
+    if (!count($errors) && (!$user || !$is_password_correct)) {
+        $errors['email'] = [
+            'title' => 'Электронная почта',
+            'description' => 'Неверное значение',
+        ];
+
+        $errors['password'] = [
+            'title' => 'Пароль',
+            'description' => 'Неверное значение',
+        ];
+    }
+
+    if (!count($errors)) {
+        unset($user['password_hash']);
+        $_SESSION['user'] = $user;
+        header('Location: index.php');
+        exit();
+    }
+
+    return [
+        'form_data' => $form_data,
+        'errors' => $errors
+    ];
+}
