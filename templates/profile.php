@@ -1,3 +1,12 @@
+<?php
+
+/**
+ * Шаблон страницы профиля пользователя
+ *
+ */
+
+?>
+
 <h1 class="visually-hidden">Профиль</h1>
 <div class="profile profile--default">
     <div class="profile__user-wrapper">

@@ -2,6 +2,8 @@
 
 const CONTENT_FILTER_QUERY = 'content_type_id';
 
+const SEARCH_QUERY = 'query';
+
 const SORT_TYPE_QUERY = 'sort_type';
 
 const SORT_ORDER_REVERSED = "sort_order_reversed";

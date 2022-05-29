@@ -37,7 +37,6 @@ $layout_data = [
     'title' => 'Просмотр поста',
     'user' => $user,
     'page_modifier' => 'publication',
-    'content' => '',
 ];
 
 $is_page_error = is_null($post) || is_null($comments) || is_null($author)
