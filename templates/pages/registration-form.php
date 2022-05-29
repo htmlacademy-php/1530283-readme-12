@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Шаблон основного контента страницы регистрации
  *
  * @var array $form_data - ассоциативный массив с данными полей формы
  * @var array $errors - ассоциативный массив с данными ошибок полей формы
- * @var bool $invalid - валидность формы
+ * @var string $invalid_block_content - разметка блока ошибок валидации
  */
 
 ?>
@@ -117,12 +116,7 @@
                     </div>
                 </div>
             </div>
-            <?= $invalid ? include_template(
-                'partials/form-invalid-block.php',
-                [
-                    'errors' => $errors
-                ]
-            ) : '' ?>
+            <?= $invalid_block_content  ?>
         </div>
         <div class="registration__input-file-container form__input-container form__input-container--file">
             <input class="registration__input-file form__input-file"

@@ -32,12 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ) = handle_login_form($db_connection);
 }
 
+$invalid_block_content = count($errors) ? include_template(
+    'common/form-invalid-block.php',
+    [
+        'errors' => $errors
+    ]
+) : '';
+
 $page_content = include_template(
-    'login-form.php',
+    'pages/login-form.php',
     [
         'form_data' => $form_data,
         'errors' => $errors,
-        'invalid' => !!count($errors),
+        'invalid_block_content' => $invalid_block_content,
     ]
 );
 

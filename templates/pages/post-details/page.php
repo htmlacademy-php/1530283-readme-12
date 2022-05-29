@@ -110,7 +110,7 @@ list(
                             <?php
                             foreach ($comments as $comment): ?>
                                 <?= include_template(
-                                    'partials/comment.php',
+                                    'pages/post-details/comment.php',
                                     [
                                         'comment' => $comment
                                     ]

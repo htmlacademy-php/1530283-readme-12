@@ -17,7 +17,7 @@
                     <header class="post__header post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="../img/userpic-elvira.jpg" alt="Аватар пользователя" width="60" height="60">
+                                <img class="post__author-avatar" src="../../../img/userpic-elvira.jpg" alt="Аватар пользователя" width="60" height="60">
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name">Эльвира Хайпулинова</b>
@@ -28,7 +28,7 @@
                     <div class="post__main">
                         <h2><a href="#">Наконец, обработала фотки!</a></h2>
                         <div class="post-photo__image-wrapper">
-                            <img src="../img/rock.jpg" alt="Фото от пользователя" width="760" height="396">
+                            <img src="../../../img/rock.jpg" alt="Фото от пользователя" width="760" height="396">
                         </div>
                     </div>
                     <footer class="post__footer post__indicators">
@@ -58,7 +58,7 @@
                     <header class="post__header post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="../img/userpic-tanya.jpg" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="../../../img/userpic-tanya.jpg" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name">Таня Фирсова</b>
@@ -100,7 +100,7 @@
                     <header class="post__header post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="../img/userpic-petro.jpg" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="../../../img/userpic-petro.jpg" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name">Петр Демин</b>
@@ -111,7 +111,7 @@
                     <div class="post__main">
                         <div class="post-video__block">
                             <div class="post-video__preview">
-                                <img src="../img/coast.jpg" alt="Превью к видео" width="760" height="396">
+                                <img src="../../../img/coast.jpg" alt="Превью к видео" width="760" height="396">
                             </div>
                             <div class="post-video__control">
                                 <button class="post-video__play post-video__play--paused button button--video" type="button"><span class="visually-hidden">Запустить видео</span></button>
@@ -159,7 +159,7 @@
                     <header class="post__header post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="../img/userpic-mark.jpg" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="../../../img/userpic-mark.jpg" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name">Марк Смолов</b>
@@ -202,7 +202,7 @@
                     <header class="post__header post__author">
                         <a class="post__author-link" href="#" title="Автор">
                             <div class="post__avatar-wrapper">
-                                <img class="post__author-avatar" src="../img/userpic-larisa.jpg" alt="Аватар пользователя">
+                                <img class="post__author-avatar" src="../../../img/userpic-larisa.jpg" alt="Аватар пользователя">
                             </div>
                             <div class="post__info">
                                 <b class="post__author-name">Лариса Роговая</b>
@@ -214,7 +214,7 @@
                         <div class="post-link__wrapper">
                             <a class="post-link__external" href="http://www.vitadental.ru" title="Перейти по ссылке">
                                 <div class="post-link__icon-wrapper">
-                                    <img src="../img/logo-vita.jpg" alt="Иконка">
+                                    <img src="../../../img/logo-vita.jpg" alt="Иконка">
                                 </div>
                                 <div class="post-link__info">
                                     <h3>Стоматология «Вита»</h3>

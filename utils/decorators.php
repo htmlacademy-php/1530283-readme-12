@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Функция возвращает разметку контента страницы с карточками
  * популярных публикаций сгенерированных из переданного массива публикаций.
@@ -10,10 +9,10 @@
  *
  * Ограничения:
  * 1. Функция не обрабатывает разметку секции фильтрации и сортировки,
- * т.е. принимает готовую разметку данной секции для шаблонов popular.php
- * и popular-empty.php.
+ * т.е. принимает готовую разметку данной секции для шаблонов popular/page.php
+ * и popular/page-empty.php.
  * 2. Структура ассоциативного массива публикации должна соответствовать
- * требованиям шаблона popular.php.
+ * требованиям шаблона popular/page.php.
  *
  * @param  string  $popular_filters_content  Разметка секции фильтрации и сортировки
  * @param  array | null  $post_cards  Массив публикаций в виде ассоциативных массивов
@@ -26,7 +25,7 @@ function decorate_popular_page(
 ): string {
     if (is_null($post_cards)) {
         return include_template(
-            'popular-empty.php',
+            'pages/popular/page-empty.php',
             [
                 'popular_filters_content' => $popular_filters_content,
                 'title' => 'Ошибка',
@@ -37,7 +36,7 @@ function decorate_popular_page(
 
     if (!count($post_cards)) {
         return include_template(
-            'popular-empty.php',
+            'pages/popular/page-empty.php',
             [
                 'popular_filters_content' => $popular_filters_content,
                 'title' => 'Ничего не найдено',
@@ -46,7 +45,7 @@ function decorate_popular_page(
     }
 
     return include_template(
-        'popular.php',
+        'pages/popular/page.php',
         [
             'popular_filters_content' => $popular_filters_content,
             'post_cards' => $post_cards,
@@ -69,7 +68,7 @@ function decorate_popular_page(
  *
  * @return string Разметка контента карточки публикации
  */
-function decorate_post_card_content(array $post_card): string
+function decorate_popular_post_card_content(array $post_card): string
 {
     $id = $post_card['id'];
     $content_type = $post_card['content_type'];
@@ -77,7 +76,7 @@ function decorate_post_card_content(array $post_card): string
     $string_content = $post_card['string_content'] ?? '';
 
     return include_template(
-        "partials/post-card/$content_type-content.php",
+        "pages/popular/post-card/content/$content_type.php",
         [
             'id' => $id,
             'text_content' => $text_content,

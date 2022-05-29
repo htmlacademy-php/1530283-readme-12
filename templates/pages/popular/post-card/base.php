@@ -27,14 +27,15 @@ list(
         </a>
     </header>
     <div class="post__main">
-        <?= decorate_post_card_content($post_card) ?>
+        <?= decorate_popular_post_card_content($post_card) ?>
     </div>
     <footer class="post__footer">
         <div class="post__author">
             <a class="post__author-link" href="#" title="Автор">
                 <div class="post__avatar-wrapper">
                     <img class="post__author-avatar"
-                         src="/<?= $author_avatar ?? 'img/icon-input-user.svg' ?>"
+                         src="/<?= $author_avatar ??
+                                   'img/icon-input-user.svg' ?>"
                          alt="Аватар пользователя">
                 </div>
                 <div class="post__info">
@@ -43,7 +44,8 @@ list(
                         ) ?></b>
                     <time class="post__time" datetime="<?= format_iso_date_time(
                         $created_at
-                    ) ?>"><?= format_relative_time($created_at) ?> назад</time>
+                    ) ?>"><?= format_relative_time($created_at) ?> назад
+                    </time>
                 </div>
             </a>
         </div>

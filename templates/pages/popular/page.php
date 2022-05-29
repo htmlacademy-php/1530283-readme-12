@@ -7,6 +7,7 @@
  * фильтрации по типу контента
  * @var array $post_cards - массив с данными для карточек публикаций
  */
+
 ?>
 
 <div class="container">
@@ -18,7 +19,7 @@
         <?php
         foreach ($post_cards as $post_card): ?>
             <?= include_template(
-                'partials/post-card/base.php',
+                'pages/popular/post-card/base.php',
                 ['post_card' => $post_card]
             ) ?>
         <?php

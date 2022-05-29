@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(SERVER_ERROR_STATUS);
 
         $page_content = include_template(
-            'partials/error.php',
+            'common/error.php',
             ['content' => 'Не удалось завершить регистрацию']
         );
 
@@ -100,12 +100,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$invalid_block_content = count($errors) ? include_template(
+    'common/form-invalid-block.php',
+    [
+        'errors' => $errors
+    ]
+) : '';
+
 $page_content = include_template(
-    'registration-form.php',
+    'pages/registration-form.php',
     [
         'form_data' => $form_data,
         'errors' => $errors,
-        'invalid' => !!count($errors),
+        'invalid_block_content' => $invalid_block_content,
     ]
 );
 

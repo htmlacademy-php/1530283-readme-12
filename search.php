@@ -15,11 +15,11 @@ $layout_data = [
     'query' => $query,
 ];
 
-$query_content = include_template('partials/search/query.php', [
+$query_content = include_template('pages/search/query.php', [
     'query' => $query,
 ]);
 
-$page_content = include_template('search.php', [
+$page_content = include_template('pages/search/page.php', [
     'query_content' => $query_content,
 ]);
 

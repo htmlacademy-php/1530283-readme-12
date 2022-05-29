@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(SERVER_ERROR_STATUS);
 
         $page_content = include_template(
-            'partials/error.php',
+            'common/error.php',
             ['content' => 'Не удалось создать публикацию']
         );
 
@@ -131,7 +131,7 @@ if (!$content_types) {
     http_response_code(NOT_FOUND_STATUS);
 
     $page_content = include_template(
-        'partials/error.php',
+        'common/error.php',
         ['content' => 'Не удалось загрузить страницу']
     );
 
@@ -160,7 +160,7 @@ if ($current_content_id) {
         http_response_code(NOT_FOUND_STATUS);
 
         $page_content = include_template(
-            'partials/error.php',
+            'common/error.php',
             [
                 'content' => 'Тип контента задан неверно',
                 'link_description' => 'Перейти на страницу формы с типом по умолчанию',
@@ -195,7 +195,7 @@ $content_tabs =
     get_content_filters($content_types, $basename, $current_content_id);
 
 $content_fields_content = include_template(
-    "partials/add-post-form/$current_content_type-content-fields.php",
+    "pages/add-post-form/content-fields/$current_content_type.php",
     [
         'form_data' => $form_data,
         'errors' => $errors,
@@ -204,19 +204,26 @@ $content_fields_content = include_template(
 
 $content_tabs_content =
     include_template(
-        'partials/add-post-form/content-tabs.php',
+        'pages/add-post-form/content-tabs.php',
         [
             'content_tabs' => $content_tabs,
         ]
     );
 
+$invalid_block_content = count($errors) ? include_template(
+    'common/form-invalid-block.php',
+    [
+        'errors' => $errors
+    ]
+) : '';
+
 $page_content = include_template(
-    'add-post-form.php',
+    'pages/add-post-form/page.php',
     [
         'title' => ADD_POST_FORM_TITLE[$current_content_type],
         'form_data' => $form_data,
         'errors' => $errors,
-        'invalid' => boolval(count($errors)),
+        'invalid_block_content' => $invalid_block_content,
         'content_tabs' => $content_tabs_content,
         'content_fields' => $content_fields_content,
         'with_photo_file' => $is_photo_content_type,

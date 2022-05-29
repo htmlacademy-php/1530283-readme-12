@@ -46,7 +46,7 @@ if ($is_page_error) {
     http_response_code(NOT_FOUND_STATUS);
 
     $page_content = include_template(
-        'partials/error.php',
+        'common/error.php',
         ['content' => 'Не удалось загрузить страницу']
     );
 
@@ -60,14 +60,14 @@ if ($is_page_error) {
 }
 
 $author_content = include_template(
-    'partials/post-details/author.php',
+    'pages/post-details/author.php',
     ['author' => $author]
 );
 
 $content_type = $post['content_type'];
 
 $post_details_content = include_template(
-    "partials/post-details/$content_type-content.php",
+    "pages/post-details/content/$content_type.php",
     [
         'text_content' => $post['text_content'] ?? '',
         'string_content' => $post['string_content'] ?? '',
@@ -75,7 +75,7 @@ $post_details_content = include_template(
 );
 
 $page_content = include_template(
-    'post-details.php',
+    'pages/post-details/page.php',
     [
         'post' => $post,
         'post_content' => $post_details_content,

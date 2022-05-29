@@ -24,7 +24,7 @@ $layout_data = [
     'content' => '',
 ];
 
-$page_content = include_template('profile.php', []);
+$page_content = include_template('pages/profile.php', []);
 
 $layout_data['content'] = $page_content;
 

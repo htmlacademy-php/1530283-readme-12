@@ -4,10 +4,10 @@
  *
  * @var string $content_tabs - разметка секции табов по типу контента
  * @var bool $content_fields - разметка полей контента публикации
+ * @var string $invalid_block_content - разметка блока ошибок валидации
  * @var string $title - скрытый заголовок формы
  * @var array $form_data - ассоциативный массив с данными полей формы
  * @var array $errors - ассоциативный массив с данными ошибок полей формы
- * @var bool $invalid - валидность формы
  * @var bool $with_photo_file - наличие секции для загрузки файла фото
  */
 
@@ -85,12 +85,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <?= $invalid ? include_template(
-                                'partials/form-invalid-block.php',
-                                [
-                                    'errors' => $errors
-                                ]
-                            ) : '' ?>
+                            <?= $invalid_block_content ?>
                         </div>
                         <?php
                         if ($with_photo_file): ?>

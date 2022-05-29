@@ -1,14 +1,15 @@
 <?php
 /**
- * Шаблон полей контента для формы добавления публикации ссылки.
+ * Шаблон полей контента для формы добавления публикации видео.
  *
  * @var array $form_data - ассоциативный массив с данными полей формы
  * @var array $errors - ассоциативный массив с данными ошибок полей формы
  */
+
 ?>
-<div class="adding-post__textarea-wrapper form__input-wrapper">
+<div class="adding-post__input-wrapper form__input-wrapper">
     <label class="adding-post__label form__label"
-           for="string-content">Ссылка <span
+           for="string-content">Ссылка youtube <span
                 class="form__input-required">*</span></label>
     <div class="form__input-section <?= $errors['string_content']
         ? 'form__input-section--error' : '' ?>">
@@ -22,8 +23,7 @@
                     class="visually-hidden">Информация об ошибке</span>
         </button>
         <div class="form__error-text">
-            <h3 class="form__error-title">
-                <?= $errors['string_content']
+            <h3 class="form__error-title"><?= $errors['string_content']
                     ? $errors['string_content']['title'] : '' ?></h3>
             <p class="form__error-desc"><?= $errors['string_content']
                     ? $errors['string_content']['description'] : '' ?></p>

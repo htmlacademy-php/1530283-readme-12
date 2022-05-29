@@ -1,15 +1,15 @@
 <?php
 /**
- * Шаблон полей контента для формы добавления публикации видео.
+ * Шаблон полей контента для формы добавления публикации фото.
  *
  * @var array $form_data - ассоциативный массив с данными полей формы
  * @var array $errors - ассоциативный массив с данными ошибок полей формы
  */
+
 ?>
 <div class="adding-post__input-wrapper form__input-wrapper">
     <label class="adding-post__label form__label"
-           for="string-content">Ссылка youtube <span
-                class="form__input-required">*</span></label>
+           for="string-content">Ссылка из интернета</label>
     <div class="form__input-section <?= $errors['string_content']
         ? 'form__input-section--error' : '' ?>">
         <input class="adding-post__input form__input"

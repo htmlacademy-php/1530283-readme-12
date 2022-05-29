@@ -50,7 +50,7 @@ $layout_data = [
     'content' => '',
 ];
 
-$page_content = include_template('feed.php', []);
+$page_content = include_template('pages/feed.php', []);
 
 $layout_data['content'] = $page_content;
 

@@ -48,7 +48,7 @@ if (is_null($content_types)) {
     http_response_code(NOT_FOUND_STATUS);
 
     $page_content = include_template(
-        'partials/error.php',
+        'common/error.php',
         [
             'content' => 'Не удалось загрузить страницу'
         ]
@@ -81,7 +81,7 @@ $any_content_filter = [
 ];
 
 $popular_filters_content = include_template(
-    'partials/popular-filters.php',
+    'pages/popular/filters.php',
     [
         'sort_types' => $sort_types,
         'is_sort_order_reversed' => $is_sort_order_reversed,
@@ -94,7 +94,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
     http_response_code(BAD_REQUEST_STATUS);
 
     $page_content = include_template(
-        'popular-empty.php',
+        'pages/popular/page-empty.php',
         [
             'popular_filters_content' => $popular_filters_content,
             'title' => 'Ошибка',
