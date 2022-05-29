@@ -5,7 +5,6 @@ require_once 'utils/functions.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
 require_once 'models/user.php';
-require_once 'models/hashtag.php';
 require_once 'init/db.php';
 
 /**
@@ -21,7 +20,6 @@ $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 $post = null;
 $comments = null;
 $author = null;
-$hashtags = null;
 
 if ($post_id) {
     $post = get_post($db_connection, $post_id);
@@ -39,8 +37,7 @@ $layout_data = [
     'page_modifier' => 'publication',
 ];
 
-$is_page_error = is_null($post) || is_null($comments) || is_null($author)
-                 || is_null($hashtags);
+$is_page_error = is_null($post) || is_null($comments) || is_null($author);
 
 if ($is_page_error) {
     http_response_code(NOT_FOUND_STATUS);
@@ -79,7 +76,6 @@ $page_content = include_template(
     [
         'post' => $post,
         'post_content' => $post_details_content,
-        'hashtags' => $hashtags,
         'author_content' => $author_content,
         'comments' => $comments,
     ]

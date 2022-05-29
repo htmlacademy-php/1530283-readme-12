@@ -42,7 +42,8 @@ function get_posts(mysqli $db_connection, $config = [])
     $content_type_id = $config['content_type_id'] ?? '';
     $is_order_reversed = $config['is_order_reversed'] ?? false;
 
-    $filter_sql = $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
+    $filter_sql =
+        $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
     $order_direction_sql = $is_order_reversed ? 'ASC' : 'DESC';
     $sort_sql = $sort_type ? "ORDER BY $sort_type $order_direction_sql" : '';
 
@@ -107,6 +108,7 @@ function get_posts(mysqli $db_connection, $config = [])
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     hashtags: array
  * } - данные публикации
  */
 function get_post(mysqli $db_connection, int $id)
@@ -124,12 +126,15 @@ function get_post(mysqli $db_connection, int $id)
             users.avatar_url AS author_avatar,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
-            COUNT(DISTINCT comments.id) AS comments_count
+            COUNT(DISTINCT comments.id) AS comments_count,
+            GROUP_CONCAT(DISTINCT hashtags.name) AS hashtags_string
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+            LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         WHERE posts.id = ?
         GROUP BY posts.id
     ";
@@ -145,7 +150,15 @@ function get_post(mysqli $db_connection, int $id)
 
     $post = mysqli_fetch_assoc($result);
 
-    return $post['id'] ? $post : null;
+    if (!$post['id']) {
+        return null;
+    }
+
+    $post['hashtags'] =
+        $post['hashtags_string'] ? explode(',', $post['hashtags_string']) : [];
+    unset($post['hashtags_string']);
+
+    return $post;
 }
 
 /**

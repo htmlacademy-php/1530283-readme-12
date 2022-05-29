@@ -9,7 +9,6 @@ require_once 'utils/helpers.php';
  * @var string $post_content - разметка секции контента публикации
  * @var string $author_content - разметка секции автора публикации
  * @var array $comments - массив с комментариями к публикации
- * @var array $hashtags - массив с хэштегами к публикации
  */
 
 list(
@@ -73,8 +72,12 @@ list(
                 </div>
                 <ul class="post__tags">
                     <?php
-                    foreach ($hashtags as $hashtag): ?>
-                        <li><a href="#">#<?= $hashtag['name'] ?></a></li>
+                    foreach ($post['hashtags'] as $hashtag): ?>
+                        <li>
+                            <a href="<?= 'search.php?query=' . urlencode(
+                                "#$hashtag"
+                            ) ?>">#<?= htmlspecialchars($hashtag) ?></a>
+                        </li>
                     <?php
                     endforeach; ?>
                 </ul>
