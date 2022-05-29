@@ -1,8 +1,10 @@
 <?php
+
 require_once 'config/db.php';
 
 if (!isset($db) or !is_array($db)) {
     $db_connection = false;
+
     return;
 }
 
@@ -18,4 +20,5 @@ $db_connection = mysqli_connect($localhost, $username, $password, $database);
 
 if ($db_connection) {
     mysqli_set_charset($db_connection, $charset);
+    mysqli_options($db_connection, MYSQLI_OPT_INT_AND_FLOAT_NATIVE, true);
 }

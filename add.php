@@ -123,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$basename = basename(__FILE__);
 
 $content_types = get_content_types($db_connection);
 
@@ -148,31 +149,50 @@ $current_content_id = filter_input(
     CONTENT_FILTER_QUERY,
     FILTER_SANITIZE_NUMBER_INT
 );
+
 $current_content_type = null;
 
 if ($current_content_id) {
-    $current_content_type_data =
-        get_content_type($db_connection, $current_content_id);
-    $current_content_type =
-        $current_content_type_data ? $current_content_type_data['type'] : null;
+    $is_current_content_valid =
+        validate_content_filter($current_content_id, $content_types);
+
+    if (!$is_current_content_valid) {
+        http_response_code(NOT_FOUND_STATUS);
+
+        $page_content = include_template(
+            'partials/error.php',
+            [
+                'content' => 'Тип контента задан неверно',
+                'link_description' => 'Перейти на страницу формы с типом по умолчанию',
+                'link_url' => $basename,
+            ]
+        );
+
+        $layout_data['content'] = $page_content;
+        $layout_content = include_template('layouts/user.php', $layout_data);
+
+        print($layout_content);
+
+        exit();
+    }
+} else {
+    $default_content_type = $content_types[0];
+    $current_content_id = $default_content_type['id'];
+    $current_content_type = $default_content_type['type'];
 }
 
-$basename = basename(__FILE__);
-
 if (!$current_content_type) {
-    $default_content_type_id = $content_types[0]['id'];
-    $redirect_url = "$basename?content_type_id=$default_content_type_id";
-
-    header("Location: $redirect_url");
-
-    exit();
+    $content_index =
+        array_search($current_content_id, array_column($content_types, 'id'));
+    $current_content_type = $content_types[$content_index]['type'];
 }
 
 $form_data['content_type_id'] = $current_content_id;
 
 $is_photo_content_type = $current_content_type === 'photo';
 
-$content_tabs = get_content_filters($content_types, $basename);
+$content_tabs =
+    get_content_filters($content_types, $basename, $current_content_id);
 
 $content_fields_content = include_template(
     "partials/add-post-form/$current_content_type-content-fields.php",

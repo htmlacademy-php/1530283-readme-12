@@ -147,57 +147,37 @@ function format_relative_time(string $date): string
 }
 
 /**
- * Функция проверяет установлено ли в адресной строке значение GET параметра.
- *
- * @param  string  $query_name  Название GET параметра
- * @param  string|null  $query_value  Значение GET параметра
- *
- * @return bool Результат проверки
- */
-function is_query_active(string $query_name, string $query_value = null): bool
-{
-    $current_query_value = filter_input(
-        INPUT_GET,
-        $query_name,
-        FILTER_SANITIZE_STRING
-    );
-
-    if (is_null($query_value)) {
-        return is_null($current_query_value);
-    }
-
-    return $current_query_value === $query_value;
-}
-
-/**
  * Функция генерирует ссылку для сортировки публикаций по заданному полю.
  * Поле публикации, по которму производится сортировка должно соотествовать
  * структуре публикаций возвращаемых функицей get_posts.
  * Смена направления сортировки производится ссылкой, соответсвующей
  * текущему активному значения поля, по которму производится сортировка.
- * Направление сортировки вычисляется на основе текущего значения в адресной строке.
+ * Направление сортировки вычисляется на основе текущего значения в адресной
+ * строке.
  *
  * @param  string  $basename  URL страницы без GET параметров
- * @param  string  $sort_type  Поле публикации, по которму производится сортировка
+ * @param  string  $sort_type  - поле публикации, по которму производится
+ * сортировка
+ * @param  string  $current_sort_type  - текущее значение поля публикации,
+ * по которму производится сортировка
+ * @param  bool  $is_order_reversed  - обратная сортировка (по возрастанию)
  *
- * @return string Итоговый URL страницы для получения списка публикаций с учетом заданной сортировки
+ * @return string - итоговый URL страницы для получения списка публикаций
+ * с учетом заданной сортировки
  */
 function get_sort_url(
     string $basename,
-    string $sort_type
+    string $sort_type,
+    string $current_sort_type,
+    bool $is_order_reversed
 ): string {
     $query_params = $_GET;
-    $current_sort_order = filter_input(
-        INPUT_GET,
-        SORT_ORDER_REVERSED,
-        FILTER_SANITIZE_STRING
-    );
 
     $query_params[SORT_TYPE_QUERY] = $sort_type;
 
-    if (is_query_active(SORT_TYPE_QUERY, $sort_type)) {
-        $query_params[SORT_ORDER_REVERSED] = is_null($current_sort_order) ? ''
-            : null;
+    if ($sort_type === $current_sort_type) {
+        $query_params[SORT_ORDER_REVERSED] =
+            $is_order_reversed ? 'false' : 'true';
     }
 
     $query_string = http_build_query($query_params);
@@ -231,22 +211,26 @@ function get_content_filter_url(
  * Фильтр представляет собой ассоциативный массив аналогичный типу контента,
  * дполненный полями url и active.
  *
- * @param  array  $content_types  список типов контента
- * @param  string  $basename  URL страницы без GET параметров
+ * @param  array  $content_types  - список типов контента
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int | null  $current_content_type  - id текущего типа контента
  *
- * @return array Массив фильтров публикаций по типу контента
+ * @return array - массив фильтров публикаций по типу контента
  */
-function get_content_filters(array $content_types, string $basename): array
-{
+function get_content_filters(
+    array $content_types,
+    string $basename,
+    int $current_content_type = null
+): array {
     $content_filters = $content_types;
 
     array_walk(
         $content_filters,
-        function (&$filter) use ($basename) {
+        function (&$filter) use ($basename, $current_content_type) {
             $id = $filter['id'];
 
             $url = get_content_filter_url($basename, $id);
-            $active = is_query_active(CONTENT_FILTER_QUERY, $id);
+            $active = $id === $current_content_type;
 
             $filter['url'] = $url;
             $filter['active'] = $active;
@@ -261,22 +245,36 @@ function get_content_filters(array $content_types, string $basename): array
  * Тип сортировки представляет собой ассоциативный массив аналогичный
  * элементами в массиве SORT_TYPE_OPTIONS дополненный полями url и active.
  *
- * @param  string  $basename  URL страницы без GET параметров
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  string  $current_sort_type  - текущее значение поля публикации,
+ * по которму производится сортировка
+ * @param  bool  $is_order_reversed  - обратная сортировка (по возрастанию)
  *
  * @return array Массив типов сортировки публикаций
  */
-function get_sort_types(string $basename): array
-{
+function get_sort_types(
+    string $basename,
+    string $current_sort_type,
+    bool $is_order_reversed
+): array {
     $sort_types = SORT_TYPE_OPTIONS;
 
     array_walk(
         $sort_types,
-        function (&$sort_type) use ($basename) {
+        function (&$sort_type) use (
+            $basename,
+            $current_sort_type,
+            $is_order_reversed
+        ) {
             $value = $sort_type['value'];
 
-            $url = get_sort_url($basename, $value);
-            $active = is_query_active(SORT_TYPE_QUERY, $value);
-
+            $url = get_sort_url(
+                $basename,
+                $value,
+                $current_sort_type,
+                $is_order_reversed
+            );
+            $active = $value === $current_sort_type;
 
             $sort_type['url'] = $url;
             $sort_type['active'] = $active;
@@ -319,19 +317,15 @@ function validate_sort_type(string $current_sort_type): bool
  * Ограничения: Тип контента представляет собой ассоциативный массив,
  * содержащий ключ id.
  *
- * @param  string | null  $current_content_filter  - id типа контента
+ * @param  string  $current_content_filter  - id типа контента
  * @param  array  $content_types  - список доступных типов контента
  *
  * @return bool Результат валидации
  */
 function validate_content_filter(
-    $current_content_filter,
+    string $current_content_filter,
     array $content_types
 ): bool {
-    if (is_null($current_content_filter)) {
-        return false;
-    }
-
     $available_content_filters = array_map(
         function ($content_type) {
             return $content_type['id'];
@@ -488,7 +482,7 @@ function check_guest()
  * В случае некорректных данных, либо ошибки аутентификации,
  * возвращает ассоциативный массив с данными формы и ошибками валидации.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
  *
  * @return array - данные формы и данные ошибок валидации
  */

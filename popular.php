@@ -19,29 +19,20 @@ check_db_connection($db_connection);
 $basename = basename(__FILE__);
 
 $current_sort_type = filter_input(
-    INPUT_GET,
-    SORT_TYPE_QUERY,
-    FILTER_SANITIZE_STRING
-);
-
-if (!$current_sort_type) {
-    $url = get_sort_url(
-        $basename,
-        SORT_TYPE_OPTIONS[0]['value']
-    );
-
-    header("Location: $url");
-
-    exit();
-}
+                         INPUT_GET,
+                         SORT_TYPE_QUERY,
+                         FILTER_SANITIZE_STRING
+                     ) ?? SORT_TYPE_OPTIONS[0]['value'];
 
 $current_content_filter = filter_input(
-    INPUT_GET,
-    CONTENT_FILTER_QUERY,
-    FILTER_SANITIZE_NUMBER_INT
-);
+                              INPUT_GET,
+                              CONTENT_FILTER_QUERY,
+                              FILTER_SANITIZE_NUMBER_INT
+                          ) ?? null;
 
-$is_sort_order_reversed = isset($_GET[SORT_ORDER_REVERSED]);
+$is_sort_order_reversed =
+    filter_input(INPUT_GET, SORT_ORDER_REVERSED, FILTER_VALIDATE_BOOLEAN) ??
+    false;
 
 $content_types = get_content_types($db_connection);
 
@@ -69,7 +60,7 @@ if (is_null($content_types)) {
 
     print($layout_content);
 
-    return;
+    exit();
 }
 
 $is_sort_type_valid = validate_sort_type($current_sort_type);
@@ -79,13 +70,14 @@ $is_content_filter_valid = is_null($current_content_filter)
                                $content_types
                            );
 
-$sort_types = get_sort_types($basename);
-$content_filters = get_content_filters($content_types, $basename);
+$sort_types =
+    get_sort_types($basename, $current_sort_type, $is_sort_order_reversed);
+$content_filters = get_content_filters($content_types, $basename, $current_content_filter);
 $any_content_filter = [
     'name' => 'Все',
     'type' => 'all',
     'url' => get_content_filter_url($basename),
-    'active' => is_query_active(CONTENT_FILTER_QUERY),
+    'active' => is_null($current_content_filter),
 ];
 
 $popular_filters_content = include_template(
