@@ -4,19 +4,19 @@ require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'models/post.php';
+require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 
 /**
+ * @var array $user_session - сессия пользователя
  * @var mysqli $db_connection - ресурс соединения с базой данных
  */
-
-$user = check_user();
 
 $query = filter_input(INPUT_GET, SEARCH_QUERY, FILTER_SANITIZE_STRING);
 
 $layout_data = [
     'title' => "Вы искали: $query",
-    'user' => $user,
+    'user' => $user_session,
     'page_modifier' => 'search-results',
     'query' => $query,
 ];
@@ -28,10 +28,8 @@ $query_content = include_template(
     ]
 );
 
-// todo: temp posts
 $posts = get_posts_by_query($db_connection, $query);
 
-var_dump($posts);
 // todo: check if $posts is null // array;
 
 $page_content = count($posts)

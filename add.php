@@ -6,22 +6,22 @@ require_once 'utils/functions.php';
 require_once 'utils/post-form-validators.php';
 require_once 'models/content_type.php';
 require_once 'models/post.php';
+require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 
 /**
+ * @var array $user_session - сессия пользователя
  * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
-$user = check_user();
-
 $form_data = [
-    'author_id' => $user['id'],
+    'author_id' => $user_session['id'],
 ];
 $errors = [];
 
 $layout_data = [
     'title' => 'Добавить публикацию',
-    'user' => $user,
+    'user' => $user_session,
     'page_modifier' => 'adding-post',
 ];
 

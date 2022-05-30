@@ -2,20 +2,19 @@
 
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
+require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 
 /**
+ * @var array $user_session - сессия пользователя
  * @var mysqli $db_connection - ресурс соединения с базой данных
  */
-
-session_start();
-$user = $_SESSION['user'] ?? null;
 
 $basename = basename(__FILE__);
 
 $layout_data = [
     'title' => 'Профиль ползователя',
-    'user' => $user,
+    'user' => $user_session,
     'page_modifier' => 'profile',
     'basename' => $basename,
     'content' => '',

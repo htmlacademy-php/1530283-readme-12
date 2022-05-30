@@ -5,13 +5,13 @@ require_once 'utils/functions.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
 require_once 'models/user.php';
+require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 
 /**
+ * @var array $user_session - сессия пользователя
  * @var mysqli $db_connection - ресурс соединения с базой данных
  */
-
-$user = check_user();
 
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 
@@ -31,7 +31,7 @@ if (is_array($post) and isset($post['author_id'])) {
 
 $layout_data = [
     'title' => 'Просмотр поста',
-    'user' => $user,
+    'user' => $user_session,
     'page_modifier' => 'publication',
 ];
 
