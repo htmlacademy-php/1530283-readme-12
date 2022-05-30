@@ -4,16 +4,14 @@ require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/login-form-validators.php';
 require_once 'models/user.php';
-require_once 'init/db.php';
+require_once 'init/db-connection.php';
 
 /**
- * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
 session_start();
 $user = $_SESSION['user'] ?? null;
-
-check_db_connection($db_connection);
 
 if (!$user) {
     $form_data = [];

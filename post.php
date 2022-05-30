@@ -5,15 +5,13 @@ require_once 'utils/functions.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
 require_once 'models/user.php';
-require_once 'init/db.php';
+require_once 'init/db-connection.php';
 
 /**
- * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
 $user = check_user();
-
-check_db_connection($db_connection);
 
 $post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
 

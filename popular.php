@@ -6,15 +6,13 @@ require_once 'utils/functions.php';
 require_once 'utils/decorators.php';
 require_once 'models/post.php';
 require_once 'models/content_type.php';
-require_once 'init/db.php';
+require_once 'init/db-connection.php';
 
 /**
- * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
 $user = check_user();
-
-check_db_connection($db_connection);
 
 $basename = basename(__FILE__);
 
@@ -113,7 +111,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
     return;
 }
 
-$post_cards = get_posts(
+$post_cards = get_popular_posts(
     $db_connection,
     [
         'sort_type' => $current_sort_type,

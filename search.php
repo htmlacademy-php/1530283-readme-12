@@ -4,7 +4,11 @@ require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'models/post.php';
-require_once 'init/db.php';
+require_once 'init/db-connection.php';
+
+/**
+ * @var mysqli $db_connection - ресурс соединения с базой данных
+ */
 
 $user = check_user();
 
@@ -25,8 +29,9 @@ $query_content = include_template(
 );
 
 // todo: temp posts
-$posts = get_posts($db_connection);
+$posts = get_posts_by_query($db_connection, $query);
 
+var_dump($posts);
 // todo: check if $posts is null // array;
 
 $page_content = count($posts)

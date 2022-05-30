@@ -6,15 +6,13 @@ require_once 'utils/functions.php';
 require_once 'utils/post-form-validators.php';
 require_once 'models/content_type.php';
 require_once 'models/post.php';
-require_once 'init/db.php';
+require_once 'init/db-connection.php';
 
 /**
- * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
 $user = check_user();
-
-check_db_connection($db_connection);
 
 $form_data = [
     'author_id' => $user['id'],
