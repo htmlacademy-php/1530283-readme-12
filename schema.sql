@@ -10,7 +10,7 @@ CREATE TABLE content_types(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
     type varchar(255) NOT NULL UNIQUE,
     name varchar(255) NOT NULL UNIQUE
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE users(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
@@ -19,12 +19,12 @@ CREATE TABLE users(
     login varchar(255) NOT NULL,
     password_hash char(60) NOT NULL,
     avatar_url varchar(255)
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE hashtags(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
     name varchar(255) NOT NULL UNIQUE
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE posts(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
@@ -35,13 +35,14 @@ CREATE TABLE posts(
     text_content varchar(1000),
     string_content varchar(255),
     views_count int unsigned DEFAULT 0,
+    FULLTEXT INDEX post_fulltext_index (title, string_content, text_content),
     FOREIGN KEY (author_id) REFERENCES users(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (content_type_id) REFERENCES content_types(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE posts_hashtags(
     post_id int unsigned NOT NULL,
@@ -53,7 +54,7 @@ CREATE TABLE posts_hashtags(
     FOREIGN KEY (hashtag_id) REFERENCES hashtags(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE comments(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
@@ -67,7 +68,7 @@ CREATE TABLE comments(
     FOREIGN KEY (author_id) REFERENCES users(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE likes(
     post_id int unsigned NOT NULL,
@@ -79,7 +80,7 @@ CREATE TABLE likes(
     FOREIGN KEY (author_id) REFERENCES users(id)
        ON UPDATE CASCADE
        ON DELETE CASCADE
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE subscriptions(
     subscriber_id int unsigned NOT NULL CHECK (subscriber_id != observable_id),
@@ -91,7 +92,7 @@ CREATE TABLE subscriptions(
     FOREIGN KEY (observable_id) REFERENCES users(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
-);
+) ENGINE = InnoDB;
 
 CREATE TABLE messages(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
@@ -105,6 +106,4 @@ CREATE TABLE messages(
     FOREIGN KEY (receiver_id) REFERENCES users(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
-);
-
-CREATE FULLTEXT INDEX post_full_text_index ON posts(title, string_content, text_content);
+) ENGINE = InnoDB;
