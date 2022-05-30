@@ -14,14 +14,13 @@ if (!isset($title)) {
 
 $withLink = isset($link_description) and isset($link_url);
 ?>
-<section class="page__main page__main--empty">
-    <div class="container">
-        <h1><?= $title ?></h1>
-        <p><?= $content ?></p>
-        <?php
-        if ($withLink): ?>
-            <a href="<?= $link_url ?>"><?= $link_description ?></a>
-        <?php
-        endif; ?>
-    </div>
-</section>
+
+<div class="container container--empty">
+    <h2><?= $title ?></h2>
+    <p><?= $content ?></p>
+    <?php
+    if ($withLink): ?>
+        <a href="<?= $link_url ?>"><?= $link_description ?></a>
+    <?php
+    endif; ?>
+</div>

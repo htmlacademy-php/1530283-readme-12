@@ -40,9 +40,9 @@
             <li class="popular__filters-item popular__filters-item--<?= $any_content_filter['type'] ?> filters__item filters__item--<?= $any_content_filter['icon'] ?>">
                 <a class="filters__button filters__button--ellipse filters__button--all <?= $any_content_filter['active']
                     ? 'filters__button--active' : '' ?>"
-                <?= !$any_content_filter['active']
-                    ? 'href="' . $any_content_filter['url'] . '"' : '' ?> >
-                <span><?= $any_content_filter['name'] ?></span>
+                    <?= !$any_content_filter['active']
+                        ? 'href="' . $any_content_filter['url'] . '"' : '' ?> >
+                    <span><?= $any_content_filter['name'] ?></span>
                 </a>
             </li>
             <?php
@@ -52,10 +52,10 @@
                         ? 'filters__button--active' : '' ?> button"
                         <?= !$content_filter['active']
                             ? 'href="' . $content_filter['url'] . '"' : '' ?> >
-                    <span class="visually-hidden"><?= $content_filter['name'] ?></span>
-                    <svg class="filters__icon" width="22" height="18">
-                        <use xlink:href="#icon-filter-<?= $content_filter['type'] ?>"></use>
-                    </svg>
+                        <span class="visually-hidden"><?= $content_filter['name'] ?></span>
+                        <svg class="filters__icon" width="22" height="18">
+                            <use xlink:href="#icon-filter-<?= $content_filter['type'] ?>"></use>
+                        </svg>
                     </a>
                 </li>
             <?php

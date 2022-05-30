@@ -13,7 +13,7 @@
  * т.е. принимает готовую разметку данной секции для шаблонов popular/page.php
  * и popular/page-empty.php.
  * 2. Структура ассоциативного массива публикации должна соответствовать
- * требованиям шаблона popular/page.php.
+ * требованиям шаблона popular/main.php.
  *
  * @param  string  $popular_filters_content  Разметка секции фильтрации и сортировки
  * @param  array | null  $post_cards  Массив публикаций в виде ассоциативных массивов
@@ -25,31 +25,43 @@ function decorate_popular_page(
     $post_cards
 ): string {
     if (is_null($post_cards)) {
+        $error_content = include_template('common/message.php', [
+            'title' => 'Ошибка',
+            'content' => 'Не удалось загрузить публикации'
+        ]);
+
         return include_template(
-            'pages/popular/page-empty.php',
+            'pages/popular/page.php',
             [
-                'popular_filters_content' => $popular_filters_content,
-                'title' => 'Ошибка',
-                'content' => 'Не удалось загрузить публикации',
+                'filters_content' => $popular_filters_content,
+                'main_content' => $error_content,
             ]
         );
     }
 
     if (!count($post_cards)) {
+        $empty_content = include_template('common/message.php', [
+            'title' => 'Ничего не найдено'
+        ]);
+
         return include_template(
-            'pages/popular/page-empty.php',
+            'pages/popular/page.php',
             [
-                'popular_filters_content' => $popular_filters_content,
-                'title' => 'Ничего не найдено',
+                'filters_content' => $popular_filters_content,
+                'main_content' => $empty_content,
             ]
         );
     }
 
+    $main_content = include_template('pages/popular/main.php', [
+        'post_cards' => $post_cards,
+    ]);
+
     return include_template(
         'pages/popular/page.php',
         [
-            'popular_filters_content' => $popular_filters_content,
-            'post_cards' => $post_cards,
+            'filters_content' => $popular_filters_content,
+            'main_content' => $main_content,
         ]
     );
 }

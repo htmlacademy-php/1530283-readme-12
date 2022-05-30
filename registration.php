@@ -81,18 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         http_response_code(SERVER_ERROR_STATUS);
-
-        $page_content = include_template(
-            'common/error.php',
-            ['content' => 'Не удалось завершить регистрацию']
+        render_message_page(
+            ['content' => 'Не удалось завершить регистрацию'],
+            $layout_data,
+            'user'
         );
-
-        $layout_data['content'] = $page_content;
-
-        $layout_content = include_template('layouts/guest.php', $layout_data);
-
-        print($layout_content);
-
         exit();
     }
 }

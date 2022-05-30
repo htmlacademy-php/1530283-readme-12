@@ -104,18 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         http_response_code(SERVER_ERROR_STATUS);
-
-        $page_content = include_template(
-            'common/error.php',
-            ['content' => 'Не удалось создать публикацию']
+        render_message_page(
+            ['content' => 'Не удалось создать публикацию'],
+            $layout_data,
+            'user'
         );
-
-        $layout_data['content'] = $page_content;
-
-        $layout_content = include_template('layouts/user.php', $layout_data);
-
-        print($layout_content);
-
         exit();
     }
 }
@@ -126,18 +119,11 @@ $content_types = get_content_types($db_connection);
 
 if (!$content_types) {
     http_response_code(NOT_FOUND_STATUS);
-
-    $page_content = include_template(
-        'common/error.php',
-        ['content' => 'Не удалось загрузить страницу']
+    render_message_page(
+        ['content' => 'Не удалось загрузить страницу'],
+        $layout_data,
+        'user'
     );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layouts/user.php', $layout_data);
-
-    print($layout_content);
-
     exit();
 }
 
@@ -155,21 +141,15 @@ if ($current_content_id) {
 
     if (!$is_current_content_valid) {
         http_response_code(NOT_FOUND_STATUS);
-
-        $page_content = include_template(
-            'common/error.php',
+        render_message_page(
             [
                 'content' => 'Тип контента задан неверно',
                 'link_description' => 'Перейти на страницу формы с типом по умолчанию',
                 'link_url' => $basename,
-            ]
+            ],
+            $layout_data,
+            'user'
         );
-
-        $layout_data['content'] = $page_content;
-        $layout_content = include_template('layouts/user.php', $layout_data);
-
-        print($layout_content);
-
         exit();
     }
 } else {

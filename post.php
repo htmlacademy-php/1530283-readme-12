@@ -39,19 +39,12 @@ $is_page_error = is_null($post) || is_null($comments) || is_null($author);
 
 if ($is_page_error) {
     http_response_code(NOT_FOUND_STATUS);
-
-    $page_content = include_template(
-        'common/error.php',
-        ['content' => 'Не удалось загрузить страницу']
+    render_message_page(
+        ['content' => 'Не удалось загрузить страницу'],
+        $layout_data,
+        'user'
     );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layouts/user.php', $layout_data);
-
-    print($layout_content);
-
-    return;
+    exit();
 }
 
 $author_content = include_template(

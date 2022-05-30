@@ -26,7 +26,7 @@
             text-align: center;
         }
 
-        .popular__empty {
+        .container__empty {
             margin-top: 6rem;
             text-align: center;
             font-size: 1.5rem;

@@ -44,20 +44,11 @@ $layout_data = [
 
 if (is_null($content_types)) {
     http_response_code(NOT_FOUND_STATUS);
-
-    $page_content = include_template(
-        'common/error.php',
-        [
-            'content' => 'Не удалось загрузить страницу'
-        ]
+    render_message_page(
+        ['content' => 'Не удалось загрузить страницу'],
+        $layout_data,
+        'user'
     );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layouts/user.php', $layout_data);
-
-    print($layout_content);
-
     exit();
 }
 
@@ -70,7 +61,8 @@ $is_content_filter_valid = is_null($current_content_filter)
 
 $sort_types =
     get_sort_types($basename, $current_sort_type, $is_sort_order_reversed);
-$content_filters = get_content_filters($content_types, $basename, $current_content_filter);
+$content_filters =
+    get_content_filters($content_types, $basename, $current_content_filter);
 $any_content_filter = [
     'name' => 'Все',
     'type' => 'all',
@@ -88,17 +80,25 @@ $popular_filters_content = include_template(
     ]
 );
 
+// todo: тоже отптимизировать?
 if (!$is_sort_type_valid or !$is_content_filter_valid) {
     http_response_code(BAD_REQUEST_STATUS);
 
-    $page_content = include_template(
-        'pages/popular/page-empty.php',
+    $filter_error_message = include_template(
+        'common/message.php',
         [
-            'popular_filters_content' => $popular_filters_content,
             'title' => 'Ошибка',
             'content' => 'Параметры фильтрации или сортировки заданы некорректно',
             'link_description' => 'Сброс параметров',
             'link_url' => $basename,
+        ]
+    );
+
+    $page_content = include_template(
+        'pages/popular/page.php',
+        [
+            'filters_content' => $popular_filters_content,
+            'main_content' => $filter_error_message,
         ]
     );
 
@@ -108,7 +108,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
 
     print($layout_content);
 
-    return;
+    exit();
 }
 
 $post_cards = get_popular_posts(

@@ -21,9 +21,6 @@ list(
     'hashtags' => $hashtags
     )
     = $post_card;
-
-// todo: temp fallback with empty array
-$hashtags = $post_card['hashtags'] ?? [];
 ?>
 
 <article class="<?= $card_modifier ? "${card_modifier}__post"

@@ -1,11 +1,10 @@
 <?php
 /**
- * Шаблон основного контента странцы 'Популярное'.
- * Отображает карточки публикаций с учетом выбранной сортировки и фильтрации.
+ * Шаблон странцы 'Популярное'.
  *
- * @var string $popular_filters_content - разметка секции сортировки и
- * фильтрации по типу контента
- * @var array $post_cards - массив с данными для карточек публикаций
+ * @var string $filters_content - разметка секции сортировки и фильтрации
+ * по типу контента
+ * @var string $main_content - разметка основного контента страницы
  */
 
 ?>
@@ -14,15 +13,6 @@
     <h1 class="page__title page__title--popular">Популярное</h1>
 </div>
 <div class="popular container">
-    <?= $popular_filters_content ?>
-    <div class="popular__posts">
-        <?php
-        foreach ($post_cards as $post_card): ?>
-            <?= include_template(
-                'pages/popular/post-card/base.php',
-                ['post_card' => $post_card]
-            ) ?>
-        <?php
-        endforeach; ?>
-    </div>
+    <?= $filters_content ?>
+    <?= $main_content ?>
 </div>

@@ -16,14 +16,21 @@ $db_connection = mysqli_connect($localhost, $username, $password, $database);
 if (!$db_connection || mysqli_error($db_connection)) {
     http_response_code(SERVER_ERROR_STATUS);
 
-    $error_layout = include_template(
+    $error_content = include_template(
+        'common/message.php',
+        [
+            'content' => 'Произошла внутренняя ошибка сервера',
+        ]
+    );
+
+    $layout = include_template(
         'layouts/empty.php',
-        ['content' => 'Произошла внутренняя ошибка сервера']
+        ['content' => $error_content]
     );
 
     ob_end_clean();
 
-    print($error_layout);
+    print($layout);
 
     exit();
 }

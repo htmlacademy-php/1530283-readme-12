@@ -28,6 +28,8 @@ $query_content = include_template(
     ]
 );
 
+// todo: check search mode - usual / hash
+
 $posts = get_posts_by_query($db_connection, $query);
 
 // todo: check if $posts is null // array;

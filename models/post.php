@@ -4,7 +4,7 @@ require_once 'models/hashtag.php';
 require_once 'models/post_hashtag.php';
 
 /**
- * Функция получает список публикаций из базы данных.
+ * Функция получает список публикаций из базы данных для страницы 'Популярное'.
  * Функция принимает ресурс соединения с базой данный
  * и ассоциативныый массив с параметрами запроса.
  * Параметры запроса позволяют задавать фильтрацию и сортировку публикаций.
@@ -33,7 +33,7 @@ require_once 'models/post_hashtag.php';
  *     comments_count: int,
  * }>
  */
-function get_posts(mysqli $db_connection, $config = [])
+function get_popular_posts(mysqli $db_connection, $config = [])
 {
     $sort_type = $config['sort_type'] ? mysqli_real_escape_string(
         $db_connection,
@@ -84,6 +84,151 @@ function get_posts(mysqli $db_connection, $config = [])
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+// todo: Добавить выборку по подпискам (после реализации подписок)
+/**
+ * Функция получает список публикаций из базы данных для странцы 'Моя лента'.
+ * Функция принимает ресурс соединения с базой данный
+ * и ассоциативныый массив с параметрами запроса.
+ * Параметры запроса позволяют задавать фильтрацию и сортировку публикаций.
+ * В случае успешного запроса функция возвращается массив
+ * публикаций в виде ассоциативных массивов.
+ * В случае неуспешного запроса возвращается null.
+ *
+ * @param  mysqli  $db_connection  ресурс соединения с базой данных
+ * @param  array{
+ *     content_type_id: int | null
+ * } $config - параметры запроса
+ *
+ * @return null | array<int, array{
+ *     id: int,
+ *     title: string,
+ *     string_content: string,
+ *     text_content: string,
+ *     created_at: string,
+ *     views_count: int,
+ *     author_login: string,
+ *     author_avatar: string,
+ *     content_type: string,
+ *     likes_count: int,
+ *     comments_count: int,
+ *     hashtags: array
+ * }>
+ */
+function get_feed_posts(mysqli $db_connection, $config = [])
+{
+    $content_type_id = $config['content_type_id'] ?? '';
+
+    $filter_sql =
+        $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
+
+    $sql = "
+        SELECT
+            posts.id,
+            posts.title,
+            posts.string_content,
+            posts.text_content,
+            posts.created_at,
+            posts.views_count,
+            users.login AS author_login,
+            users.avatar_url AS author_avatar,
+            content_types.type AS content_type,
+            COUNT(DISTINCT likes.author_id) AS likes_count,
+            COUNT(DISTINCT comments.id) AS comments_count,
+            GROUP_CONCAT(DISTINCT hashtags.name) AS hashtags_string
+        FROM posts
+            JOIN users ON posts.author_id = users.id
+            JOIN content_types ON posts.content_type_id = content_types.id
+            LEFT JOIN likes ON posts.id = likes.post_id
+            LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+            LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
+        $filter_sql
+        GROUP BY posts.id
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+
+    if ($filter_sql) {
+        mysqli_stmt_bind_param($statement, 'i', $content_type_id);
+    }
+
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return null;
+    }
+
+    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    foreach ($posts as &$post) {
+        $post['hashtags'] =
+            $post['hashtags_string'] ? explode(',', $post['hashtags_string'])
+                : [];
+        unset($post['hashtags_string']);
+        unset($posts['score']);
+    }
+
+    return $posts;
+}
+
+// todo: add phpDoc
+/**
+ * @param  mysqli  $db_connection
+ * @param  string  $query
+ *
+ * @return array|null
+ */
+function get_posts_by_query(mysqli $db_connection, string $query)
+{
+    $sql = "
+        SELECT
+            posts.id,
+            posts.title,
+            posts.string_content,
+            posts.text_content,
+            posts.created_at,
+            posts.views_count,
+            users.login AS author_login,
+            users.avatar_url AS author_avatar,
+            content_types.type AS content_type,
+            COUNT(DISTINCT likes.author_id) AS likes_count,
+            COUNT(DISTINCT comments.id) AS comments_count,
+            MATCH(posts.title, posts.string_content, posts.text_content) AGAINST(? IN BOOLEAN MODE) AS score,
+            GROUP_CONCAT(DISTINCT hashtags.name) AS hashtags_string
+        FROM posts
+            JOIN users ON posts.author_id = users.id
+            JOIN content_types ON posts.content_type_id = content_types.id
+            LEFT JOIN likes ON posts.id = likes.post_id
+            LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+            LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
+        WHERE MATCH(posts.title, posts.string_content, posts.text_content) AGAINST(? IN BOOLEAN MODE)
+        GROUP BY posts.id
+        ORDER BY score DESC
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'ss', $query, $query);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return null;
+    }
+
+    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    foreach ($posts as &$post) {
+        $post['hashtags'] =
+            $post['hashtags_string'] ? explode(',', $post['hashtags_string'])
+                : [];
+        unset($post['hashtags_string']);
+    }
+
+    return $posts;
 }
 
 /**
@@ -213,6 +358,8 @@ function create_post(mysqli $db_connection, array $post_data)
     mysqli_stmt_execute($statement);
 
     if (mysqli_error($db_connection)) {
+        var_dump(mysqli_error($db_connection));
+
         return null;
     }
 
