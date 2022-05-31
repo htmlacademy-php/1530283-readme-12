@@ -3,7 +3,20 @@
 require_once 'utils/helpers.php';
 require_once 'utils/decorators.php';
 
-// todo: add phpDoc
+/**
+ * Функция рендерит состояние некорректно заданной фильтрации или сортировки
+ * страницы 'Популярное'.
+ *
+ * Ограничения:
+ * 1. Функция не обрабатывает разметку секции фильтрации и сортировки,
+ * т.е. принимает готовую разметку данной секции для шаблонов popular/page.php
+ * 2. Данные для шаблона страницы должны содержать все необходимеы данные для
+ * шаблона popular/page.php, кроме основного контента страницы.
+ *
+ * @param  string  $popular_filters_content - разметка секции фильтрации и
+ * сортировки по типу контента
+ * @param  array  $layout_data - данные для шаблона страницы 'Популярное'
+ */
 function render_popular_filter_error(
     string $popular_filters_content,
     array $layout_data
@@ -33,7 +46,22 @@ function render_popular_filter_error(
     print($layout_content);
 }
 
-// todo: add phpDoc
+/**
+ * Функция рендерит страницу 'Популярное' в зависимости от переданного массива
+ * публикаций.
+ *
+ * Ограничения:
+ * 1. Функция не обрабатывает разметку секции фильтрации и сортировки,
+ * т.е. принимает готовую разметку данной секции для шаблонов popular/page.php
+ * 2. Данные для шаблона страницы должны содержать все необходимеы данные для
+ * шаблона popular/page.php, кроме основного контента страницы.
+ *
+ * @param  string  $popular_filters_content - разметка секции фильтрации и
+ * сортировки по типу контента
+ * @param  array  $post_cards - массив публикаций в виде ассоциативных
+ * массивов
+ * @param  array  $layout_data - прочие данные для шаблона страницы 'Популярное'
+ */
 function render_popular_page(
     string $popular_filters_content,
     array $post_cards,

@@ -3,7 +3,20 @@
 require_once 'utils/helpers.php';
 require_once 'utils/decorators.php';
 
-// todo: add phpDoc
+/**
+ * Функция рендерит состояние некорректно заданной фильтрации страницы
+ * 'Моя лента'.
+ *
+ * Ограничения:
+ * 1. Функция не обрабатывает разметку секции фильтрации и промо-секции,
+ * т.е. принимает готовую разметку данных секций для шаблонов feed/page.php.
+ * 2. Данные для шаблона страницы должны содержать все необходимеы данные для
+ * шаблона feed/page.php, кроме основного контента страницы.
+ *
+ * @param  string  $feed_filters_content - разметка секции фильтрации и сортировки
+ * @param  string  $promo_content - разметка промо-секции
+ * @param  array  $layout_data - данные для шаблона страницы 'Моя лента'
+ */
 function render_feed_filter_error(
     string $feed_filters_content,
     string $promo_content,
@@ -35,16 +48,31 @@ function render_feed_filter_error(
     print($layout_content);
 }
 
-// todo: add phpDoc
+/**
+ * Функция рендерит страницу 'Моя лента' в зависимости от переданного массива
+ * публикаций.
+ *
+ * Ограничения:
+ * 1. Функция не обрабатывает разметку секции фильтрации и промо-секции,
+ * т.е. принимает готовую разметку данных секций для шаблонов feed/page.php.
+ * 2. Данные для шаблона страницы должны содержать все необходимеы данные для
+ * шаблона feed/page.php, кроме основного контента страницы.
+ *
+ * @param  string  $feed_filters_content - разметка секции фильтрации и сортировки
+ * @param  string  $promo_content - разметка промо-секции
+ * @param array | null $post_cards - массив публикаций в виде ассоциативных
+ * массивов
+ * @param  array  $layout_data - данные для шаблона страницы 'Моя лента'
+ */
 function render_feed_page(
-    string $popular_filters_content,
+    string $feed_filters_content,
     string $promo_content,
     $post_cards,
     array $layout_data
 ) {
     $page_content =
         decorate_feed_page_content(
-            $popular_filters_content,
+            $feed_filters_content,
             $promo_content,
             $post_cards
         );

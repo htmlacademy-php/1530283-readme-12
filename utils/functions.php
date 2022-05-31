@@ -240,12 +240,13 @@ function get_content_filters(
     return $content_filters;
 }
 
-// todo: add phpDoc
 /**
- * @param  string  $basename -
- * @param bool  $is_active -
+ * Функция возвращает данные ссылки для снятия фильтрации по типу контента.
  *
- * @return array
+ * @param  string  $basename - URL страницы без GET параметров
+ * @param bool  $is_active - ссылка активна
+ *
+ * @return array - ассоциативный массив с данымми ссылки
  */
 function get_any_content_filter(
     string $basename,
