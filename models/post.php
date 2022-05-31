@@ -353,12 +353,6 @@ function create_post(mysqli $db_connection, array $post_data)
     );
     mysqli_stmt_execute($statement);
 
-    if (mysqli_error($db_connection)) {
-        var_dump(mysqli_error($db_connection));
-
-        return null;
-    }
-
     $post_id = mysqli_insert_id($db_connection);
 
     if (!$post_id) {
