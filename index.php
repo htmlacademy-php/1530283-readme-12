@@ -3,6 +3,7 @@
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/login-form-validators.php';
+require_once 'utils/renderers/feed.php';
 require_once 'models/user.php';
 require_once 'models/post.php';
 require_once 'models/content_type.php';
@@ -16,22 +17,18 @@ session_start();
 $user = $_SESSION['user'] ?? null;
 
 if (!$user) {
-    $form_data = [];
-    $errors = [];
+    $login_form_data = [
+        'form_data' => [],
+        'errors' => [],
+    ];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        list(
-            'form_data' => $form_data,
-            'errors' => $errors,
-            ) = handle_login_form($db_connection);
+        $login_form_data = handle_login_form($db_connection);
     }
 
     $layout_content = include_template(
         'layouts/welcome.php',
-        [
-            'form_data' => $form_data,
-            'errors' => $errors,
-        ]
+        $login_form_data
     );
 
     print($layout_content);
@@ -46,7 +43,6 @@ $layout_data = [
     'user' => $user,
     'page_modifier' => 'feed',
     'basename' => $basename,
-    'content' => '',
 ];
 
 $current_content_filter = filter_input(
@@ -78,7 +74,7 @@ $content_filters =
 $any_content_filter =
     get_any_content_filter($basename, is_null($current_content_filter));
 
-$filters_content = include_template(
+$feed_filters_content = include_template(
     'pages/feed/filters.php',
     [
         'content_filters' => $content_filters,
@@ -86,69 +82,30 @@ $filters_content = include_template(
     ]
 );
 
-$promo_content = include_template('common/promo.php', []);
+$promo_content = include_template('common/promo.php');
 
-// todo: тоже отптимизировать?
 if (!$is_content_filter_valid) {
     http_response_code(BAD_REQUEST_STATUS);
-
-    $filter_error_message = include_template(
-        'common/message.php',
-        [
-            'title' => 'Ошибка',
-            'content' => 'Параметры фильтрации заданы некорректно',
-            'link_description' => 'Сброс параметров',
-            'link_url' => $basename,
-        ]
+    render_feed_filter_error(
+        $feed_filters_content,
+        $promo_content,
+        $layout_data
     );
-
-    $page_content = include_template(
-        'pages/feed/page.php',
-        [
-            'filters_content' => $filters_content,
-            'main_content' => $filter_error_message,
-            'promo_content' => $promo_content,
-        ]
-    );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layouts/user.php', $layout_data);
-
-    print($layout_content);
-
     exit();
 }
 
-$post_card = get_feed_posts(
+$post_cards = get_feed_posts(
     $db_connection,
-    [
-        'content_type_id' => $current_content_filter
-    ]
+    ['content_type_id' => $current_content_filter]
 );
 
-// todo: decorate feed page ?
-// todo: handle error;
-// todo: handle empty state;
+if (is_null($post_cards)) {
+    http_response_code(SERVER_ERROR_STATUS);
+}
 
-$main_content = include_template(
-    'pages/feed/main.php',
-    [
-        'post_cards' => $post_card,
-    ]
+render_feed_page(
+    $feed_filters_content,
+    $promo_content,
+    $post_cards,
+    $layout_data
 );
-
-$page_content = include_template(
-    'pages/feed/page.php',
-    [
-        'main_content' => $main_content,
-        'filters_content' => $filters_content,
-        'promo_content' => $promo_content
-    ]
-);
-
-$layout_data['content'] = $page_content;
-
-$layout_content = include_template('layouts/user.php', $layout_data);
-
-print($layout_content);

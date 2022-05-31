@@ -71,6 +71,64 @@ function decorate_popular_page_content(
     );
 }
 
+// todo: addPhp
+function decorate_feed_page_content(
+    string $feed_filters_content,
+    string $promo_content,
+    $post_cards
+): string {
+    if (is_null($post_cards)) {
+        $error_content = include_template(
+            'common/message.php',
+            [
+                'title' => 'Ошибка',
+                'content' => 'Не удалось загрузить публикации',
+            ]
+        );
+
+        return include_template(
+            'pages/feed/page.php',
+            [
+                'filters_content' => $feed_filters_content,
+                'main_content' => $error_content,
+                'promo_content' => $promo_content,
+            ]
+        );
+    }
+
+    if (!count($post_cards)) {
+        $empty_content = include_template(
+            'common/message.php',
+            ['title' => 'Ничего не найдено']
+        );
+
+        return include_template(
+            'pages/feed/page.php',
+            [
+                'filters_content' => $feed_filters_content,
+                'main_content' => $empty_content,
+                'promo_content' => $promo_content,
+            ]
+        );
+    }
+
+    $main_content = include_template(
+        'pages/feed/main.php',
+        [
+            'post_cards' => $post_cards,
+        ]
+    );
+
+    return include_template(
+        'pages/feed/page.php',
+        [
+            'main_content' => $main_content,
+            'filters_content' => $feed_filters_content,
+            'promo_content' => $promo_content,
+        ]
+    );
+}
+
 /**
  * Функция возвращает разметку контента карточки публикации
  * в зависимости от типа контента публикации.
@@ -108,5 +166,3 @@ function decorate_post_card_content(
         ]
     );
 }
-
-

@@ -23,23 +23,25 @@ $layout_data = [
 
 $query_content = include_template(
     'pages/search/query.php',
-    [
-        'query' => $query,
-    ]
+    ['query' => $query]
 );
 
 // todo: check search mode - usual / hash
 
-$posts = get_posts_by_query($db_connection, $query);
+$post_cards = get_posts_by_query($db_connection, $query);
 
-// todo: check if $posts is null // array;
 
-$page_content = count($posts)
+if (is_null($post_cards)) {
+    http_response_code(SERVER_ERROR_STATUS);
+}
+
+// todo: check if $posts is null;
+$page_content = count($post_cards)
     ? include_template(
         'pages/search/page.php',
         [
             'query_content' => $query_content,
-            'post_cards' => $posts
+            'post_cards' => $post_cards
         ]
     )
     : include_template(

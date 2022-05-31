@@ -91,7 +91,7 @@ $post_cards = get_popular_posts(
 );
 
 if (is_null($post_cards)) {
-    http_response_code(NOT_FOUND_STATUS);
+    http_response_code(SERVER_ERROR_STATUS);
 }
 
 render_popular_page($popular_filters_content, $post_cards, $layout_data);

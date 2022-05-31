@@ -4,25 +4,27 @@ require_once 'utils/helpers.php';
 require_once 'utils/decorators.php';
 
 // todo: add phpDoc
-function render_popular_filter_error(
-    string $popular_filters_content,
+function render_feed_filter_error(
+    string $feed_filters_content,
+    string $promo_content,
     array $layout_data
 ) {
     $filter_error_message = include_template(
         'common/message.php',
         [
             'title' => 'Ошибка',
-            'content' => 'Параметры фильтрации или сортировки заданы некорректно',
+            'content' => 'Параметры фильтрации заданы некорректно',
             'link_description' => 'Сброс параметров',
             'link_url' => $layout_data['basename'],
         ]
     );
 
     $page_content = include_template(
-        'pages/popular/page.php',
+        'pages/feed/page.php',
         [
-            'filters_content' => $popular_filters_content,
+            'filters_content' => $feed_filters_content,
             'main_content' => $filter_error_message,
+            'promo_content' => $promo_content,
         ]
     );
 
@@ -34,13 +36,18 @@ function render_popular_filter_error(
 }
 
 // todo: add phpDoc
-function render_popular_page(
+function render_feed_page(
     string $popular_filters_content,
-    array $post_cards,
+    string $promo_content,
+    $post_cards,
     array $layout_data
 ) {
     $page_content =
-        decorate_popular_page_content($popular_filters_content, $post_cards);
+        decorate_feed_page_content(
+            $popular_filters_content,
+            $promo_content,
+            $post_cards
+        );
 
     $layout_data['content'] = $page_content;
 
