@@ -486,3 +486,17 @@ function handle_login_form(mysqli $db_connection)
         'errors' => $errors
     ];
 }
+
+/**
+ * Функция преобразует json-строку сформированную MySQL функцией JSON_ARRAYAGG
+ * в массив.
+ *
+ * @param  string  $json - массив в виде формате json
+ *
+ * @return array - преобразованный массив
+ */
+function decode_json_array_agg(string $json): array {
+    return  array_filter(json_decode($json), function ($value) {
+        return $value;
+    });
+}

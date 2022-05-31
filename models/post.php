@@ -1,5 +1,6 @@
 <?php
 
+require_once 'utils/functions.php';
 require_once 'models/hashtag.php';
 require_once 'models/post_hashtag.php';
 
@@ -136,7 +137,7 @@ function get_feed_posts(mysqli $db_connection, $config = [])
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            GROUP_CONCAT(DISTINCT hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -164,9 +165,7 @@ function get_feed_posts(mysqli $db_connection, $config = [])
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] =
-            $post['hashtags_string'] ? explode(',', $post['hashtags_string'])
-                : [];
+        $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
         unset($post['hashtags_string']);
         unset($posts['score']);
     }
@@ -197,7 +196,7 @@ function get_posts_by_query(mysqli $db_connection, string $query)
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
             MATCH(posts.title, posts.string_content, posts.text_content) AGAINST(? IN BOOLEAN MODE) AS score,
-            GROUP_CONCAT(DISTINCT hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -222,9 +221,7 @@ function get_posts_by_query(mysqli $db_connection, string $query)
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] =
-            $post['hashtags_string'] ? explode(',', $post['hashtags_string'])
-                : [];
+        $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
         unset($post['hashtags_string']);
     }
 
@@ -272,7 +269,7 @@ function get_post(mysqli $db_connection, int $id)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            GROUP_CONCAT(DISTINCT hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -299,8 +296,7 @@ function get_post(mysqli $db_connection, int $id)
         return null;
     }
 
-    $post['hashtags'] =
-        $post['hashtags_string'] ? explode(',', $post['hashtags_string']) : [];
+    $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
     unset($post['hashtags_string']);
 
     return $post;
