@@ -83,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(SERVER_ERROR_STATUS);
         render_message_page(
             ['content' => 'Не удалось завершить регистрацию'],
+            'user',
             $layout_data,
-            'user'
         );
         exit();
     }

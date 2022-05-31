@@ -20,15 +20,18 @@
  *
  * @return string Разметка контента страницы с карточками популярных публикаций
  */
-function decorate_popular_page(
+function decorate_popular_page_content(
     string $popular_filters_content,
     $post_cards
 ): string {
     if (is_null($post_cards)) {
-        $error_content = include_template('common/message.php', [
-            'title' => 'Ошибка',
-            'content' => 'Не удалось загрузить публикации'
-        ]);
+        $error_content = include_template(
+            'common/message.php',
+            [
+                'title' => 'Ошибка',
+                'content' => 'Не удалось загрузить публикации'
+            ]
+        );
 
         return include_template(
             'pages/popular/page.php',
@@ -40,9 +43,10 @@ function decorate_popular_page(
     }
 
     if (!count($post_cards)) {
-        $empty_content = include_template('common/message.php', [
-            'title' => 'Ничего не найдено'
-        ]);
+        $empty_content = include_template(
+            'common/message.php',
+            ['title' => 'Ничего не найдено']
+        );
 
         return include_template(
             'pages/popular/page.php',
@@ -53,9 +57,10 @@ function decorate_popular_page(
         );
     }
 
-    $main_content = include_template('pages/popular/main.php', [
-        'post_cards' => $post_cards,
-    ]);
+    $main_content = include_template(
+        'pages/popular/main.php',
+        ['post_cards' => $post_cards]
+    );
 
     return include_template(
         'pages/popular/page.php',
@@ -77,8 +82,8 @@ function decorate_popular_page(
  * и/или строковый контент (text_content и/или string_content) в зависимости
  * от типа контента.
  *
- * @param  array  $post_card - данные публикации в виде ассоциативного массива
- * @param string | null $page - название страницы (опционально)
+ * @param  array  $post_card  - данные публикации в виде ассоциативного массива
+ * @param  string | null  $page  - название страницы (опционально)
  *
  * @return string Разметка контента карточки публикации
  */

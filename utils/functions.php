@@ -240,6 +240,25 @@ function get_content_filters(
     return $content_filters;
 }
 
+// todo: add phpDoc
+/**
+ * @param  string  $basename -
+ * @param bool  $is_active -
+ *
+ * @return array
+ */
+function get_any_content_filter(
+    string $basename,
+    bool $is_active
+): array {
+    return [
+        'name' => 'Все',
+        'type' => 'all',
+        'url' => get_content_filter_url($basename),
+        'active' => $is_active,
+    ];
+}
+
 /**
  * Функция возвращает массив типов сортировки публикаций.
  * Тип сортировки представляет собой ассоциативный массив аналогичный
@@ -465,19 +484,4 @@ function handle_login_form(mysqli $db_connection)
         'form_data' => $form_data,
         'errors' => $errors
     ];
-}
-
-// todo: add phpDoc
-function render_message_page(array $message_data, array $layout_data, string $layout_type)
-{
-    $page_content = include_template(
-        'common/message.php',
-        $message_data
-    );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template("layouts/$layout_type.php", $layout_data);
-
-    print($layout_content);
 }

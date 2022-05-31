@@ -2,6 +2,7 @@
 
 require_once 'config/db.php';
 require_once 'utils/helpers.php';
+require_once 'utils/renderers/common.php';
 
 list(
     'hostname' => $localhost,
@@ -15,23 +16,11 @@ $db_connection = mysqli_connect($localhost, $username, $password, $database);
 
 if (!$db_connection || mysqli_error($db_connection)) {
     http_response_code(SERVER_ERROR_STATUS);
-
-    $error_content = include_template(
-        'common/message.php',
-        [
-            'content' => 'Произошла внутренняя ошибка сервера',
-        ]
-    );
-
-    $layout = include_template(
-        'layouts/empty.php',
-        ['content' => $error_content]
-    );
-
     ob_end_clean();
-
-    print($layout);
-
+    render_message_page(
+        ['content' => 'Произошла внутренняя ошибка сервера'],
+        'empty'
+    );
     exit();
 }
 

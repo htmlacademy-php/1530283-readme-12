@@ -61,8 +61,8 @@ if (is_null($content_types)) {
     http_response_code(NOT_FOUND_STATUS);
     render_message_page(
         ['content' => 'Не удалось загрузить страницу'],
+        'user',
         $layout_data,
-        'user'
     );
     exit();
 }
@@ -75,12 +75,8 @@ $is_content_filter_valid = is_null($current_content_filter)
 
 $content_filters =
     get_content_filters($content_types, $basename, $current_content_filter);
-$any_content_filter = [
-    'name' => 'Все',
-    'type' => 'all',
-    'url' => get_content_filter_url($basename),
-    'active' => is_null($current_content_filter),
-];
+$any_content_filter =
+    get_any_content_filter($basename, is_null($current_content_filter));
 
 $filters_content = include_template(
     'pages/feed/filters.php',

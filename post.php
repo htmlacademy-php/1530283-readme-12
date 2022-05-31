@@ -41,8 +41,8 @@ if ($is_page_error) {
     http_response_code(NOT_FOUND_STATUS);
     render_message_page(
         ['content' => 'Не удалось загрузить страницу'],
+        'user',
         $layout_data,
-        'user'
     );
     exit();
 }
