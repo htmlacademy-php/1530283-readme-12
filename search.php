@@ -27,9 +27,14 @@ $query_content = include_template(
     ['query' => $query]
 );
 
-// todo: check search mode - usual / hash
+$is_hashtag_mode = $query[0] === '#';
 
-$post_cards = get_posts_by_query($db_connection, $query);
+if ($is_hashtag_mode) {
+    $query = substr($query, 1);
+}
+
+$post_cards = $is_hashtag_mode ? get_posts_by_hashtag($db_connection, $query)
+    : get_posts_by_query($db_connection, $query);
 
 if (is_null($post_cards)) {
     http_response_code(SERVER_ERROR_STATUS);

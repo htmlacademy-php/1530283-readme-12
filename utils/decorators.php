@@ -227,12 +227,12 @@ function decorate_search_page_content(
     }
 
     $main_content = include_template(
-        'pages/feed/main.php',
+        'pages/search/main.php',
         ['post_cards' => $post_cards]
     );
 
     return include_template(
-        'pages/feed/page.php',
+        'pages/search/page.php',
         [
             'query_content' => $query_content,
             'main_content' => $main_content,
