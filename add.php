@@ -4,6 +4,7 @@ require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/post-form-validators.php';
+require_once 'utils/renderers/common.php';
 require_once 'models/content_type.php';
 require_once 'models/post.php';
 require_once 'init/user-session.php';

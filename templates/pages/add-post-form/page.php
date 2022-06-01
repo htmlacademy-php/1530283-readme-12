@@ -49,15 +49,10 @@
                                                 type="button">!<span
                                                     class="visually-hidden">Информация об ошибке</span>
                                         </button>
-                                        <div class="form__error-text">
-                                            <h3 class="form__error-title">
-                                                <?= $errors['title']
-                                                    ? $errors['title']['title']
-                                                    : '' ?></h3>
-                                            <p class="form__error-desc"><?= $errors['title']
-                                                    ? $errors['title']['description']
-                                                    : '' ?></p>
-                                        </div>
+                                        <?= include_template(
+                                            'common/form-error-text.php',
+                                            ['error' => $errors['title'] ?? []]
+                                        ) ?>
                                     </div>
                                 </div>
                                 <?= $content_fields ?>

@@ -32,14 +32,10 @@
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
                         </button>
-                        <div class="form__error-text">
-                            <h3 class="form__error-title"><?= $errors['email']
-                                    ? $errors['email']['title']
-                                    : '' ?></h3>
-                            <p class="form__error-desc"><?= $errors['email']
-                                    ? $errors['email']['description']
-                                    : '' ?></p>
-                        </div>
+                        <?= include_template(
+                            'common/form-error-text.php',
+                            ['error' => $errors['email'] ?? []]
+                        ) ?>
                     </div>
                 </div>
                 <div class="registration__input-wrapper form__input-wrapper">
@@ -56,14 +52,10 @@
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
                         </button>
-                        <div class="form__error-text">
-                            <h3 class="form__error-title"><?= $errors['login']
-                                    ? $errors['login']['title']
-                                    : '' ?></h3>
-                            <p class="form__error-desc"><?= $errors['login']
-                                    ? $errors['login']['description']
-                                    : '' ?></p>
-                        </div>
+                        <?= include_template(
+                            'common/form-error-text.php',
+                            ['error' => $errors['login'] ?? []]
+                        ) ?>
                     </div>
                 </div>
                 <div class="registration__input-wrapper form__input-wrapper">
@@ -80,14 +72,10 @@
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
                         </button>
-                        <div class="form__error-text">
-                            <h3 class="form__error-title"><?= $errors['password']
-                                    ? $errors['password']['title']
-                                    : '' ?></h3>
-                            <p class="form__error-desc"><?= $errors['password']
-                                    ? $errors['password']['description']
-                                    : '' ?></p>
-                        </div>
+                        <?= include_template(
+                            'common/form-error-text.php',
+                            ['error' => $errors['password'] ?? []]
+                        ) ?>
                     </div>
                 </div>
                 <div class="registration__input-wrapper form__input-wrapper">
@@ -105,14 +93,10 @@
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
                         </button>
-                        <div class="form__error-text">
-                            <h3 class="form__error-title"><?= $errors['password_repeat']
-                                    ? $errors['password_repeat']['title']
-                                    : '' ?></h3>
-                            <p class="form__error-desc"><?= $errors['password_repeat']
-                                    ? $errors['password_repeat']['description']
-                                    : '' ?></p>
-                        </div>
+                        <?= include_template(
+                            'common/form-error-text.php',
+                            ['error' => $errors['password_repeat'] ?? []]
+                        ) ?>
                     </div>
                 </div>
             </div>
