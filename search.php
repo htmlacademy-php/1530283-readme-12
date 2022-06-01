@@ -3,6 +3,7 @@
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
+require_once 'utils/renderers/search.php';
 require_once 'models/post.php';
 require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
@@ -30,30 +31,8 @@ $query_content = include_template(
 
 $post_cards = get_posts_by_query($db_connection, $query);
 
-
 if (is_null($post_cards)) {
     http_response_code(SERVER_ERROR_STATUS);
 }
 
-// todo: check if $posts is null;
-$page_content = count($post_cards)
-    ? include_template(
-        'pages/search/page.php',
-        [
-            'query_content' => $query_content,
-            'post_cards' => $post_cards
-        ]
-    )
-    : include_template(
-        'pages/search/page-empty.php',
-        [
-            'query_content' => $query_content,
-            'back_url' => $_SERVER['HTTP_REFERER'],
-        ]
-    );
-
-$layout_data['content'] = $page_content;
-
-$layout_content = include_template('layouts/user.php', $layout_data);
-
-print($layout_content);
+render_search_page($query_content, $post_cards, $layout_data);

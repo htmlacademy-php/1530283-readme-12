@@ -14,9 +14,9 @@
  * 2. Структура ассоциативного массива публикации должна соответствовать
  * требованиям шаблона popular/main.php.
  *
- * @param  string  $popular_filters_content - разметка секции фильтрации и
+ * @param  string  $popular_filters_content  - разметка секции фильтрации и
  * сортировки
- * @param  array | null  $post_cards - массив публикаций в виде ассоциативных
+ * @param  array | null  $post_cards  - массив публикаций в виде ассоциативных
  * массивов
  *
  * @return string Разметка контента страницы 'Популярное'
@@ -86,9 +86,11 @@ function decorate_popular_page_content(
  * 2. Структура ассоциативного массива публикации должна соответствовать
  * требованиям шаблона feed/main.php.
  *
- * @param  string  $feed_filters_content - разметка секции фильтрации и сортировки
- * @param  string  $promo_content - разметка промо-секции
- * @param  array | null  $post_cards  Массив публикаций в виде ассоциативных массивов
+ * @param  string  $feed_filters_content  - разметка секции фильтрации и
+ * сортировки
+ * @param  string  $promo_content  - разметка промо-секции
+ * @param  array | null  $post_cards - массив публикаций в виде ассоциативных
+ * массивов
  *
  * @return string Разметка контента страницы 'Моя лента'
  */
@@ -183,6 +185,57 @@ function decorate_post_card_content(
             'id' => $id,
             'text_content' => $text_content,
             'string_content' => $string_content,
+        ]
+    );
+}
+
+/**
+ * Функция возвращает разметку контента страницы 'Результаты поиска'
+ * Функция принимает опционально массив публикаций.
+ * В случае пустого массива публикаций, либо его отсутствия вместо карточек
+ * будет выведно сообщение об отсутствии результатов поиска.
+ *
+ * Ограничения:
+ * 1. Функция не обрабатывает разметку разметка блока строки запроса,
+ * т.е. принимает готовую разметку данной секции для шаблонов search/page.php
+ * 2. Структура ассоциативного массива публикации должна соответствовать
+ * требованиям шаблона search/main.php.
+ *
+ * @param  string  $query_content - разметка блока строки запроса
+ * @param  array | null  $post_cards - массив публикаций в виде ассоциативных
+ * массивов
+ *
+ * @return string - разметка страницы 'Результаты поиска'
+ */
+function decorate_search_page_content(
+    string $query_content,
+    $post_cards
+): string {
+    if (is_null($post_cards) || !count($post_cards)) {
+        $empty_content = include_template(
+            'pages/search/empty.php',
+            ['back_url' => $_SERVER['HTTP_REFERER']]
+        );
+
+        return include_template(
+            'pages/search/page.php',
+            [
+                'query_content' => $query_content,
+                'main_content' => $empty_content,
+            ]
+        );
+    }
+
+    $main_content = include_template(
+        'pages/feed/main.php',
+        ['post_cards' => $post_cards]
+    );
+
+    return include_template(
+        'pages/feed/page.php',
+        [
+            'query_content' => $query_content,
+            'main_content' => $main_content,
         ]
     );
 }
