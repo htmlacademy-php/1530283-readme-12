@@ -3,6 +3,93 @@
 require_once 'utils/constants.php';
 
 /**
+ * Функция обрабабатыват данные формы аутентификации.
+ * В случае успешной аутентификации происходит
+ * перенаправление на контроллер index.php и досрочный выход из сценария.
+ * В случае некорректных данных, либо ошибки аутентификации,
+ * возвращает ассоциативный массив с данными формы и ошибками валидации.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ *
+ * @return array - данные формы и данные ошибок валидации
+ */
+function handle_login_form(mysqli $db_connection): array
+{
+    $form_data = [];
+
+    $form_data['email'] = $_POST['email'] ?? '';
+    $form_data['password'] = $_POST['password'] ?? '';
+
+    $errors = get_login_form_data_errors($form_data);
+
+    $user = !count($errors) ? get_user_by_email(
+        $db_connection,
+        $form_data['email']
+    ) : null;
+
+    $is_password_correct = $user
+                           && password_verify(
+                               $form_data['password'],
+                               $user['password_hash']
+                           );
+
+    if (!count($errors) && (!$user || !$is_password_correct)) {
+        $errors['email'] = [
+            'title' => 'Электронная почта',
+            'description' => 'Неверное значение',
+        ];
+
+        $errors['password'] = [
+            'title' => 'Пароль',
+            'description' => 'Неверное значение',
+        ];
+    }
+
+    if ($user) {
+        unset($user['password_hash']);
+    }
+
+    return [
+        'form_data' => $form_data,
+        'errors' => $errors,
+        'user' => $user
+    ];
+}
+
+/**
+ * Функция возвращает ассоциативный массив ошибок валидации формы авторизации
+ * Ключами массива являются значения полей формы, а значениями -
+ * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
+ * В случае отсутствия ошибок возвращается пустой массив.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return array<int, array{
+ *   title: string,
+ *   description: string
+ * }> - массив ошибок валидации
+ */
+
+function get_login_form_data_errors(array $form_data): array
+{
+    $errors = [];
+
+    foreach ($form_data as $field => $value) {
+        $get_error = "get_login_${field}_error";
+
+        if (is_callable($get_error)) {
+            $error = $get_error($form_data);
+
+            if ($error) {
+                $errors[$field] = $error;
+            }
+        }
+    }
+
+    return $errors;
+}
+
+/**
  * Функция валидирует значение электронной почты формы авторизации и
  * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
  * описание ошибки. Если значение валидно, функция возвращает null.
@@ -99,37 +186,4 @@ function get_login_password_error(array $form_data)
     }
 
     return null;
-}
-
-/**
- * Функция возвращает ассоциативный массив ошибок валидации формы авторизации
- * Ключами массива являются значения полей формы, а значениями -
- * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
- * В случае отсутствия ошибок возвращается пустой массив.
- *
- * @param  array  $form_data  - ассоциативный массив полей формы и их значений
- *
- * @return array<int, array{
- *   title: string,
- *   description: string
- * }> - массив ошибок валидации
- */
-
-function get_login_form_data_errors(array $form_data): array
-{
-    $errors = [];
-
-    foreach ($form_data as $field => $value) {
-        $get_error = "get_login_${field}_error";
-
-        if (is_callable($get_error)) {
-            $error = $get_error($form_data);
-
-            if ($error) {
-                $errors[$field] = $error;
-            }
-        }
-    }
-
-    return $errors;
 }

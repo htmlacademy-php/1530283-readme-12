@@ -2,7 +2,8 @@
 
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
-require_once 'utils/login-form-validators.php';
+require_once 'utils/form-handlers/login.php';
+require_once 'utils/renderers/common.php';
 require_once 'utils/renderers/feed.php';
 require_once 'models/user.php';
 require_once 'models/post.php';
@@ -17,18 +18,29 @@ session_start();
 $user = $_SESSION['user'] ?? null;
 
 if (!$user) {
-    $login_form_data = [
-        'form_data' => [],
-        'errors' => [],
-    ];
+    $form_data = [];
+    $errors = [];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $login_form_data = handle_login_form($db_connection);
+        list(
+            'form_data' => $form_data,
+            'errors' => $errors,
+            'user' => $user
+            ) = handle_login_form($db_connection);
+
+        if (!count($errors)) {
+            $_SESSION['user'] = $user;
+            header('Location: index.php');
+            exit();
+        }
     }
 
     $layout_content = include_template(
         'layouts/welcome.php',
-        $login_form_data
+        [
+            'form_data' => $form_data,
+            'errors' => $errors,
+        ]
     );
 
     print($layout_content);

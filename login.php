@@ -2,7 +2,7 @@
 
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
-require_once 'utils/login-form-validators.php';
+require_once 'utils/form-handlers/login.php';
 require_once 'models/user.php';
 require_once 'init/guest-session.php';
 require_once 'init/db-connection.php';
@@ -26,14 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     list(
         'form_data' => $form_data,
         'errors' => $errors,
-    ) = handle_login_form($db_connection);
+        'user' => $user
+        ) = handle_login_form($db_connection);
+
+    if (!count($errors)) {
+        $_SESSION['user'] = $user;
+        header('Location: index.php');
+        exit();
+    }
 }
 
 $invalid_block_content = count($errors) ? include_template(
     'common/form-invalid-block.php',
-    [
-        'errors' => $errors
-    ]
+    ['errors' => $errors]
 ) : '';
 
 $page_content = include_template(
