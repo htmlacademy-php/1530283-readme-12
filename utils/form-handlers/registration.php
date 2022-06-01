@@ -2,6 +2,104 @@
 
 require_once 'utils/constants.php';
 
+// todo: add phpDoc
+/**
+ * Функция обрабабатыват данные формы аутентификации.
+ * В случае успешной аутентификации происходит
+ * перенаправление на контроллер index.php и досрочный выход из сценария.
+ * В случае некорректных данных, либо ошибки аутентификации,
+ * возвращает ассоциативный массив с данными формы и ошибками валидации.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ *
+ * @return array - данные формы и данные ошибок валидации
+ */
+function handle_registration_form(mysqli $db_connection): array
+{
+    $with_file = isset($_FILES['photo-file'])
+                 && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
+
+    $form_data['email'] = $_POST['email'] ?? '';
+    $form_data['login'] = $_POST['login'] ?? '';
+    $form_data['password'] = $_POST['password'] ?? '';
+    $form_data['password_repeat'] = $_POST['password-repeat'] ?? '';
+    $form_data['avatar_file'] =
+        $with_file ? $_FILES['photo-file'] : null;
+
+    $errors = get_registration_form_data_errors($form_data);
+
+    if (count($errors)) {
+        if ($with_file && !$errors['avatar_file']) {
+            $errors['avatar_file'] = [
+                'title' => 'Файл фото',
+                'description' => 'Загрузите файл еще раз'
+            ];
+        }
+    }
+
+    $photo_url =
+        !count($errors) && $with_file ? save_file($form_data['avatar_file'])
+            : '';
+
+    if ($with_file && !$photo_url) {
+        $errors['avatar_file'] = [
+            'title' => 'Файл фото',
+            'description' => 'Не удалось загрузить файл'
+        ];
+    }
+
+    $is_email_busy = get_user_by_email($db_connection, $form_data['email']);
+
+    if ($is_email_busy) {
+        $errors['email'] = [
+            'title' => 'Электронная почта',
+            'description' => 'Пользователь с такой электронной почто уже зарегистрирован'
+        ];
+    }
+
+    if (!count($errors) && $with_file) {
+        $form_data['avatar_url'] = $photo_url;
+    }
+
+    return [
+        'form_data' => $form_data,
+        'errors' => $errors,
+    ];
+}
+
+/**
+ * Функция возвращает ассоциативный массив ошибок валидации формы регистрации
+ * Ключами массива являются значения полей формы, а значениями -
+ * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
+ * В случае отсутствия ошибок возвращается пустой массив.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ *
+ * @return array<int, array{
+ *   title: string,
+ *   description: string
+ * }> - массив ошибок валидации
+ */
+
+function get_registration_form_data_errors(array $form_data): array
+{
+    $errors = [];
+
+    foreach ($form_data as $field => $value) {
+        $get_error = "get_registration_${field}_error";
+
+        if (is_callable($get_error)) {
+            $error = $get_error($form_data);
+
+            if ($error) {
+                $errors[$field] = $error;
+            }
+        }
+    }
+
+    return $errors;
+}
+
 /**
  * Функция валидирует значение электронной почты формы регистрации и
  * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
@@ -260,37 +358,4 @@ function get_registration_avatar_file_error(array $form_data)
     }
 
     return null;
-}
-
-/**
- * Функция возвращает ассоциативный массив ошибок валидации формы регистрации
- * Ключами массива являются значения полей формы, а значениями -
- * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
- * В случае отсутствия ошибок возвращается пустой массив.
- *
- * @param  array  $form_data  - ассоциативный массив полей формы и их значений
- *
- * @return array<int, array{
- *   title: string,
- *   description: string
- * }> - массив ошибок валидации
- */
-
-function get_registration_form_data_errors(array $form_data): array
-{
-    $errors = [];
-
-    foreach ($form_data as $field => $value) {
-        $get_error = "get_registration_${field}_error";
-
-        if (is_callable($get_error)) {
-            $error = $get_error($form_data);
-
-            if ($error) {
-                $errors[$field] = $error;
-            }
-        }
-    }
-
-    return $errors;
 }
