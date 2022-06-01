@@ -3,6 +3,139 @@
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 
+// todo: update phpDoc
+/**
+ * Функция обрабабатыват данные формы аутентификации.
+ * В случае успешной аутентификации происходит
+ * перенаправление на контроллер index.php и досрочный выход из сценария.
+ * В случае некорректных данных, либо ошибки аутентификации,
+ * возвращает ассоциативный массив с данными формы и ошибками валидации.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ *
+ * @return array - данные формы и данные ошибок валидации
+ */
+function handle_add_post_form(mysqli $db_connection): array {
+    $form_data= [];
+
+    $with_file = isset($_FILES['photo-file'])
+                 && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
+
+    $form_data['content_type_id'] = $_POST['content-type-id'] ?? '';
+    $form_data['title'] = $_POST['title'] ?? '';
+    $form_data['text_content'] = $_POST['text-content'] ?? '';
+    $form_data['string_content'] =
+        !$with_file ? $_POST['string-content'] ?? '' : '';
+    $form_data['tags'] =
+        $_POST['tags'] ? trim(
+            preg_replace('/\s+/', TEXT_SEPARATOR, mb_strtolower($_POST['tags']))
+        ) : '';
+    $form_data['photo_file'] =
+        $with_file ? $_FILES['photo-file'] : null;
+
+    $content_type_data = $form_data['content_type_id'] ? get_content_type(
+        $db_connection,
+        $form_data['content_type_id']
+    ) : null;
+    $content_type = $content_type_data && $content_type_data['type']
+        ? $content_type_data['type'] : null;
+
+    $errors = $content_type
+        ? get_post_form_data_errors($form_data, $content_type)
+        : [
+            [
+                'title' => 'Тип контента',
+                'description' => 'Некорректный тип'
+            ]
+        ];
+
+    if (count($errors)) {
+        if ($with_file && !$errors['photo_file']) {
+            $errors['photo_file'] = [
+                'title' => 'Файл фото',
+                'description' => 'Загрузите файл еще раз'
+            ];
+        }
+    }
+
+    $is_photo_content_type = $content_type === 'photo';
+    $photo_url = '';
+
+    if (!count($errors) && $is_photo_content_type) {
+        $photo_url =
+            $with_file
+                ? save_file($form_data['photo_file'])
+                : download_file($form_data['string_content']);
+
+        if (!$photo_url) {
+            if ($with_file) {
+                $errors['photo_file'] = [
+                    'title' => 'Файл фото',
+                    'description' => 'Не удалось загрузить файл'
+                ];
+            } else {
+                $errors['string_content'] = [
+                    'title' => 'Ссылка из интернета',
+                    'description' => 'Не удалось загрузить файл по ссылке'
+                ];
+            }
+        }
+    }
+
+    if (!count($errors)) {
+        if ($is_photo_content_type) {
+            $form_data['string_content'] = $photo_url;
+        }
+    }
+
+    return [
+        'form_data' => $form_data,
+        'errors' => $errors,
+    ];
+}
+
+/**
+ * Функция возвращает ассоциативный массив ошибок валидации формы создания
+ * публикации. Ключами массива являются значения полей формы, а значениями -
+ * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
+ * В случае отсутствия ошибок возвращается пустой массив.
+ *
+ * Ограничения:
+ * Допустимые значения типов контента - photo, link, text, quote, video.
+ *
+ * @param  array  $form_data  - ассоциативный массив полей формы и их значений
+ * @param  string  $content_type  - тип контента публикации
+ *
+ * @return array<int, array{
+ *   title: string,
+ *   description: string
+ * }> - массив ошибок валидации
+ */
+function get_post_form_data_errors(
+    array $form_data,
+    string $content_type
+): array {
+    $errors = [];
+
+    foreach ($form_data as $field => $value) {
+        $is_content_field = strpos($field, 'content') !== false;
+
+        $get_error =
+            $is_content_field ? "get_${content_type}_post_${field}_error"
+                : "get_post_${field}_error";
+
+        if (is_callable($get_error)) {
+            $error = $get_error($form_data);
+
+            if ($error) {
+                $errors[$field] = $error;
+            }
+        }
+    }
+
+    return $errors;
+}
+
 /**
  * Функция валидирует значение заголовка формы создания публикации и
  * вовзвращает ассоциативный массив ошибки валидации, содержащий название и
@@ -481,46 +614,4 @@ function get_link_post_string_content_error(array $form_data)
     }
 
     return null;
-}
-
-/**
- * Функция возвращает ассоциативный массив ошибок валидации формы создания
- * публикации. Ключами массива являются значения полей формы, а значениями -
- * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
- * В случае отсутствия ошибок возвращается пустой массив.
- *
- * Ограничения:
- * Допустимые значения типов контента - photo, link, text, quote, video.
- *
- * @param  array  $form_data  - ассоциативный массив полей формы и их значений
- * @param  string  $content_type  - тип контента публикации
- *
- * @return array<int, array{
- *   title: string,
- *   description: string
- * }> - массив ошибок валидации
- */
-function get_post_form_data_errors(
-    array $form_data,
-    string $content_type
-): array {
-    $errors = [];
-
-    foreach ($form_data as $field => $value) {
-        $is_content_field = strpos($field, 'content') !== false;
-
-        $get_error =
-            $is_content_field ? "get_${content_type}_post_${field}_error"
-                : "get_post_${field}_error";
-
-        if (is_callable($get_error)) {
-            $error = $get_error($form_data);
-
-            if ($error) {
-                $errors[$field] = $error;
-            }
-        }
-    }
-
-    return $errors;
 }
