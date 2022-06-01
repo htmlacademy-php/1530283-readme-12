@@ -1,7 +1,4 @@
 <?php
-
-require_once 'utils/decorators.php';
-
 /**
  * Шаблон карточки публикации для страницы 'Популярное'
  *
@@ -11,6 +8,8 @@ require_once 'utils/decorators.php';
 list(
     'id' => $id,
     'title' => $title,
+    'string_content' => $string_content,
+    'text_content' => $text_content,
     'content_type' => $content_type,
     'author_login' => $author_login,
     'author_avatar' => $author_avatar,
@@ -27,7 +26,14 @@ list(
         </a>
     </header>
     <div class="post__main">
-        <?= decorate_post_card_content($post_card, 'popular') ?>
+        <?= include_template(
+            "pages/popular/post-card/content/$content_type.php",
+            [
+                'id' => $id,
+                'text_content' => $text_content,
+                'string_content' => $string_content,
+            ]
+        ) ?>
     </div>
     <footer class="post__footer">
         <div class="post__author">

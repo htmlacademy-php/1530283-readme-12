@@ -1,7 +1,4 @@
 <?php
-
-require_once 'utils/decorators.php';
-
 /**
  * Функция рендерит страницу 'Результаты поиска' в зависимости от переданного
  * массива публикаций.
@@ -22,8 +19,35 @@ function render_search_page(
     $post_cards,
     array $layout_data
 ) {
-    $page_content =
-        decorate_search_page_content($query_content, $post_cards);
+    $page_content = (function () use ($query_content, $post_cards) {
+        if (is_null($post_cards) || !count($post_cards)) {
+            $empty_content = include_template(
+                'pages/search/empty.php',
+                ['back_url' => $_SERVER['HTTP_REFERER']]
+            );
+
+            return include_template(
+                'pages/search/page.php',
+                [
+                    'query_content' => $query_content,
+                    'main_content' => $empty_content,
+                ]
+            );
+        }
+
+        $main_content = include_template(
+            'pages/search/main.php',
+            ['post_cards' => $post_cards]
+        );
+
+        return include_template(
+            'pages/search/page.php',
+            [
+                'query_content' => $query_content,
+                'main_content' => $main_content,
+            ]
+        );
+    })();
 
     $layout_data['content'] = $page_content;
 
