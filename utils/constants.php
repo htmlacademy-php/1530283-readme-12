@@ -1,6 +1,10 @@
 <?php
 
+const AVATAR_PLACEHOLDER = 'img/icon-input-user.svg';
+
 const CONTENT_FILTER_QUERY = 'content_type_id';
+
+const SEARCH_QUERY = 'query';
 
 const SORT_TYPE_QUERY = 'sort_type';
 

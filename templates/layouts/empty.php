@@ -1,11 +1,9 @@
 <?php
-
 /**
- * Шаблон страницы служебнго сообщения
+ * Шаблон пустой страницы
  *
- * @var string $title - заголовок страницы ('Ошибка' - по умолчанию)
- * @var string $content - текст сообщения страницы ('Что-то пошло не так...'
- * - по умолчанию)
+ * @var string | null $title - заголовок страницы
+ * @var string | null $content - разметка контента страницы
  */
 
 if (!isset($title)) {
@@ -13,7 +11,10 @@ if (!isset($title)) {
 }
 
 if (!isset($content)) {
-    $content = 'Что-то пошло не так...';
+    $content = "
+        <h1>$title</h1>
+        <p>Что-то пошло не так...</p>
+    ";
 }
 ?>
 
@@ -44,10 +45,7 @@ if (!isset($content)) {
 <header class="header"></header>
 
 <section class="page__main page__main--empty">
-    <div class="container">
-        <h1><?= $title ?></h1>
-        <p><?= $content ?></p>
-    </div>
+    <?= $content ?>
 </section>
 
 </body>

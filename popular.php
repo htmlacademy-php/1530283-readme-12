@@ -3,73 +3,52 @@
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
-require_once 'utils/decorators.php';
+require_once 'utils/renderers/popular.php';
 require_once 'models/post.php';
 require_once 'models/content_type.php';
-require_once 'init/db.php';
+require_once 'init/user-session.php';
+require_once 'init/db-connection.php';
 
 /**
- * @var mysqli | false | null $db_connection - ресурс соединения с базой данных
+ * @var array $user_session - сессия пользователя
+ * @var mysqli $db_connection - ресурс соединения с базой данных
  */
-
-$user = check_user();
-
-check_db_connection($db_connection);
 
 $basename = basename(__FILE__);
 
 $current_sort_type = filter_input(
-    INPUT_GET,
-    SORT_TYPE_QUERY,
-    FILTER_SANITIZE_STRING
-);
-
-if (!$current_sort_type) {
-    $url = get_sort_url(
-        $basename,
-        SORT_TYPE_OPTIONS[0]['value']
-    );
-
-    header("Location: $url");
-
-    exit();
-}
+                         INPUT_GET,
+                         SORT_TYPE_QUERY,
+                         FILTER_SANITIZE_STRING
+                     ) ?? SORT_TYPE_OPTIONS[0]['value'];
 
 $current_content_filter = filter_input(
-    INPUT_GET,
-    CONTENT_FILTER_QUERY,
-    FILTER_SANITIZE_NUMBER_INT
-);
+                              INPUT_GET,
+                              CONTENT_FILTER_QUERY,
+                              FILTER_SANITIZE_NUMBER_INT
+                          ) ?? null;
 
-$is_sort_order_reversed = isset($_GET[SORT_ORDER_REVERSED]);
+$is_sort_order_reversed =
+    filter_input(INPUT_GET, SORT_ORDER_REVERSED, FILTER_VALIDATE_BOOLEAN) ??
+    false;
 
 $content_types = get_content_types($db_connection);
 
 $layout_data = [
     'title' => 'Популярное',
-    'user' => $user,
+    'user' => $user_session,
     'page_modifier' => 'popular',
     'basename' => $basename,
-    'content' => '',
 ];
 
 if (is_null($content_types)) {
     http_response_code(NOT_FOUND_STATUS);
-
-    $page_content = include_template(
-        'partials/error.php',
-        [
-            'content' => 'Не удалось загрузить страницу'
-        ]
+    render_message_page(
+        ['content' => 'Не удалось загрузить страницу'],
+        'user',
+        $layout_data
     );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layouts/user.php', $layout_data);
-
-    print($layout_content);
-
-    return;
+    exit();
 }
 
 $is_sort_type_valid = validate_sort_type($current_sort_type);
@@ -79,17 +58,15 @@ $is_content_filter_valid = is_null($current_content_filter)
                                $content_types
                            );
 
-$sort_types = get_sort_types($basename);
-$content_filters = get_content_filters($content_types, $basename);
-$any_content_filter = [
-    'name' => 'Все',
-    'type' => 'all',
-    'url' => get_content_filter_url($basename),
-    'active' => is_query_active(CONTENT_FILTER_QUERY),
-];
+$sort_types =
+    get_sort_types($basename, $current_sort_type, $is_sort_order_reversed);
+$content_filters =
+    get_content_filters($content_types, $basename, $current_content_filter);
+$any_content_filter =
+    get_any_content_filter($basename, is_null($current_content_filter));
 
 $popular_filters_content = include_template(
-    'partials/popular-filters.php',
+    'pages/popular/filters.php',
     [
         'sort_types' => $sort_types,
         'is_sort_order_reversed' => $is_sort_order_reversed,
@@ -100,28 +77,11 @@ $popular_filters_content = include_template(
 
 if (!$is_sort_type_valid or !$is_content_filter_valid) {
     http_response_code(BAD_REQUEST_STATUS);
-
-    $page_content = include_template(
-        'popular-empty.php',
-        [
-            'popular_filters_content' => $popular_filters_content,
-            'title' => 'Ошибка',
-            'content' => 'Параметры фильтрации или сортировки заданы некорректно',
-            'link_description' => 'Сброс параметров',
-            'link_url' => $basename,
-        ]
-    );
-
-    $layout_data['content'] = $page_content;
-
-    $layout_content = include_template('layouts/user.php', $layout_data);
-
-    print($layout_content);
-
-    return;
+    render_popular_filter_error($popular_filters_content, $layout_data);
+    exit();
 }
 
-$post_cards = get_posts(
+$post_cards = get_popular_posts(
     $db_connection,
     [
         'sort_type' => $current_sort_type,
@@ -131,13 +91,7 @@ $post_cards = get_posts(
 );
 
 if (is_null($post_cards)) {
-    http_response_code(NOT_FOUND_STATUS);
+    http_response_code(SERVER_ERROR_STATUS);
 }
 
-$page_content = decorate_popular_page($popular_filters_content, $post_cards);
-
-$layout_data['content'] = $page_content;
-
-$layout_content = include_template('layouts/user.php', $layout_data);
-
-print($layout_content);
+render_popular_page($popular_filters_content, $post_cards, $layout_data);
