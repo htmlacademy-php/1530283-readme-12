@@ -43,6 +43,10 @@ if (!$user) {
         ]
     );
 
+    if (count($errors)) {
+        http_response_code(BAD_REQUEST_STATUS);
+    }
+
     print($layout_content);
 
     exit();

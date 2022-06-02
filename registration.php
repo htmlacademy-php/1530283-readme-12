@@ -69,4 +69,8 @@ $layout_data['content'] = $page_content;
 
 $layout_content = include_template('layouts/guest.php', $layout_data);
 
+if (count($errors)) {
+    http_response_code(BAD_REQUEST_STATUS);
+}
+
 print($layout_content);

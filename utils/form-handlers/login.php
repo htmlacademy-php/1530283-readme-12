@@ -2,17 +2,18 @@
 
 require_once 'utils/constants.php';
 
-// todo: update phpDoc
 /**
  * Функция обрабабатыват данные формы аутентификации.
- * В случае успешной аутентификации происходит
- * перенаправление на контроллер index.php и досрочный выход из сценария.
- * В случае некорректных данных, либо ошибки аутентификации,
- * возвращает ассоциативный массив с данными формы и ошибками валидации.
+ * Возвращает ассоциативный массив с данными формы, ошибками валидации
+ * и данными пользователя (в случе успешной аутентификации).
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
  *
- * @return array - данные формы и данные ошибок валидации
+ * @return array{
+ *     form_data: array,
+ *     errors: array,
+ *     user: array | null
+ * } - данные формы, данные ошибок валидации, данные пользователя
  */
 function handle_login_form(mysqli $db_connection): array
 {
@@ -70,7 +71,6 @@ function handle_login_form(mysqli $db_connection): array
  *   description: string
  * }> - массив ошибок валидации
  */
-
 function get_login_form_data_errors(array $form_data): array
 {
     $errors = [];
