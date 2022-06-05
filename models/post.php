@@ -13,7 +13,8 @@ require_once 'models/post_hashtag.php';
  * публикаций в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection  ресурс соединения с базой данных
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
  * @param  array{
  *     sort_type: 'views_count' | 'likes_count' | 'created_at' | null,
  *     is_order_reversed: bool | null,
@@ -32,9 +33,10 @@ require_once 'models/post_hashtag.php';
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     is_liked: 0 | 1
  * }>
  */
-function get_popular_posts(mysqli $db_connection, $config = [])
+function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
 {
     $sort_type = $config['sort_type'] ? mysqli_real_escape_string(
         $db_connection,
@@ -60,7 +62,8 @@ function get_popular_posts(mysqli $db_connection, $config = [])
             users.avatar_url AS author_avatar,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
-            COUNT(DISTINCT comments.id) AS comments_count
+            COUNT(DISTINCT comments.id) AS comments_count,
+            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -74,7 +77,9 @@ function get_popular_posts(mysqli $db_connection, $config = [])
     $statement = mysqli_prepare($db_connection, $sql);
 
     if ($filter_sql) {
-        mysqli_stmt_bind_param($statement, 'i', $content_type_id);
+        mysqli_stmt_bind_param($statement, 'si', $user_id, $content_type_id);
+    } else {
+        mysqli_stmt_bind_param($statement, 's', $user_id);
     }
 
     mysqli_stmt_execute($statement);
@@ -97,7 +102,8 @@ function get_popular_posts(mysqli $db_connection, $config = [])
  * публикаций в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection  ресурс соединения с базой данных
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
  * @param  array{
  *     content_type_id: int | null
  * } $config - параметры запроса
@@ -114,10 +120,11 @@ function get_popular_posts(mysqli $db_connection, $config = [])
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
- *     hashtags: array
+ *     hashtags: array,
+ *     is_liked: 0 | 1
  * }>
  */
-function get_feed_posts(mysqli $db_connection, $config = [])
+function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
 {
     $content_type_id = $config['content_type_id'] ?? '';
 
@@ -137,7 +144,8 @@ function get_feed_posts(mysqli $db_connection, $config = [])
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_json,
+            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -152,7 +160,9 @@ function get_feed_posts(mysqli $db_connection, $config = [])
     $statement = mysqli_prepare($db_connection, $sql);
 
     if ($filter_sql) {
-        mysqli_stmt_bind_param($statement, 'i', $content_type_id);
+        mysqli_stmt_bind_param($statement, 'si', $user_id, $content_type_id);
+    } else {
+        mysqli_stmt_bind_param($statement, 's', $user_id);
     }
 
     mysqli_stmt_execute($statement);
@@ -165,9 +175,9 @@ function get_feed_posts(mysqli $db_connection, $config = [])
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
-        unset($post['hashtags_string']);
-        unset($posts['score']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
+        unset($post['hashtags_json']);
+        unset($post['score']);
     }
 
     return $posts;
@@ -180,8 +190,9 @@ function get_feed_posts(mysqli $db_connection, $config = [])
  * публикаций в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection - ресурс соедения с базой данных
- * @param  string  $query - строка запроса
+ * @param  mysqli  $db_connection  - ресурс соедения с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  string  $query  - строка запроса
  *
  * @return null | array<int, array{
  *     id: int,
@@ -195,10 +206,11 @@ function get_feed_posts(mysqli $db_connection, $config = [])
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
- *     hashtags: array
+ *     hashtags: array,
+ *     is_liked: 0 | 1
  * }>
  */
-function get_posts_by_query(mysqli $db_connection, string $query)
+function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
 {
     $sql = "
         SELECT
@@ -213,9 +225,10 @@ function get_posts_by_query(mysqli $db_connection, string $query)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
+            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
             MATCH(posts.title, posts.string_content, posts.text_content)
                 AGAINST(? IN BOOLEAN MODE) AS score,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_json
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -230,7 +243,7 @@ function get_posts_by_query(mysqli $db_connection, string $query)
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ss', $query, $query);
+    mysqli_stmt_bind_param($statement, 'sss', $user_id, $query, $query);
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
 
@@ -241,21 +254,23 @@ function get_posts_by_query(mysqli $db_connection, string $query)
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
-        unset($post['hashtags_string']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
+        unset($post['hashtags_json']);
     }
 
     return $posts;
 }
 
+// todo: check
 /**
  * Функция получает публикации из базы данных по заданному названию хэштега.
  * В случае успешного запроса функция возвращается массив
  * публикаций в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection - ресурс соедения с базой данных
- * @param  string  $hashtag - название хэштега
+ * @param  mysqli  $db_connection  - ресурс соедения с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  string  $hashtag  - название хэштега
  *
  * @return null | array<int, array{
  *     id: int,
@@ -270,10 +285,14 @@ function get_posts_by_query(mysqli $db_connection, string $query)
  *     likes_count: int,
  *     comments_count: int,
  *     hashtags: array
+ *     is_liked: 0 | 1
  * }>
  */
-function get_posts_by_hashtag(mysqli $db_connection, string $hashtag)
-{
+function get_posts_by_hashtag(
+    mysqli $db_connection,
+    int $user_id,
+    string $hashtag
+) {
     $sql = "
         SELECT
             posts.id,
@@ -287,7 +306,8 @@ function get_posts_by_hashtag(mysqli $db_connection, string $hashtag)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_json,
+            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -296,12 +316,12 @@ function get_posts_by_hashtag(mysqli $db_connection, string $hashtag)
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         GROUP BY posts.id, posts.created_at
-        HAVING LOCATE(?, hashtags_string) > 0
+        HAVING LOCATE(?, hashtags_json) > 0
         ORDER BY posts.created_at DESC 
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 's', $hashtag);
+    mysqli_stmt_bind_param($statement, 'ss', $user_id, $hashtag);
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
 
@@ -312,9 +332,8 @@ function get_posts_by_hashtag(mysqli $db_connection, string $hashtag)
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
-        unset($post['hashtags_string']);
-        unset($post['haystack']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
+        unset($post['hashtags_json']);
     }
 
     return $posts;
@@ -327,7 +346,8 @@ function get_posts_by_hashtag(mysqli $db_connection, string $hashtag)
  * В случае неуспешного запроса возвращается null.
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
- * @param  int  $id  - id публикации
+ * @param  int  $user_id  - id пользователя
+ * @param  int  $post_id  - id публикации
  *
  * return null | array{
  *     id: int,
@@ -342,10 +362,11 @@ function get_posts_by_hashtag(mysqli $db_connection, string $hashtag)
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
- *     hashtags: array
+ *     hashtags: array,
+ *     is_liked: 0 | 1
  * } - данные публикации
  */
-function get_post(mysqli $db_connection, int $id)
+function get_post(mysqli $db_connection, int $user_id, int $post_id)
 {
     $sql = "
         SELECT
@@ -361,7 +382,8 @@ function get_post(mysqli $db_connection, int $id)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_string
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_json,
+            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -374,7 +396,7 @@ function get_post(mysqli $db_connection, int $id)
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $id);
+    mysqli_stmt_bind_param($statement, 'si', $user_id, $post_id);
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
 
@@ -388,8 +410,8 @@ function get_post(mysqli $db_connection, int $id)
         return null;
     }
 
-    $post['hashtags'] = decode_json_array_agg($post['hashtags_string']);
-    unset($post['hashtags_string']);
+    $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
+    unset($post['hashtags_json']);
 
     return $post;
 }

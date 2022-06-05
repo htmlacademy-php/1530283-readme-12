@@ -83,6 +83,7 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
 
 $post_cards = get_popular_posts(
     $db_connection,
+    $user_session['id'],
     [
         'sort_type' => $current_sort_type,
         'is_order_reversed' => $is_sort_order_reversed,

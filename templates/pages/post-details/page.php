@@ -17,6 +17,7 @@ list(
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
     'views_count' => $views_count,
+    'is_liked' => $is_liked
     )
     = $post;
 
@@ -31,7 +32,9 @@ list(
                 <?= $post_content ?>
                 <div class="post__indicators">
                     <div class="post__buttons">
-                        <a class="post__indicator post__indicator--likes button"
+                        <a class="post__indicator
+                           post__indicator--likes<?= $is_liked ? '-active' : ''?>
+                           button"
                            href="#" title="Лайк">
                             <svg class="post__indicator-icon" width="20"
                                  height="17">

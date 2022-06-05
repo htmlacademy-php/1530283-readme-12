@@ -20,7 +20,7 @@ $comments = null;
 $author = null;
 
 if ($post_id) {
-    $post = get_post($db_connection, $post_id);
+    $post = get_post($db_connection, $user_session['id'], $post_id);
     $comments = get_comments($db_connection, $post_id);
     $hashtags = get_hashtags($db_connection, $post_id);
 }

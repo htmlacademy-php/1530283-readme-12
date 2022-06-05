@@ -31,7 +31,7 @@ list(
                       $created_at
                   ) ?>"><?= format_relative_time(
                     $created_at
-                ) ?>
+                ) ?> назад
             </time>
         </div>
         <p class="comments__text">

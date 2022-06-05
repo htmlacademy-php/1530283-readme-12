@@ -17,7 +17,8 @@ list(
     'created_at' => $created_at,
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
-    'hashtags' => $hashtags
+    'hashtags' => $hashtags,
+    'is_liked' => $is_liked
     )
     = $post_card;
 ?>
@@ -53,8 +54,9 @@ list(
     </div>
     <footer class="post__footer post__indicators">
         <div class="post__buttons">
-            <a class="post__indicator post__indicator--likes button" href="#"
-               title="Лайк">
+            <a class="post__indicator
+             post__indicator--likes<?= $is_liked ? '-active' : '' ?>
+             button" href="#" title="Лайк">
                 <svg class="post__indicator-icon" width="20" height="17">
                     <use xlink:href="#icon-heart"></use>
                 </svg>
