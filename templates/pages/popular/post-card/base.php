@@ -20,7 +20,9 @@ list(
     )
     = $post_card;
 ?>
-<article class="popular__post post post-<?= $content_type ?>">
+<article
+        id="post-<?= $id ?>"
+        class="popular__post post post-<?= $content_type ?>">
     <header class="post__header">
         <a href="post.php?post_id=<?= $id ?>">
             <h2><?= strip_tags($title) ?></h2>
@@ -61,7 +63,7 @@ list(
                 <a class="post__indicator
                  post__indicator--likes<?= $is_liked ? '-active' : '' ?>
                  button"
-                   href="#" title="Лайк">
+                   href="like.php?post_id=<?= $id ?>" title="Лайк">
                     <svg class="post__indicator-icon" width="20" height="17">
                         <use xlink:href="#icon-heart"></use>
                     </svg>

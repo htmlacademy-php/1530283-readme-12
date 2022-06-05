@@ -261,7 +261,6 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
     return $posts;
 }
 
-// todo: check
 /**
  * Функция получает публикации из базы данных по заданному названию хэштега.
  * В случае успешного запроса функция возвращается массив

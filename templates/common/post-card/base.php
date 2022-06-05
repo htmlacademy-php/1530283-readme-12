@@ -23,8 +23,9 @@ list(
     = $post_card;
 ?>
 
-<article class="<?= $card_modifier ? "${card_modifier}__post"
-    : '' ?> post <?= "post-$content_type" ?>">
+<article id="post-<?= $id ?>"
+         class="<?= $card_modifier ? "${card_modifier}__post" : '' ?>
+         post <?= "post-$content_type" ?>">
     <header class="post__header post__author">
         <a class="post__author-link" href="#" title="Автор">
             <div class="post__avatar-wrapper">
@@ -56,7 +57,7 @@ list(
         <div class="post__buttons">
             <a class="post__indicator
              post__indicator--likes<?= $is_liked ? '-active' : '' ?>
-             button" href="#" title="Лайк">
+             button" href="like.php?post_id=<?= $id ?>" title="Лайк">
                 <svg class="post__indicator-icon" width="20" height="17">
                     <use xlink:href="#icon-heart"></use>
                 </svg>
