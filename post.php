@@ -47,9 +47,14 @@ if ($is_page_error) {
     exit();
 }
 
+$is_own_post = $author['id'] === $user_session['id'];
+
 $author_content = include_template(
     'pages/post-details/author.php',
-    ['author' => $author]
+    [
+        'author' => $author,
+        'is_own_post' => $is_own_post,
+    ]
 );
 
 $content_type = $post['content_type'];

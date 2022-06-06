@@ -12,6 +12,7 @@ list(
     'string_content' => $string_content,
     'text_content' => $text_content,
     'content_type' => $content_type,
+    'author_id' => $author_id,
     'author_login' => $author_login,
     'author_avatar' => $author_avatar,
     'created_at' => $created_at,
@@ -27,7 +28,9 @@ list(
          class="<?= $card_modifier ? "${card_modifier}__post" : '' ?>
          post <?= "post-$content_type" ?>">
     <header class="post__header post__author">
-        <a class="post__author-link" href="#" title="Автор">
+        <a class="post__author-link"
+           href="profile.php?user_id=<?= $author_id ?>"
+           title="Автор">
             <div class="post__avatar-wrapper">
                 <img class="post__author-avatar"
                      src="/<?= $author_avatar ?? AVATAR_PLACEHOLDER ?>"

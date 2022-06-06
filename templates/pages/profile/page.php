@@ -3,46 +3,14 @@
 /**
  * Шаблон страницы профиля пользователя
  *
+ * @var string $user_content - разметка секции с информацией о пользователей
  */
 
 ?>
 
 <h1 class="visually-hidden">Профиль</h1>
 <div class="profile profile--default">
-    <div class="profile__user-wrapper">
-        <div class="profile__user user container">
-            <div class="profile__user-info user__info">
-                <div class="profile__avatar user__avatar">
-                    <img class="profile__picture user__picture"
-                         src="../../img/userpic-medium.jpg"
-                         alt="Аватар пользователя">
-                </div>
-                <div class="profile__name-wrapper user__name-wrapper">
-                    <span class="profile__name user__name">Антон<br> Глуханько</span>
-                    <time class="profile__user-time user__time"
-                          datetime="2014-03-20">5 лет на сайте
-                    </time>
-                </div>
-            </div>
-            <div class="profile__rating user__rating">
-                <p class="profile__rating-item user__rating-item user__rating-item--publications">
-                    <span class="user__rating-amount">556</span>
-                    <span class="profile__rating-text user__rating-text">публикаций</span>
-                </p>
-                <p class="profile__rating-item user__rating-item user__rating-item--subscribers">
-                    <span class="user__rating-amount">1856</span>
-                    <span class="profile__rating-text user__rating-text">подписчиков</span>
-                </p>
-            </div>
-            <div class="profile__user-buttons user__buttons">
-                <button class="profile__user-button user__button user__button--subscription button button--main"
-                        type="button">Подписаться
-                </button>
-                <a class="profile__user-button user__button user__button--writing button button--green"
-                   href="#">Сообщение</a>
-            </div>
-        </div>
-    </div>
+    <?= $user_content ?>
     <div class="profile__tabs-wrapper tabs">
         <div class="container">
             <div class="profile__tabs filters">
@@ -71,7 +39,7 @@
                         </header>
                         <div class="post__main">
                             <div class="post-photo__image-wrapper">
-                                <img src="../../img/rock.jpg"
+                                <img src="../../../img/rock.jpg"
                                      alt="Фото от пользователя" width="760"
                                      height="396">
                             </div>
@@ -127,7 +95,7 @@
                                    title="Автор">
                                     <div class="post__avatar-wrapper post__avatar-wrapper--repost">
                                         <img class="post__author-avatar"
-                                             src="../../img/userpic-tanya.jpg"
+                                             src="../../../img/userpic-tanya.jpg"
                                              alt="Аватар пользователя">
                                     </div>
                                     <div class="post__info">
@@ -204,7 +172,7 @@
                                             <a class="user__avatar-link"
                                                href="#">
                                                 <img class="comments__picture"
-                                                     src="../../img/userpic-larisa.jpg"
+                                                     src="../../../img/userpic-larisa.jpg"
                                                      alt="Аватар пользователя">
                                             </a>
                                         </div>
@@ -229,7 +197,7 @@
                                             <a class="user__avatar-link"
                                                href="#">
                                                 <img class="comments__picture"
-                                                     src="../../img/userpic-larisa.jpg"
+                                                     src="../../../img/userpic-larisa.jpg"
                                                      alt="Аватар пользователя">
                                             </a>
                                         </div>
@@ -272,7 +240,7 @@
                               method="post">
                             <div class="comments__my-avatar">
                                 <img class="comments__picture"
-                                     src="../../img/userpic-medium.jpg"
+                                     src="../../../img/userpic-medium.jpg"
                                      alt="Аватар пользователя">
                             </div>
                             <textarea class="comments__textarea form__textarea"
@@ -294,7 +262,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -317,7 +285,7 @@
                                    title="Перейти на публикацию">
                                     <div class="post-mini__image-wrapper">
                                         <img class="post-mini__image"
-                                             src="../../img/rock-small.png"
+                                             src="../../../img/rock-small.png"
                                              width="109" height="109"
                                              alt="Превью публикации">
                                     </div>
@@ -330,7 +298,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -364,7 +332,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -387,7 +355,7 @@
                                    title="Перейти на публикацию">
                                     <div class="post-mini__image-wrapper">
                                         <img class="post-mini__image"
-                                             src="../../img/coast-small.png"
+                                             src="../../../img/coast-small.png"
                                              width="109" height="109"
                                              alt="Превью публикации">
                                         <span class="post-mini__play-big">
@@ -406,7 +374,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -440,7 +408,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -480,7 +448,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -516,7 +484,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -552,7 +520,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
@@ -588,7 +556,7 @@
                                 <div class="post-mini__avatar user__avatar">
                                     <a class="user__avatar-link" href="#">
                                         <img class="post-mini__picture user__picture"
-                                             src="../../img/userpic-petro.jpg"
+                                             src="../../../img/userpic-petro.jpg"
                                              alt="Аватар пользователя">
                                     </a>
                                 </div>
