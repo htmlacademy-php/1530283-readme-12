@@ -478,3 +478,30 @@ function create_post(mysqli $db_connection, array $post_data)
 
     return $post_id;
 }
+
+/**
+ * Функция проверяет наличие публикации в базе данных по заданному id.
+ * В случае ошибки запроса возвращается отрицательный результат (false).
+ *
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param  int  $post_id - id публикации
+ *
+ * @return bool - результат проверки
+ */
+function check_post(mysqli $db_connection, int $post_id): bool
+{
+    $sql = "SELECT posts.id FROM posts WHERE posts.id = ?";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $post_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return false;
+    }
+
+    $post = mysqli_fetch_assoc($result);
+
+    return boolval($post['id']);
+}
