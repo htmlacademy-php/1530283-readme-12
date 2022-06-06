@@ -5,6 +5,7 @@ require_once 'init/db-connection.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'models/user.php';
+require_once 'models/post.php';
 
 /**
  * @var array $user_session - сессия пользователя
@@ -27,7 +28,10 @@ $is_own_profile = intval($user_id) === $user_session['id'];
 
 $user = get_user($db_connection, $user_id);
 
-if (!$user) {
+$user_posts =
+    get_posts_by_author($db_connection, $user_session['id'], $user_id);
+
+if (!$user || !$user_posts) {
     http_response_code(NOT_FOUND_STATUS);
     render_message_page(
         ['content' => 'Не удалось загрузить страницу'],
@@ -45,10 +49,16 @@ $user_content = include_template(
     ]
 );
 
+$tabs_content = include_template('pages/profile/tabs.php', []);
+
+// todo: empty state
+
 $page_content = include_template(
     'pages/profile/page.php',
     [
         'user_content' => $user_content,
+        'tabs_content' => $tabs_content,
+        'user_posts' =>  $user_posts,
     ]
 );
 

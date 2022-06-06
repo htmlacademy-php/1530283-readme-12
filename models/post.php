@@ -347,6 +347,86 @@ function get_posts_by_hashtag(
 }
 
 /**
+ * Функция получается публикации из базы данных по заданному id автора
+ * с применением полнотекстового поиска по полям заголовка и контента.
+ * В случае успешного запроса функция возвращается массив
+ * публикаций в виде ассоциативных массивов.
+ * В случае неуспешного запроса возвращается null.
+ *
+ * @param  mysqli  $db_connection  - ресурс соедения с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  int  $author_id  - id автора
+ *
+ * @return null | array<int, array{
+ *     id: int,
+ *     title: string,
+ *     string_content: string,
+ *     text_content: string,
+ *     created_at: string,
+ *     views_count: int,
+ *     author_id: int,
+ *     author_login: string,
+ *     author_avatar: string,
+ *     content_type: string,
+ *     likes_count: int,
+ *     comments_count: int,
+ *     hashtags: array,
+ *     is_liked: 0 | 1
+ * }>
+ */
+function get_posts_by_author(
+    mysqli $db_connection,
+    int $user_id,
+    int $author_id
+) {
+    $sql = "
+        SELECT
+            posts.id,
+            posts.title,
+            posts.string_content,
+            posts.text_content,
+            posts.created_at,
+            posts.views_count,
+            users.id AS author_id,
+            users.login AS author_login,
+            users.avatar_url AS author_avatar,
+            content_types.type AS content_type,
+            COUNT(DISTINCT likes.author_id) AS likes_count,
+            COUNT(DISTINCT comments.id) AS comments_count,
+            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
+            JSON_ARRAYAGG(hashtags.name) AS hashtags_json
+        FROM posts
+            JOIN users ON posts.author_id = users.id
+            JOIN content_types ON posts.content_type_id = content_types.id
+            LEFT JOIN likes ON posts.id = likes.post_id
+            LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+            LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
+        WHERE posts.author_id = ?
+        GROUP BY posts.id, posts.created_at
+        ORDER BY posts.created_at DESC 
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'si', $user_id, $author_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return null;
+    }
+
+    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    foreach ($posts as &$post) {
+        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
+        unset($post['hashtags_json']);
+    }
+
+    return $posts;
+}
+
+/**
  * Функция получает публикацию из базы данных по заданному id.
  * В случае успешного запроса функция возвращает публикацию
  * в виде ассоциативного массива.
@@ -491,8 +571,8 @@ function create_post(mysqli $db_connection, array $post_data)
  * Функция проверяет наличие публикации в базе данных по заданному id.
  * В случае ошибки запроса возвращается отрицательный результат (false).
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $post_id - id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  - id публикации
  *
  * @return bool - результат проверки
  */
