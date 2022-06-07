@@ -46,27 +46,29 @@ function render_popular_filter_error(
 }
 
 /**
- * Функция рендерит страницу 'Популярное' в зависимости от переданного массива
- * публикаций.
+ * Функция рендерит страницу 'Популярное' в зависимости от массива публикаций.
  *
  * Ограничения:
  * 1. Функция не обрабатывает разметку секции фильтрации и сортировки,
  * т.е. принимает готовую разметку данной секции для шаблонов popular/page.php
- * 2. Данные для шаблона страницы должны содержать все необходимеы данные для
+ * 2. Данные для основного контента страницы должны содержать все необходимые
+ * данные для шаблона popular/main.php.
+ * 3. Данные для шаблона страницы должны содержать все необходимеы данные для
  * шаблона popular/page.php, кроме основного контента страницы.
  *
  * @param  string  $popular_filters_content  - разметка секции фильтрации и
  * сортировки по типу контента
- * @param  array  $post_cards  - массив публикаций в виде ассоциативных
- * массивов
- * @param  array  $layout_data  - прочие данные для шаблона страницы 'Популярное'
+ * @param  array  $main_data  - данные основного контента страницы 'Популярное'
+ * @param  array  $layout_data  - прочие данные шаблона страницы 'Популярное'
  */
 function render_popular_page(
     string $popular_filters_content,
-    array $post_cards,
+    array $main_data,
     array $layout_data
 ) {
-    $page_content = (function () use ($popular_filters_content, $post_cards) {
+    $page_content = (function () use ($popular_filters_content, $main_data) {
+        $post_cards = $main_data['post_cards'];
+
         if (is_null($post_cards)) {
             $error_content = include_template(
                 'common/message.php',
@@ -100,10 +102,7 @@ function render_popular_page(
             );
         }
 
-        $main_content = include_template(
-            'pages/popular/main.php',
-            ['post_cards' => $post_cards]
-        );
+        $main_content = include_template('pages/popular/main.php', $main_data);
 
         return include_template(
             'pages/popular/page.php',

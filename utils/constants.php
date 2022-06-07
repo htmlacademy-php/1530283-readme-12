@@ -1,8 +1,16 @@
 <?php
 
+const DEFAULT_POSTS_LIMIT = 6;
+
+const INITIAL_POSTS_PAGE = 1;
+
 const AVATAR_PLACEHOLDER = 'img/icon-input-user.svg';
 
 const CONTENT_FILTER_QUERY = 'content_type_id';
+
+const LIMIT_QUERY = 'limit';
+
+const PAGE_QUERY = 'page';
 
 const SEARCH_QUERY = 'query';
 

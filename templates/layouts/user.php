@@ -38,6 +38,18 @@
         .post-link__info-wrapper {
             align-items: center;
         }
+
+        .button--gray-disabled {
+            cursor: initial;
+        }
+
+        .button--gray-disabled,
+        .button--gray-disabled:hover,
+        .button--gray-disabled:active {
+            opacity: 0.5;
+            background-color: rgba(205,212,232,.6);
+            color: rgba(46,56,77,.5);
+        }
     </style>
 </head>
 <body class="page">

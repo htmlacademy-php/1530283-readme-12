@@ -16,6 +16,12 @@ require_once 'init/db-connection.php';
 
 $basename = basename(__FILE__);
 
+$limit = filter_input(INPUT_GET, LIMIT_QUERY, FILTER_SANITIZE_NUMBER_INT) ??
+         DEFAULT_POSTS_LIMIT;
+
+$page = filter_input(INPUT_GET, PAGE_QUERY, FILTER_SANITIZE_NUMBER_INT) ??
+        INITIAL_POSTS_PAGE;
+
 $current_sort_type = filter_input(
                          INPUT_GET,
                          SORT_TYPE_QUERY,
@@ -81,18 +87,33 @@ if (!$is_sort_type_valid or !$is_content_filter_valid) {
     exit();
 }
 
-$post_cards = get_popular_posts(
-    $db_connection,
-    $user_session['id'],
-    [
-        'sort_type' => $current_sort_type,
-        'is_order_reversed' => $is_sort_order_reversed,
-        'content_type_id' => $current_content_filter
-    ]
-);
+$post_cards_config = [
+    'sort_type' => $current_sort_type,
+    'is_order_reversed' => $is_sort_order_reversed,
+    'content_type_id' => $current_content_filter,
+    'limit' => $limit,
+    'offset' => ($page - 1) * $limit,
+];
+
+$post_cards =
+    get_popular_posts($db_connection, $user_session['id'], $post_cards_config);
+$next_cards_config = $post_cards_config;
+
+$next_cards_config['offset'] = $page * $limit;
+$next_post_cards =
+    get_popular_posts($db_connection, $user_session['id'], $next_cards_config);
+$is_next_page = !is_null($next_post_cards) && count($next_post_cards);
+$pagination = get_pagination($basename, $page, $is_next_page);
 
 if (is_null($post_cards)) {
     http_response_code(SERVER_ERROR_STATUS);
 }
 
-render_popular_page($popular_filters_content, $post_cards, $layout_data);
+render_popular_page(
+    $popular_filters_content,
+    [
+        'post_cards' => $post_cards,
+        'pagination' => $pagination,
+    ],
+    $layout_data
+);

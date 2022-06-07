@@ -18,7 +18,9 @@ require_once 'models/post_hashtag.php';
  * @param  array{
  *     sort_type: 'views_count' | 'likes_count' | 'created_at' | null,
  *     is_order_reversed: bool | null,
- *     content_type_id: int | null
+ *     content_type_id: int | null,
+ *     limit: int,
+ *     offset: int
  * } $config - параметры запроса
  *
  * @return null | array<int, array{
@@ -45,6 +47,7 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
     ) : null;
     $content_type_id = $config['content_type_id'] ?? '';
     $is_order_reversed = $config['is_order_reversed'] ?? false;
+    list('limit' => $limit, 'offset' => $offset) = $config;
 
     $filter_sql =
         $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
@@ -74,14 +77,28 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
         $filter_sql
         GROUP BY posts.id
         $sort_sql
+        LIMIT ? OFFSET ?
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
 
     if ($filter_sql) {
-        mysqli_stmt_bind_param($statement, 'si', $user_id, $content_type_id);
+        mysqli_stmt_bind_param(
+            $statement,
+            'siii',
+            $user_id,
+            $content_type_id,
+            $limit,
+            $offset
+        );
     } else {
-        mysqli_stmt_bind_param($statement, 's', $user_id);
+        mysqli_stmt_bind_param(
+            $statement,
+            'sii',
+            $user_id,
+            $limit,
+            $offset
+        );
     }
 
     mysqli_stmt_execute($statement);
@@ -131,8 +148,11 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
 {
     $content_type_id = $config['content_type_id'] ?? '';
 
-    $filter_sql =
-        $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
+    $filter_sql = "WHERE subscriptions.subscriber_id = ?";
+
+    if ($config['content_type_id']) {
+        $filter_sql .= ' AND content_types.id = ?';
+    }
 
     $sql = "
         SELECT
@@ -153,6 +173,7 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
+            JOIN subscriptions ON posts.author_id = subscriptions.observable_id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
@@ -163,10 +184,16 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
 
     $statement = mysqli_prepare($db_connection, $sql);
 
-    if ($filter_sql) {
-        mysqli_stmt_bind_param($statement, 'si', $user_id, $content_type_id);
+    if ($config['content_type_id']) {
+        mysqli_stmt_bind_param(
+            $statement,
+            'sii',
+            $user_id,
+            $user_id,
+            $content_type_id
+        );
     } else {
-        mysqli_stmt_bind_param($statement, 's', $user_id);
+        mysqli_stmt_bind_param($statement, 'si', $user_id, $user_id);
     }
 
     mysqli_stmt_execute($statement);
