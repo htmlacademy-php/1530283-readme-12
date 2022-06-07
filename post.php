@@ -26,7 +26,7 @@ if ($post_id) {
 }
 
 if (is_array($post) and isset($post['author_id'])) {
-    $author = get_user($db_connection, $post['author_id']);
+    $author = get_user($db_connection, $post['author_id'], $user_session['id']);
 }
 
 $layout_data = [

@@ -14,6 +14,7 @@ list(
     'avatar_url' => $avatar_url,
     'subscribers_count' => $subscribers_count,
     'posts_count' => $posts_count,
+    'is_observable' => $is_observable
     ) = $user;
 ?>
 
@@ -23,7 +24,7 @@ list(
             <div class="profile__avatar user__avatar">
                 <img class="profile__picture user__picture"
                      src="/<?= $avatar_url ?? AVATAR_PLACEHOLDER ?>"
-                     alt="Аватар пользователя">
+                     alt="Аватар пользователя" width="100" height="100">
             </div>
             <div class="profile__name-wrapper user__name-wrapper">
                 <span class="profile__name user__name"><?= htmlspecialchars(
@@ -60,7 +61,8 @@ list(
         if (!$is_own_profile): ?>
             <div class="profile__user-buttons user__buttons">
                 <a class="profile__user-button user__button user__button--subscription button button--main"
-                   href="subscribe.php?user_id=<?= $id ?>">Подписаться
+                   href="subscribe.php?user_id=<?= $id ?>"><?= $is_observable
+                        ? 'Отписаться' : 'Подписаться' ?>
                 </a>
                 <a class="profile__user-button user__button user__button--writing button button--green"
                    href="messages.php">Сообщение</a>

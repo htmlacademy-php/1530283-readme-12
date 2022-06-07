@@ -26,7 +26,7 @@ $user_id = filter_input(INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT) ??
            $user_session['id'];
 $is_own_profile = intval($user_id) === $user_session['id'];
 
-$user = get_user($db_connection, $user_id);
+$user = get_user($db_connection, $user_id, $user_session['id']);
 
 $user_posts =
     get_posts_by_author($db_connection, $user_session['id'], $user_id);
@@ -52,6 +52,7 @@ $user_content = include_template(
 $tabs_content = include_template('pages/profile/tabs.php', []);
 
 // todo: empty state
+// todo: update property card template for own posts
 
 $page_content = include_template(
     'pages/profile/page.php',
