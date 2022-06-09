@@ -19,7 +19,7 @@ list(
         <a class="user__avatar-link"
            href="profile.php?user_id=<?= $author_id ?>">
             <img class="comments__picture"
-                 src="/<?= $author_avatar ?>"
+                 src="/<?= $author_avatar ?? AVATAR_PLACEHOLDER ?>"
                  alt="Аватар пользователя">
         </a>
     </div>
