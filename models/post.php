@@ -553,6 +553,8 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
  */
 function create_post(mysqli $db_connection, array $post_data)
 {
+    mysqli_begin_transaction($db_connection);
+
     $tags = $post_data['tags'] ? explode(
         TEXT_SEPARATOR,
         mysqli_real_escape_string($db_connection, $post_data['tags'])
@@ -586,10 +588,16 @@ function create_post(mysqli $db_connection, array $post_data)
         return null;
     }
 
-    // todo: add transaction
     foreach ($tags as $tag) {
-        add_hashtag_to_post($db_connection, $tag, $post_id);
+        $hashtag_success = add_hashtag_to_post($db_connection, $tag, $post_id);
+
+        if (!$hashtag_success) {
+            mysqli_rollback($db_connection);
+            return null;
+        }
     }
+
+    mysqli_commit($db_connection);
 
     return $post_id;
 }
