@@ -25,7 +25,7 @@ list(
         id="post-<?= $id ?>"
         class="popular__post post post-<?= $content_type ?>">
     <header class="post__header">
-        <a href="post.php?post_id=<?= $id ?>">
+        <a href="post.php?post-id=<?= $id ?>">
             <h2><?= strip_tags($title) ?></h2>
         </a>
     </header>
@@ -66,7 +66,7 @@ list(
                 <a class="post__indicator
                  post__indicator--likes<?= $is_liked ? '-active' : '' ?>
                  button"
-                   href="like.php?post_id=<?= $id ?>" title="Лайк">
+                   href="like.php?post-id=<?= $id ?>" title="Лайк">
                     <svg class="post__indicator-icon" width="20" height="17">
                         <use xlink:href="#icon-heart"></use>
                     </svg>
@@ -78,7 +78,7 @@ list(
                     <span class="visually-hidden">количество лайков</span>
                 </a>
                 <a class="post__indicator post__indicator--comments button"
-                   href="post.php?post_id=<?= $id ?>#comments" title="Комментарии">
+                   href="post.php?post-id=<?= $id ?>#comments" title="Комментарии">
                     <svg class="post__indicator-icon" width="19" height="17">
                         <use xlink:href="#icon-comment"></use>
                     </svg>

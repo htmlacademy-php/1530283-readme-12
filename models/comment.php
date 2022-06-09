@@ -8,6 +8,7 @@
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
  * @param  int  $post_id  - id публикации
+ * @param  int | null  $limit  - ограничение по количеству (опционально)
  *
  * @return null | array<int, array{
  *     id: int,
@@ -18,8 +19,9 @@
  *     author_avatar: string
  * }>
  */
-function get_comments(mysqli $db_connection, int $post_id)
+function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
 {
+    $limit_sql = $limit ? 'LIMIT ?' : '';
     $sql = "
         SELECT 
             comments.id,
@@ -33,10 +35,15 @@ function get_comments(mysqli $db_connection, int $post_id)
                 ON comments.author_id = users.id
         WHERE comments.post_id = ?
         ORDER BY comments.created_at DESC
+        $limit_sql
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $post_id);
+    if (is_null($limit)) {
+        mysqli_stmt_bind_param($statement, 'i', $post_id);
+    } else {
+        mysqli_stmt_bind_param($statement, 'ii', $post_id, $limit);
+    }
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
 
@@ -45,6 +52,36 @@ function get_comments(mysqli $db_connection, int $post_id)
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Функция возвращает число комментариев к заданной публикации.
+ * В случае ошибки запроса функция возвращает 0.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  -  id публикации
+ *
+ * @return int - число комментариев
+ */
+function get_comments_count(mysqli $db_connection, int $post_id): int
+{
+    $sql = "
+        SELECT
+            COUNT(comments.id) AS comments_count
+        FROM comments
+        WHERE comments.post_id = ?
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $post_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return 0;
+    }
+
+    return mysqli_fetch_assoc($result)['comments_count'] ?? 0;
 }
 
 /**

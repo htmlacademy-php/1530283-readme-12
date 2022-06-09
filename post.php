@@ -1,5 +1,6 @@
 <?php
 
+require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/form-handlers/add-comment.php';
@@ -14,7 +15,12 @@ require_once 'init/db-connection.php';
  * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
-$post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
+$post_id = filter_input(INPUT_GET, POST_ID_QUERY, FILTER_SANITIZE_NUMBER_INT);
+$is_comments_expanded =
+    filter_input(INPUT_GET, COMMENTS_EXPANDED, FILTER_VALIDATE_BOOLEAN) ??
+    false;
+
+$basename = basename(__FILE__);
 
 $post = null;
 $comments = null;
@@ -55,9 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$comments_limit = $is_comments_expanded ? null : DEFAULT_COMMENTS_LIMIT;
+
 if ($post_id) {
     $post = get_post($db_connection, $user_session['id'], $post_id);
-    $comments = get_comments($db_connection, $post_id);
+    $comments = get_comments($db_connection, $post_id, $comments_limit);
     $hashtags = get_hashtags($db_connection, $post_id);
 }
 
@@ -100,10 +108,23 @@ $post_details_content = include_template(
 $form_data['post_id'] = $post['id'];
 $form_data['post_author_id'] = $post['author_id'];
 
+$all_comments_count = $is_comments_expanded
+    ? count($comments)
+    : get_comments_count(
+        $db_connection,
+        $post_id
+    );
+$is_comments_expansion_required = count($comments) < $all_comments_count;
+$expand_comments_url =
+    !$is_comments_expanded && $is_comments_expansion_required
+        ? get_expand_comments_url($basename) : null;
+
 $comments_content = include_template(
     'common/comments.php',
     [
         'comments' => $comments,
+        'comments_count' => $all_comments_count,
+        'expand_comments_url' => $expand_comments_url,
         'user' => $user_session,
         'form_data' => $form_data,
         'errors' => $errors,

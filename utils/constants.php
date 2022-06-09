@@ -2,11 +2,17 @@
 
 const DEFAULT_POSTS_LIMIT = 6;
 
+const DEFAULT_COMMENTS_LIMIT = 2;
+
 const INITIAL_POSTS_PAGE = 1;
 
 const AVATAR_PLACEHOLDER = 'img/icon-input-user.svg';
 
 const CONTENT_FILTER_QUERY = 'content_type_id';
+
+const COMMENTS_EXPANDED = 'comments-expanded';
+
+const POST_ID_QUERY = 'post-id';
 
 const LIMIT_QUERY = 'limit';
 

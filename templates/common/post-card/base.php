@@ -46,7 +46,7 @@ list(
         </a>
     </header>
     <div class="post__main">
-        <h2><a href="post.php?post_id=<?= $id ?>"><?= $title ?></a></h2>
+        <h2><a href="post.php?post-id=<?= $id ?>"><?= $title ?></a></h2>
         <?= include_template(
             "common/post-card/content/$content_type.php",
             [
@@ -60,7 +60,7 @@ list(
         <div class="post__buttons">
             <a class="post__indicator
              post__indicator--likes<?= $is_liked ? '-active' : '' ?>
-             button" href="like.php?post_id=<?= $id ?>" title="Лайк">
+             button" href="like.php?post-id=<?= $id ?>" title="Лайк">
                 <svg class="post__indicator-icon" width="20" height="17">
                     <use xlink:href="#icon-heart"></use>
                 </svg>
@@ -72,7 +72,7 @@ list(
                 <span class="visually-hidden">количество лайков</span>
             </a>
             <a class="post__indicator post__indicator--comments button"
-               href="post.php?post_id=<?= $id ?>#comments"
+               href="post.php?post-id=<?= $id ?>#comments"
                title="Комментарии">
                 <svg class="post__indicator-icon" width="19" height="17">
                     <use xlink:href="#icon-comment"></use>

@@ -35,7 +35,7 @@ list(
                         <a class="post__indicator
                            post__indicator--likes<?= $is_liked ? '-active' : ''?>
                            button"
-                           href="like.php?post_id=<?= $id ?>" title="Лайк">
+                           href="like.php?post-id=<?= $id ?>" title="Лайк">
                             <svg class="post__indicator-icon" width="20"
                                  height="17">
                                 <use xlink:href="#icon-heart"></use>

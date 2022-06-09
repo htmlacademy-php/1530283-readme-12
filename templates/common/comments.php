@@ -9,6 +9,8 @@
  *
  * @var array $comments - массив с комментариями к публикации
  * @var int $comments_count - числов комментариев
+ * @var string | null $expand_comments_url - ссылка показа полного списка
+ * комментариев
  * @var array | null $user -  данные пользователя
  * @var array | null $form_data - данные формы
  * @var array | null $errors - ошибки валиадции
@@ -65,9 +67,13 @@ $with_form = is_array($user) && is_array($form_data) && is_array($errors);
             <?php
             endforeach; ?>
         </ul>
-        <a class="comments__more-link" href="#">
-            <span>Показать все комментарии</span>
-            <sup class="comments__amount"><?= $comments_count ?></sup>
-        </a>
+        <?php
+        if ($expand_comments_url): ?>
+            <a class="comments__more-link" href="<?= $expand_comments_url ?>">
+                <span>Показать все комментарии</span>
+                <sup class="comments__amount"><?= $comments_count ?></sup>
+            </a>
+        <?php
+        endif; ?>
     </div>
 </div>

@@ -11,7 +11,7 @@ require_once 'models/like.php';
  */
 
 $is_post_id_valid = false;
-$post_id = filter_input(INPUT_GET, 'post_id', FILTER_SANITIZE_NUMBER_INT);
+$post_id = filter_input(INPUT_GET, POST_ID_QUERY, FILTER_SANITIZE_NUMBER_INT);
 
 if ($post_id) {
     $is_post_id_valid = check_post($db_connection, $post_id);

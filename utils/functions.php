@@ -190,6 +190,22 @@ function get_pagination(
 }
 
 /**
+ * Функция возвращает ссылку для показа показа полного списка комментариев.
+ *
+ * @param  string  $basename - URL страницы без GET параметров
+ *
+ * @return string - ссылка показа полного списка комментариев
+ */
+function get_expand_comments_url(string $basename): string
+{
+    $query_params = $_GET;
+    $query_params[COMMENTS_EXPANDED] = 'true';
+    $query_string = http_build_query($query_params);
+
+    return "/$basename?$query_string#comments";
+}
+
+/**
  * Функция генерирует ссылку для сортировки публикаций по заданному полю.
  * Поле публикации, по которму производится сортировка должно соотествовать
  * структуре публикаций возвращаемых функицей get_posts.
