@@ -6,13 +6,14 @@
  * комментариев в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  int  $post_id  id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  - id публикации
  *
  * @return null | array<int, array{
  *     id: int,
  *     created_at: string,
  *     content: string,
+ *     author_id: int,
  *     author_login: string,
  *     author_avatar: string
  * }>
@@ -24,12 +25,14 @@ function get_comments(mysqli $db_connection, int $post_id)
             comments.id,
             comments.created_at,
             comments.content,
-            users.login as author_login,
-            users.avatar_url as author_avatar
+            comments.author_id AS author_id,
+            users.login AS author_login,
+            users.avatar_url AS author_avatar
         FROM comments
             JOIN users
                 ON comments.author_id = users.id
         WHERE comments.post_id = ?
+        ORDER BY comments.created_at DESC
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
@@ -42,4 +45,43 @@ function get_comments(mysqli $db_connection, int $post_id)
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Функция добавляет комментарий к публикации в базу данных.
+ * Функция возвращает id созданного комментария.
+ * В случае неуспешного создания возвращается null.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  array  $comment_data  - данные для добавления комментария
+ *
+ * @return int | null - id созданного комментария
+ */
+function create_comment(mysqli $db_connection, array $comment_data)
+{
+    $sql = "
+        INSERT INTO comments (
+            author_id,
+            post_id,
+            content
+        ) VALUES (?, ?, ?)
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        'iis',
+        $comment_data['author_id'],
+        $comment_data['post_id'],
+        $comment_data['content'],
+    );
+    mysqli_stmt_execute($statement);
+
+    $comment_id = mysqli_insert_id($db_connection);
+
+    if (!$comment_id) {
+        return null;
+    }
+
+    return $comment_id;
 }

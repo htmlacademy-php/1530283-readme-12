@@ -71,7 +71,8 @@ list(
                 <span><?= $likes_count ?></span>
                 <span class="visually-hidden">количество лайков</span>
             </a>
-            <a class="post__indicator post__indicator--comments button" href="#"
+            <a class="post__indicator post__indicator--comments button"
+               href="post.php?post_id=<?= $id ?>#comments"
                title="Комментарии">
                 <svg class="post__indicator-icon" width="19" height="17">
                     <use xlink:href="#icon-comment"></use>
@@ -79,7 +80,8 @@ list(
                 <span><?= $comments_count ?></span>
                 <span class="visually-hidden">количество комментариев</span>
             </a>
-            <a class="post__indicator post__indicator--repost button" href="#"
+            <a class="post__indicator post__indicator--repost button"
+               href=""
                title="Репост">
                 <svg class="post__indicator-icon" width="19" height="17">
                     <use xlink:href="#icon-repost"></use>

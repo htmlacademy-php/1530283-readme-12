@@ -111,7 +111,6 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-// todo: Добавить выборку по подпискам (после реализации подписок)
 /**
  * Функция получает список публикаций из базы данных для странцы 'Моя лента'.
  * Функция принимает ресурс соединения с базой данный
@@ -587,6 +586,7 @@ function create_post(mysqli $db_connection, array $post_data)
         return null;
     }
 
+    // todo: add transaction
     foreach ($tags as $tag) {
         add_hashtag_to_post($db_connection, $tag, $post_id);
     }

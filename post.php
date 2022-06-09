@@ -2,6 +2,7 @@
 
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
+require_once 'utils/form-handlers/add-comment.php';
 require_once 'models/post.php';
 require_once 'models/comment.php';
 require_once 'models/user.php';
@@ -19,6 +20,41 @@ $post = null;
 $comments = null;
 $author = null;
 
+$form_data = [];
+$errors = [];
+
+$layout_data = [
+    'title' => 'Просмотр поста',
+    'user' => $user_session,
+    'page_modifier' => 'publication',
+];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    list(
+        'form_data' => $form_data,
+        'errors' => $errors
+        ) = handle_add_comment_form($db_connection);
+
+    if (!count($errors)) {
+        $form_data['author_id'] = $user_session['id'];
+        $created_comment_id = create_comment($db_connection, $form_data);
+
+        if ($created_comment_id) {
+            $post_author_id = $form_data['post_author_id'];
+            header("Location: profile.php?user_id=$post_author_id");
+            exit();
+        }
+
+        http_response_code(SERVER_ERROR_STATUS);
+        render_message_page(
+            ['content' => 'Не удалось создать комментарий'],
+            'user',
+            $layout_data,
+        );
+        exit();
+    }
+}
+
 if ($post_id) {
     $post = get_post($db_connection, $user_session['id'], $post_id);
     $comments = get_comments($db_connection, $post_id);
@@ -28,12 +64,6 @@ if ($post_id) {
 if (is_array($post) and isset($post['author_id'])) {
     $author = get_user($db_connection, $post['author_id'], $user_session['id']);
 }
-
-$layout_data = [
-    'title' => 'Просмотр поста',
-    'user' => $user_session,
-    'page_modifier' => 'publication',
-];
 
 $is_page_error = is_null($post) || is_null($comments) || is_null($author);
 
@@ -67,13 +97,26 @@ $post_details_content = include_template(
     ]
 );
 
+$form_data['post_id'] = $post['id'];
+$form_data['post_author_id'] = $post['author_id'];
+
+$comments_content = include_template(
+    'common/comments.php',
+    [
+        'comments' => $comments,
+        'user' => $user_session,
+        'form_data' => $form_data,
+        'errors' => $errors,
+    ]
+);
+
 $page_content = include_template(
     'pages/post-details/page.php',
     [
         'post' => $post,
         'post_content' => $post_details_content,
         'author_content' => $author_content,
-        'comments' => $comments,
+        'comments_content' => $comments_content,
     ]
 );
 
@@ -81,5 +124,9 @@ $layout_data['title'] = $post['title'];
 $layout_data['content'] = $page_content;
 
 $layout_content = include_template('layouts/user.php', $layout_data);
+
+if (count($errors)) {
+    http_response_code(BAD_REQUEST_STATUS);
+}
 
 print($layout_content);
