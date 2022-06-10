@@ -149,9 +149,9 @@ function format_relative_time(string $date): string
 /**
  * Функция возвращает ссылки для пагинации.
  *
- * @param  string  $basename - URL страницы без GET параметров
- * @param  int  $current_page - номер текущей страницы
- * @param  bool  $is_next_page - доступность следующей страницы
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int  $current_page  - номер текущей страницы
+ * @param  bool  $is_next_page  - доступность следующей страницы
  *
  * @return array{
  *     prev: string | null,
@@ -192,7 +192,7 @@ function get_pagination(
 /**
  * Функция возвращает ссылку для показа показа полного списка комментариев.
  *
- * @param  string  $basename - URL страницы без GET параметров
+ * @param  string  $basename  - URL страницы без GET параметров
  *
  * @return string - ссылка показа полного списка комментариев
  */
@@ -214,7 +214,7 @@ function get_expand_comments_url(string $basename): string
  * Направление сортировки вычисляется на основе текущего значения в адресной
  * строке.
  *
- * @param  string  $basename - URL страницы без GET параметров
+ * @param  string  $basename  - URL страницы без GET параметров
  * @param  string  $sort_type  - поле публикации, по которму производится
  * сортировка
  * @param  string  $current_sort_type  - текущее значение поля публикации,
@@ -249,10 +249,11 @@ function get_sort_url(
  * Для генерирации ссылки, соотвествующей отсутствию фильтрации,
  * id типа контента не передается в функцию.
  *
- * @param  string  $basename  URL страницы без GET параметров
- * @param  int | null  $content_type_id  id типа контента публикации
+ * @param  string  $basename - URL страницы без GET параметров
+ * @param  int | null  $content_type_id - id типа контента публикации
  *
- * @return string Итоговый URL страницы для получения списка публикаций с учетом фильтрации
+ * @return string - итоговый URL страницы для получения списка публикаций
+ * с учетом фильтрации
  */
 function get_content_filter_url(
     string $basename,
@@ -330,7 +331,7 @@ function get_any_content_filter(
  * по которму производится сортировка
  * @param  bool  $is_order_reversed  - обратная сортировка (по возрастанию)
  *
- * @return array Массив типов сортировки публикаций
+ * @return array - массив типов сортировки публикаций
  */
 function get_sort_types(
     string $basename,
@@ -386,6 +387,85 @@ function validate_sort_type(string $current_sort_type): bool
     return array_search(
                $current_sort_type,
                $available_sort_types
+           ) !== false;
+}
+
+/**
+ * Функция генерирует ссылку переключения на заданный таб страницы профиля
+ * пользователя.
+ *
+ * @param  string  $basename - URL страницы без GET параметров
+ * @param  string  $tab_value - значение таба
+ *
+ * @return string - итоговый URL страницы для переключения на заданный таб
+ */
+function get_profile_tab_url(
+    string $basename,
+    string $tab_value
+): string {
+    $query_params = $_GET;
+    $query_params[TAB_QUERY] = $tab_value;
+    $query_string = http_build_query($query_params);
+
+    return "/$basename?$query_string";
+}
+
+/**
+ * Функция возвращает массив с данными табов для страницы профиля пользователя.
+ * Данные таба представляют собой ассоциативный массив аналогичный
+ * элементам в массиве PROFILE_TABS дополненный полями url и active.
+ *
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  string  $current_tab  - текущий таб
+ *
+ * @return array - массив c данными табов
+ */
+function get_profile_tabs(
+    string $basename,
+    string $current_tab
+): array {
+    $profile_tabs = PROFILE_TABS;
+
+    array_walk(
+        $profile_tabs,
+        function (&$profile_tab) use (
+            $basename,
+            $current_tab
+        ) {
+            $value = $profile_tab['value'];
+
+            $url = get_profile_tab_url($basename, $value);
+            $active = $value === $current_tab;
+
+            $profile_tab['url'] = $url;
+            $profile_tab['active'] = $active;
+        }
+    );
+
+    return $profile_tabs;
+}
+
+/**
+ * Функция валидирует переданное значение таба страницы профиля пользователя.
+ * Валидные значения табов перечислены в ключах value в массиве PROFILE_TABS.
+ * Результат функции - true - если значение валидно, false - если не валидно.
+ *
+ * @param  string  $current_tab  - выбранный таб
+ *
+ * @return bool Результат валидации
+ */
+function validate_profile_tab(string $current_tab): bool
+{
+    $available_profile_tabs = array_map(
+        function ($option) {
+            return $option['value'];
+        },
+        PROFILE_TABS
+    );
+
+    return array_search(
+               $current_tab,
+               $available_profile_tabs
            ) !== false;
 }
 

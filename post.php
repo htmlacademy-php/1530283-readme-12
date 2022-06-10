@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($created_comment_id) {
             $post_author_id = $form_data['post_author_id'];
-            header("Location: profile.php?user_id=$post_author_id");
+            header("Location: profile.php?user-id=$post_author_id");
             exit();
         }
 

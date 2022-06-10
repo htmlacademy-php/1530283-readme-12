@@ -12,6 +12,10 @@ const CONTENT_FILTER_QUERY = 'content_type_id';
 
 const COMMENTS_EXPANDED = 'comments-expanded';
 
+const TAB_QUERY = 'tab';
+
+const USER_ID_QUERY = 'user-id';
+
 const POST_ID_QUERY = 'post-id';
 
 const LIMIT_QUERY = 'limit';
@@ -43,6 +47,27 @@ const SORT_TYPE_OPTIONS = [
         'label' => 'Дата',
         'value' => 'created_at',
     ],
+];
+
+const PROFILE_POSTS_TAB = [
+    'label' => 'Посты',
+    'value' => 'posts',
+];
+
+const PROFILE_LIKES_TAB = [
+    'label' => 'Лайки',
+    'value' => 'likes',
+];
+
+const PROFILE_SUBSCRIPTIONS_TAB = [
+    'label' => 'Подписки',
+    'value' => 'subscriptions',
+];
+
+const PROFILE_TABS = [
+    PROFILE_POSTS_TAB,
+    PROFILE_LIKES_TAB,
+    PROFILE_SUBSCRIPTIONS_TAB,
 ];
 
 const TEXT_SEPARATOR = ' ';

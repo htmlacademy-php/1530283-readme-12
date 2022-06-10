@@ -61,7 +61,7 @@ list(
         if (!$is_own_profile): ?>
             <div class="profile__user-buttons user__buttons">
                 <a class="profile__user-button user__button user__button--subscription button button--main"
-                   href="subscribe.php?user_id=<?= $id ?>"><?= $is_observable
+                   href="subscribe.php?user-id=<?= $id ?>"><?= $is_observable
                         ? 'Отписаться' : 'Подписаться' ?>
                 </a>
                 <a class="profile__user-button user__button user__button--writing button button--green"

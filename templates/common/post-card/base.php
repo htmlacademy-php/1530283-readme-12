@@ -29,7 +29,7 @@ list(
          post <?= "post-$content_type" ?>">
     <header class="post__header post__author">
         <a class="post__author-link"
-           href="profile.php?user_id=<?= $author_id ?>"
+           href="profile.php?user-id=<?= $author_id ?>"
            title="Автор">
             <div class="post__avatar-wrapper">
                 <img class="post__author-avatar"

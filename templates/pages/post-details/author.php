@@ -27,7 +27,7 @@ $user_name = strip_tags($user_name);
     <div class="post-details__user-info user__info">
         <div class="post-details__avatar user__avatar">
             <a class="post-details__avatar-link user__avatar-link"
-               href="profile.php?user_id=<?= $id ?>">
+               href="profile.php?user-id=<?= $id ?>">
                 <img class="post-details__picture user__picture"
                      src="/<?= $avatar_url ?? AVATAR_PLACEHOLDER ?>"
                      alt="Аватар пользователя" width="60" height="60">
@@ -68,7 +68,7 @@ $user_name = strip_tags($user_name);
     if (!$is_own_post): ?>
         <div class="post-details__user-buttons user__buttons">
             <a class="user__button user__button--subscription button button--main"
-               href="subscribe.php?user_id=<?= $id ?>"><?= $is_observable
+               href="subscribe.php?user-id=<?= $id ?>"><?= $is_observable
                     ? 'Отписаться' : 'Подписаться' ?>
             </a>
             <a class="user__button user__button--writing button button--green"
