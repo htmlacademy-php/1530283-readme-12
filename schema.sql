@@ -73,6 +73,7 @@ CREATE TABLE comments(
 CREATE TABLE likes(
     post_id int unsigned NOT NULL,
     author_id int unsigned NOT NULL,
+    created_at timestamp DEFAULT current_timestamp,
     PRIMARY KEY (post_id, author_id),
     FOREIGN KEY (post_id) REFERENCES posts(id)
        ON UPDATE CASCADE

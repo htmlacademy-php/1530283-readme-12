@@ -15,7 +15,7 @@
  */
 function render_message_page(
     array $message_data,
-    string $layout_type,
+    string $layout_type = 'empty',
     array $layout_data = []
 ) {
     $page_content = include_template(

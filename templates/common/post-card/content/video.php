@@ -17,7 +17,7 @@ $string_content = isset($string_content) ? strip_tags($string_content) : '';
         <img alt="youtube cover" width="760" height="396"
              src="<?= get_youtube_cover_url($string_content) ?>"/>
     </div>
-    <a href="post.php?post_id=<?= $id ?>" class="post-video__play-big button">
+    <a href="post.php?post-id=<?= $id ?>" class="post-video__play-big button">
         <svg class="post-video__play-big-icon" width="14" height="14">
             <use xlink:href="#icon-video-play-big"></use>
         </svg>

@@ -8,6 +8,8 @@
  *
  * @param  mysqli  $db_connection  - ресурс соединения с базой данных
  * @param  int  $user_id  - id пользователя
+ * @param  int  $reference_user_id  - id пользователя, относительно которого
+ * проверяется статус подписки
  *
  * return null | array{
  *     id: int,
@@ -17,9 +19,10 @@
  *     avatar_url: string,
  *     subscribers_count: int,
  *     posts_count: int,
+ *     is_observable: bool
  * }
  */
-function get_user(mysqli $db_connection, int $user_id)
+function get_user(mysqli $db_connection, int $user_id, int $reference_user_id)
 {
     $sql = "
         SELECT
@@ -28,8 +31,9 @@ function get_user(mysqli $db_connection, int $user_id)
             users.login,
             users.email,
             users.avatar_url,
-            COUNT(DISTINCT  subscriptions.subscriber_id) as subscribers_count,
-            COUNT(DISTINCT posts.id) as posts_count
+            COUNT(DISTINCT subscriptions.subscriber_id) as subscribers_count,
+            COUNT(DISTINCT posts.id) as posts_count,
+        JSON_CONTAINS(JSON_ARRAYAGG(subscriptions.subscriber_id), ?) AS is_observable
         FROM users
             LEFT JOIN subscriptions
                 ON users.id = subscriptions.observable_id
@@ -40,7 +44,7 @@ function get_user(mysqli $db_connection, int $user_id)
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 's', $user_id);
+    mysqli_stmt_bind_param($statement, 'si', $reference_user_id, $user_id);
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
 
@@ -140,4 +144,31 @@ function get_user_by_email(mysqli $db_connection, string $user_email)
     $user = mysqli_fetch_assoc($result);
 
     return $user['id'] ? $user : null;
+}
+
+/**
+ * Функция проверяет наличие пользователя в базе данных по заданному id.
+ * В случае ошибки запроса возвращается отрицательный результат (false).
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id публикации
+ *
+ * @return bool - результат проверки
+ */
+function check_user(mysqli $db_connection, int $user_id): bool
+{
+    $sql = "SELECT users.id FROM users WHERE users.id = ?";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $user_id);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return false;
+    }
+
+    $user = mysqli_fetch_assoc($result);
+
+    return boolval($user['id']);
 }

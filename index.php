@@ -15,9 +15,9 @@ require_once 'init/db-connection.php';
  */
 
 session_start();
-$user = $_SESSION['user'] ?? null;
+$user_session = $_SESSION['user'] ?? null;
 
-if (!$user) {
+if (!$user_session) {
     $form_data = [];
     $errors = [];
 
@@ -25,11 +25,11 @@ if (!$user) {
         list(
             'form_data' => $form_data,
             'errors' => $errors,
-            'user' => $user
+            'user' => $user_session
             ) = handle_login_form($db_connection);
 
         if (!count($errors)) {
-            $_SESSION['user'] = $user;
+            $_SESSION['user'] = $user_session;
             header('Location: index.php');
             exit();
         }
@@ -56,7 +56,7 @@ $basename = basename(__FILE__);
 
 $layout_data = [
     'title' => 'Моя лента',
-    'user' => $user,
+    'user' => $user_session,
     'page_modifier' => 'feed',
     'basename' => $basename,
 ];
@@ -112,6 +112,7 @@ if (!$is_content_filter_valid) {
 
 $post_cards = get_feed_posts(
     $db_connection,
+    $user_session['id'],
     ['content_type_id' => $current_content_filter]
 );
 

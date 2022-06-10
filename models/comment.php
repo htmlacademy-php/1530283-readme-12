@@ -6,29 +6,69 @@
  * комментариев в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection  ресурс соединения с базой данных
- * @param  int  $post_id  id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  - id публикации
+ * @param  int | null  $limit  - ограничение по количеству (опционально)
  *
  * @return null | array<int, array{
  *     id: int,
  *     created_at: string,
  *     content: string,
+ *     author_id: int,
  *     author_login: string,
  *     author_avatar: string
  * }>
  */
-function get_comments(mysqli $db_connection, int $post_id)
+function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
 {
+    $limit_sql = $limit ? 'LIMIT ?' : '';
     $sql = "
         SELECT 
             comments.id,
             comments.created_at,
             comments.content,
-            users.login as author_login,
-            users.avatar_url as author_avatar
+            comments.author_id AS author_id,
+            users.login AS author_login,
+            users.avatar_url AS author_avatar
         FROM comments
             JOIN users
                 ON comments.author_id = users.id
+        WHERE comments.post_id = ?
+        ORDER BY comments.created_at DESC
+        $limit_sql
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    if (is_null($limit)) {
+        mysqli_stmt_bind_param($statement, 'i', $post_id);
+    } else {
+        mysqli_stmt_bind_param($statement, 'ii', $post_id, $limit);
+    }
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return null;
+    }
+
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Функция возвращает число комментариев к заданной публикации.
+ * В случае ошибки запроса функция возвращает 0.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  -  id публикации
+ *
+ * @return int - число комментариев
+ */
+function get_comments_count(mysqli $db_connection, int $post_id): int
+{
+    $sql = "
+        SELECT
+            COUNT(comments.id) AS comments_count
+        FROM comments
         WHERE comments.post_id = ?
     ";
 
@@ -38,8 +78,47 @@ function get_comments(mysqli $db_connection, int $post_id)
     $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
+        return 0;
+    }
+
+    return mysqli_fetch_assoc($result)['comments_count'] ?? 0;
+}
+
+/**
+ * Функция добавляет комментарий к публикации в базу данных.
+ * Функция возвращает id созданного комментария.
+ * В случае неуспешного создания возвращается null.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  array  $comment_data  - данные для добавления комментария
+ *
+ * @return int | null - id созданного комментария
+ */
+function create_comment(mysqli $db_connection, array $comment_data)
+{
+    $sql = "
+        INSERT INTO comments (
+            author_id,
+            post_id,
+            content
+        ) VALUES (?, ?, ?)
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        'iis',
+        $comment_data['author_id'],
+        $comment_data['post_id'],
+        $comment_data['content'],
+    );
+    mysqli_stmt_execute($statement);
+
+    $comment_id = mysqli_insert_id($db_connection);
+
+    if (!$comment_id) {
         return null;
     }
 
-    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    return $comment_id;
 }
