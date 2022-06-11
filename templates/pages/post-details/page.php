@@ -24,7 +24,9 @@ list(
 ?>
 
 <div class="container">
-    <h1 class="page__title page__title--publication"><?= $title ?></h1>
+    <h1 class="page__title page__title--publication"><?= htmlspecialchars(
+            $title
+        ) ?></h1>
     <section class="post-details">
         <h2 class="visually-hidden">Публикация</h2>
         <div class="post-details__wrapper post-photo">
@@ -33,7 +35,8 @@ list(
                 <div class="post__indicators">
                     <div class="post__buttons">
                         <a class="post__indicator
-                           post__indicator--likes<?= $is_liked ? '-active' : ''?>
+                           post__indicator--likes<?= $is_liked ? '-active'
+                            : '' ?>
                            button"
                            href="like.php?post-id=<?= $id ?>" title="Лайк">
                             <svg class="post__indicator-icon" width="20"

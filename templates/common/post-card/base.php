@@ -35,7 +35,9 @@ list(
                      alt="Аватар пользователя" width="60" height="60">
             </div>
             <div class="post__info">
-                <b class="post__author-name"><?= $author['login'] ?></b>
+                <b class="post__author-name"><?= strip_tags(
+                        $author['login']
+                    ) ?></b>
                 <time class="post__time" datetime="<?= format_iso_date_time(
                     $created_at
                 ) ?>"><?= format_relative_time($created_at) ?> назад
@@ -44,7 +46,9 @@ list(
         </a>
     </header>
     <div class="post__main">
-        <h2><a href="post.php?post-id=<?= $id ?>"><?= $title ?></a></h2>
+        <h2><a href="post.php?post-id=<?= $id ?>"><?= htmlspecialchars(
+                    $title
+                ) ?></a></h2>
         <?= include_template(
             "common/post-card/content/$content_type.php",
             [

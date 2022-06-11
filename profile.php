@@ -5,6 +5,7 @@ require_once 'init/db-connection.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/renderers/profile.php';
+require_once 'models/like.php';
 require_once 'models/user.php';
 require_once 'models/post.php';
 
@@ -68,7 +69,7 @@ $main_content = '';
 if ($current_tab === PROFILE_POSTS_TAB['value']) {
     $user_posts =
         get_posts_by_author($db_connection, $user_session['id'], $user_id);
-
+    // todo: handle error / empty state
     $main_content = include_template(
         "pages/profile/main/$current_tab.php",
         ['user_posts' => $user_posts]
@@ -76,18 +77,21 @@ if ($current_tab === PROFILE_POSTS_TAB['value']) {
 }
 
 if ($current_tab === PROFILE_LIKES_TAB['value']) {
-    // todo handle likes tab
+    $likes = get_likes($db_connection, $user['id']);
+    // todo: handle error / empty state
     $main_content = include_template(
         "pages/profile/main/$current_tab.php",
-        []
+        ['likes' => $likes, 'is_own_profile' => $is_own_profile]
     );
 }
 
 if ($current_tab === PROFILE_SUBSCRIPTIONS_TAB['value']) {
     // todo handle subscriptions tab
+    $subscriptions = [];
+    // todo: handle error / empty state
     $main_content = include_template(
         "pages/profile/main/$current_tab.php",
-        []
+        ['subscriptions' => $subscriptions]
     );
 }
 

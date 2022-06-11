@@ -24,7 +24,7 @@ list(
         <div class="comments__name-wrapper">
             <a class="comments__user-name"
                href="profile.php?user-id=<?= $author['id'] ?>">
-                <span><?= $author['login'] ?></span>
+                <span><?= htmlspecialchars($author['login']) ?></span>
             </a>
             <time class="comments__time"
                   datetime="<?= format_iso_date_time(
@@ -35,7 +35,7 @@ list(
             </time>
         </div>
         <p class="comments__text">
-            <?= $content ?>
+            <?= htmlspecialchars($content) ?>
         </p>
     </div>
 </li>

@@ -50,6 +50,17 @@
             background-color: rgba(205,212,232,.6);
             color: rgba(46,56,77,.5);
         }
+
+        .post-mini__image-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .post-mini__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body class="page">

@@ -9,7 +9,7 @@ require_once 'utils/functions.php';
  * @var string $text_content - текстовый контент публикации
  */
 
-$text_content = isset($text_content) ? htmlspecialchars($text_content) : '';
+$text_content = htmlspecialchars($text_content);
 $cropped_text_content = crop_text(
     $text_content,
     MAX_POST_CARD_TEXT_CONTENT_LENGTH

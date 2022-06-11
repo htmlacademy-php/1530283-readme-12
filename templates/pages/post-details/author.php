@@ -35,7 +35,7 @@ $user_name = strip_tags($user_name);
         </div>
         <div class="post-details__name-wrapper user__name-wrapper">
             <a class="post-details__name user__name" href="#">
-                <span><?= $user_name ?></span>
+                <span><?= strip_tags($user_name) ?></span>
             </a>
             <time class="post-details__time user__time"
                   datetime="<?= format_iso_date_time(
