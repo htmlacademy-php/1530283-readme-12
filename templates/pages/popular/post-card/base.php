@@ -11,9 +11,7 @@ list(
     'string_content' => $string_content,
     'text_content' => $text_content,
     'content_type' => $content_type,
-    'author_id' => $author_id,
-    'author_login' => $author_login,
-    'author_avatar' => $author_avatar,
+    'author' => $author,
     'created_at' => $created_at,
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
@@ -42,17 +40,17 @@ list(
     <footer class="post__footer">
         <div class="post__author">
             <a class="post__author-link"
-               href="profile.php?user-id=<?= $author_id ?>"
+               href="profile.php?user-id=<?= $author['id'] ?>"
                title="Автор">
                 <div class="post__avatar-wrapper">
                     <img class="post__author-avatar"
-                         src="/<?= $author_avatar ??
+                         src="/<?= $author['avatar_url'] ??
                                    'img/icon-input-user.svg' ?>"
                          alt="Аватар пользователя">
                 </div>
                 <div class="post__info">
                     <b class="post__author-name"><?= strip_tags(
-                            $author_login
+                            $author['login']
                         ) ?></b>
                     <time class="post__time" datetime="<?= format_iso_date_time(
                         $created_at

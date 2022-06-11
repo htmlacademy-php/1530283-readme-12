@@ -14,9 +14,11 @@
  *     id: int,
  *     created_at: string,
  *     content: string,
- *     author_id: int,
- *     author_login: string,
- *     author_avatar: string
+ *     author: array{
+ *         id: int,
+ *         login: string,
+ *         avatar_url: string
+ *     },
  * }>
  */
 function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
@@ -27,9 +29,11 @@ function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
             comments.id,
             comments.created_at,
             comments.content,
-            comments.author_id AS author_id,
-            users.login AS author_login,
-            users.avatar_url AS author_avatar
+            JSON_OBJECT(
+                'id', users.id,
+                'login', users.login,
+                'avatar_url', users.avatar_url
+            ) AS author
         FROM comments
             JOIN users
                 ON comments.author_id = users.id
@@ -51,7 +55,13 @@ function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
         return null;
     }
 
-    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $comments = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    foreach ($comments as &$comment) {
+        $comment['author'] = json_decode($comment['author'], true);
+    }
+
+    return $comments;
 }
 
 /**

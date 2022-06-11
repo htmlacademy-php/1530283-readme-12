@@ -12,9 +12,7 @@ list(
     'string_content' => $string_content,
     'text_content' => $text_content,
     'content_type' => $content_type,
-    'author_id' => $author_id,
-    'author_login' => $author_login,
-    'author_avatar' => $author_avatar,
+    'author' => $author,
     'created_at' => $created_at,
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
@@ -29,15 +27,15 @@ list(
          post <?= "post-$content_type" ?>">
     <header class="post__header post__author">
         <a class="post__author-link"
-           href="profile.php?user-id=<?= $author_id ?>"
+           href="profile.php?user-id=<?= $author['id'] ?>"
            title="Автор">
             <div class="post__avatar-wrapper">
                 <img class="post__author-avatar"
-                     src="/<?= $author_avatar ?? AVATAR_PLACEHOLDER ?>"
+                     src="/<?= $author['avatar_url'] ?? AVATAR_PLACEHOLDER ?>"
                      alt="Аватар пользователя" width="60" height="60">
             </div>
             <div class="post__info">
-                <b class="post__author-name"><?= $author_login ?></b>
+                <b class="post__author-name"><?= $author['login'] ?></b>
                 <time class="post__time" datetime="<?= format_iso_date_time(
                     $created_at
                 ) ?>"><?= format_relative_time($created_at) ?> назад

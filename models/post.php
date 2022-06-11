@@ -30,9 +30,11 @@ require_once 'models/post_hashtag.php';
  *     text_content: string,
  *     created_at: string,
  *     views_count: int,
- *     author_id: int,
- *     author_login: string,
- *     author_avatar: string,
+ *     author: array{
+ *         id: int,
+ *         login: string,
+ *         avatar_url: string
+ *     },
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
@@ -62,9 +64,11 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
             posts.text_content,
             posts.created_at,
             posts.views_count,
-            users.id AS author_id,
-            users.login AS author_login,
-            users.avatar_url AS author_avatar,
+            JSON_OBJECT(
+                'id', users.id,
+                'login', users.login,
+                'avatar_url', users.avatar_url
+            ) AS author,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
@@ -108,7 +112,13 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
         return null;
     }
 
-    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    foreach ($posts AS &$post) {
+        $post['author'] = json_decode($post['author'], true);
+    }
+
+    return $posts;
 }
 
 /**
@@ -133,9 +143,11 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
  *     text_content: string,
  *     created_at: string,
  *     views_count: int,
- *     author_id: int,
- *     author_login: string,
- *     author_avatar: string,
+ *     author: array{
+ *         id: int,
+ *         login: string,
+ *         avatar_url: string
+ *     },
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
@@ -161,13 +173,15 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
             posts.text_content,
             posts.created_at,
             posts.views_count,
-            users.id AS author_id,
-            users.login AS author_login,
-            users.avatar_url AS author_avatar,
+            JSON_OBJECT(
+                'id', users.id,
+                'login', users.login,
+                'avatar_url', users.avatar_url
+            ) AS author,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_json,
+            JSON_ARRAYAGG(hashtags.name) AS hashtags,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
@@ -205,9 +219,8 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
-        unset($post['hashtags_json']);
-        unset($post['score']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['author'] = json_decode($post['author'], true);
     }
 
     return $posts;
@@ -231,9 +244,11 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
  *     text_content: string,
  *     created_at: string,
  *     views_count: int,
- *     author_id: int,
- *     author_login: string,
- *     author_avatar: string,
+ *     author: array{
+ *         id: int,
+ *         login: string,
+ *         avatar_url: string
+ *     },
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
@@ -251,16 +266,18 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
             posts.text_content,
             posts.created_at,
             posts.views_count,
-            users.id AS author_id,
-            users.login AS author_login,
-            users.avatar_url AS author_avatar,
+            JSON_OBJECT(
+                'id', users.id,
+                'login', users.login,
+                'avatar_url', users.avatar_url
+            ) AS author,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
             MATCH(posts.title, posts.string_content, posts.text_content)
                 AGAINST(? IN BOOLEAN MODE) AS score,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_json
+            JSON_ARRAYAGG(hashtags.name) AS hashtags
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -286,8 +303,8 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
-        unset($post['hashtags_json']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['author'] = json_decode($post['author'], true);
     }
 
     return $posts;
@@ -310,9 +327,11 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
  *     text_content: string,
  *     created_at: string,
  *     views_count: int,
- *     author_id: int,
- *     author_login: string,
- *     author_avatar: string,
+ *     author: array{
+ *         id: int,
+ *         login: string,
+ *         avatar_url: string
+ *     },
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
@@ -333,13 +352,15 @@ function get_posts_by_hashtag(
             posts.text_content,
             posts.created_at,
             posts.views_count,
-            users.id AS author_id,
-            users.login AS author_login,
-            users.avatar_url AS author_avatar,
+            JSON_OBJECT(
+                'id', users.id,
+                'login', users.login,
+                'avatar_url', users.avatar_url
+            ) AS author,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_json,
+            JSON_ARRAYAGG(hashtags.name) AS hashtags,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
@@ -349,7 +370,7 @@ function get_posts_by_hashtag(
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         GROUP BY posts.id, posts.created_at
-        HAVING LOCATE(?, hashtags_json) > 0
+        HAVING LOCATE(?, hashtags) > 0
         ORDER BY posts.created_at DESC 
     ";
 
@@ -365,8 +386,8 @@ function get_posts_by_hashtag(
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
-        unset($post['hashtags_json']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['author'] = json_decode($post['author'], true);
     }
 
     return $posts;
@@ -390,9 +411,11 @@ function get_posts_by_hashtag(
  *     text_content: string,
  *     created_at: string,
  *     views_count: int,
- *     author_id: int,
- *     author_login: string,
- *     author_avatar: string,
+ *     author: array{
+ *         id: int,
+ *         login: string,
+ *         avatar_url: string
+ *     },
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
@@ -413,14 +436,16 @@ function get_posts_by_author(
             posts.text_content,
             posts.created_at,
             posts.views_count,
-            users.id AS author_id,
-            users.login AS author_login,
-            users.avatar_url AS author_avatar,
+            JSON_OBJECT(
+                'id', users.id,
+                'login', users.login,
+                'avatar_url', users.avatar_url
+            ) AS author,
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_json
+            JSON_ARRAYAGG(hashtags.name) AS hashtags
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -445,8 +470,8 @@ function get_posts_by_author(
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
-        unset($post['hashtags_json']);
+        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['author'] = json_decode($post['author'], true);
     }
 
     return $posts;
@@ -495,7 +520,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_ARRAYAGG(hashtags.name) AS hashtags_json,
+            JSON_ARRAYAGG(hashtags.name) AS hashtags,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
@@ -523,8 +548,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
         return null;
     }
 
-    $post['hashtags'] = decode_json_array_agg($post['hashtags_json']);
-    unset($post['hashtags_json']);
+    $post['hashtags'] = decode_json_array_agg($post['hashtags']);
 
     return $post;
 }
