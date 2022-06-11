@@ -11,7 +11,7 @@ require_once 'models/subscription.php';
  */
 
 $is_user_id_valid = false;
-$user_id = filter_input(INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT);
+$user_id = filter_input(INPUT_GET, USER_ID_QUERY, FILTER_SANITIZE_NUMBER_INT);
 
 if ($user_id) {
     $is_user_id_valid = check_user($db_connection, $user_id);
