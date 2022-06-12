@@ -64,38 +64,39 @@ if (!$is_tab_valid) {
     exit();
 }
 
-// todo: use switch case ?
 $main_content = '';
 
-if ($current_tab === PROFILE_POSTS_TAB['value']) {
-    $user_posts =
-        get_posts_by_author($db_connection, $user_session['id'], $user_id);
-    // todo: handle error / empty state
-    $main_content = include_template(
-        "pages/profile/main/$current_tab.php",
-        ['user_posts' => $user_posts]
-    );
-}
+switch ($current_tab) {
+    case PROFILE_LIKES_TAB['value']:
+        $likes = get_likes($db_connection, $user_id);
 
-if ($current_tab === PROFILE_LIKES_TAB['value']) {
-    $likes = get_likes($db_connection, $user_id);
-    // todo: handle error / empty state
-    $main_content = include_template(
-        "pages/profile/main/$current_tab.php",
-        ['likes' => $likes, 'is_own_profile' => $is_own_profile]
-    );
-}
+        if (is_null($likes)) {
+            http_response_code(SERVER_ERROR_STATUS);
+        }
 
-if ($current_tab === PROFILE_SUBSCRIPTIONS_TAB['value']) {
-    // todo handle subscriptions tab
-    $subscriptions =
-        get_observable_users($db_connection, $user_id, $user_session['id']);
-    var_dump($subscriptions);
-    // todo: handle error / empty state
-    $main_content = include_template(
-        "pages/profile/main/$current_tab.php",
-        ['subscriptions' => $subscriptions]
-    );
+        $main_content = get_profile_likes_tab_content($likes, $is_own_profile);
+        break;
+
+    case PROFILE_SUBSCRIPTIONS_TAB['value']:
+        $subscriptions =
+            get_observable_users($db_connection, $user_id, $user_session['id']);
+
+        if (is_null($subscriptions)) {
+            http_response_code(SERVER_ERROR_STATUS);
+        }
+
+        $main_content = get_profile_subscriptions_tab_content($subscriptions);
+        break;
+
+    default:
+        $user_posts =
+            get_posts_by_author($db_connection, $user_session['id'], $user_id);
+
+        if (is_null($user_posts)) {
+            http_response_code(SERVER_ERROR_STATUS);
+        }
+
+        $main_content = get_profile_posts_tab_content($user_posts);
 }
 
 $page_content = include_template(

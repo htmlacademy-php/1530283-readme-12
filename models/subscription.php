@@ -155,8 +155,6 @@ function get_observable_users(
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
 
-    var_dump(mysqli_error($db_connection));
-
     if (!$result) {
         return null;
     }

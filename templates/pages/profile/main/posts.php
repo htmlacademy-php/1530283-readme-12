@@ -2,7 +2,7 @@
 /**
  * Шаблон основного страницы профиля пользователя для таба 'Посты'
  *
- * @var array $user_posts - публикации пользователя
+ * @var array $posts - публикации пользователя
  */
 ?>
 
@@ -10,12 +10,12 @@
     class="profile__posts tabs__content tabs__content--active">
     <h2 class="visually-hidden">Публикации</h2>
     <?php
-    foreach ($user_posts as $user_post): ?>
+    foreach ($posts as $post): ?>
         <?= include_template(
             'common/post-card/base.php',
             [
                 'card_modifier' => 'profile',
-                'post_card' => $user_post
+                'post_card' => $post
             ]
         ) ?>
     <?php
