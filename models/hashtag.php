@@ -109,8 +109,6 @@ function create_hashtag(mysqli $db_connection, string $name)
     return mysqli_insert_id($db_connection);
 }
 
-
-// todo: add transaction ?
 /**
  * Функция добавляет хэштег к существующей публикации.
  * Функция принимает название хэштега и id публикации. В случае, если
@@ -134,14 +132,25 @@ function add_hashtag_to_post(
     string $name,
     int $post_id
 ): bool {
+    mysqli_begin_transaction($db_connection);
+
     $existent_hashtag = get_hashtag($db_connection, $name);
 
     $hashtag_id = is_array($existent_hashtag) && $existent_hashtag['id']
         ? $existent_hashtag['id'] : create_hashtag($db_connection, $name);
 
     if (!$hashtag_id) {
+        mysqli_rollback($db_connection);
         return false;
     }
 
-    return create_post_hashtag($db_connection, $post_id, $hashtag_id);
+    $is_success = create_post_hashtag($db_connection, $post_id, $hashtag_id);
+
+    if (!$is_success) {
+        mysqli_rollback($db_connection);
+        return false;
+    }
+
+    mysqli_commit($db_connection);
+    return true;
 }

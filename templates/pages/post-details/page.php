@@ -18,7 +18,8 @@ list(
     'comments_count' => $comments_count,
     'reposts_count' => $reposts_count,
     'views_count' => $views_count,
-    'is_liked' => $is_liked
+    'is_liked' => $is_liked,
+    'is_own' => $is_own
     )
     = $post;
 
@@ -61,7 +62,9 @@ list(
                             <span class="visually-hidden">количество комментариев</span>
                         </a>
                         <a class="post__indicator post__indicator--repost button"
-                           href="#" title="Репост">
+                            <?= !$is_own ? "href=\"repost.php?post-id=$id\""
+                                : '' ?>
+                           title="Репост">
                             <svg class="post__indicator-icon" width="19"
                                  height="17">
                                 <use xlink:href="#icon-repost"></use>

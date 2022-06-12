@@ -12,7 +12,7 @@
     <?php
     foreach ($posts as $post): ?>
         <?= include_template(
-            'common/post-card/base.php',
+            'pages/profile/post-card/base.php',
             [
                 'card_modifier' => 'profile',
                 'post_card' => $post
