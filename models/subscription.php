@@ -109,27 +109,25 @@ function toggle_subscription(
     return $change_status($db_connection, $user_id, $observable_id);
 }
 
-// todo: try to replace sub-query with join - is_observable
-// todo: try to replace sub-query with join - posts_count
-// todo: try to replace sub-query with join - subscribers_count
 /**
  * Функция получает подписки для заданного подписчика.
  * В случае успешного запроса функция возвращает массив данных о пользователях,
  * на которых подписан заданный подписчик, в виде ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection - ресурс соединеня с базой данных
- * @param  int  $user_id - id пользователя
- * @param  int  $subscriber_id - id подписчика
+ * @param  mysqli  $db_connection  - ресурс соединеня с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  int  $subscriber_id  - id подписчика
  *
  * @return null | array<int, array{
  *     id: int,
  *     avatar_url: string,
  *     login: string,
  *     created_at: string,
- *     is_observable: 0 | 1,
  *     posts_count: int,
- *     subscribers_count: int
+ *     subscribers_count: int,
+ *     is_observable: 0 | 1,
+ *     is_user: bool
  * }>
  */
 function get_subscriptions_by_subscriber(
@@ -143,34 +141,31 @@ function get_subscriptions_by_subscriber(
             users.avatar_url AS avatar_url,
             users.login AS login,
             users.created_at AS created_at,
-            (SELECT
-                JSON_CONTAINS(JSON_ARRAYAGG(sub_subscriptions.subscriber_id), ?)
-            FROM users sub_users
-            LEFT JOIN subscriptions sub_subscriptions
-                ON sub_users.id = sub_subscriptions.observable_id
-            WHERE sub_subscriptions.observable_id = users.id
-            GROUP BY sub_users.id) AS is_observable,
-            (SELECT COUNT(posts.id)
-            FROM posts
-            WHERE posts.author_id = users.id) AS posts_count,
-            (SELECT COUNT(sub_subscriptions.subscriber_id)
-            FROM subscriptions sub_subscriptions
-            WHERE sub_subscriptions.observable_id = users.id) AS subscribers_count
+            JSON_CONTAINS(JSON_ARRAYAGG(sub_subscriptions.subscriber_id), ?) AS is_observable,
+            COUNT(DISTINCT posts.id) AS posts_count,
+            COUNT(DISTINCT sub_subscriptions.subscriber_id) AS subscribers_count,
+            (users.id = ?) AS is_user
         FROM subscriptions
         JOIN users ON subscriptions.observable_id = users.id
+        LEFT JOIN posts 
+            ON users.id = posts.author_id
+        LEFT JOIN subscriptions sub_subscriptions
+            ON sub_subscriptions.observable_id = users.id
         WHERE subscriptions.subscriber_id = ?
+        GROUP BY users.id
     ";
 
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param(
         $statement,
-        'si',
+        'sii',
+        $user_id,
         $user_id,
         $subscriber_id
     );
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);
-
+    var_dump(mysqli_error($db_connection));
     if (!$result) {
         return null;
     }

@@ -23,10 +23,14 @@ if (!$user_id || !$is_user_id_valid) {
     exit();
 }
 
+if (intval($user_id) === $user_session['id']) {
+    http_response_code(BAD_REQUEST_STATUS);
+    render_message_page(['content' => 'Нельзя оформить подписку на собственный профиль']);
+    exit();
+}
 
 $is_subscription_toggled =
     toggle_subscription($db_connection, $user_session['id'], $user_id);
-
 
 if (!$is_subscription_toggled) {
     http_response_code(SERVER_ERROR_STATUS);

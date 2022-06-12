@@ -88,7 +88,7 @@ switch ($current_tab) {
         if (is_null($subscriptions)) {
             http_response_code(SERVER_ERROR_STATUS);
         }
-        // todo: handle case when subscription is the user
+
         $main_content = get_profile_subscriptions_tab_content($subscriptions);
         break;
 

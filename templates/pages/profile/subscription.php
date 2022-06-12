@@ -14,7 +14,8 @@ list(
     'avatar_url' => $avatar_url,
     'subscribers_count' => $subscribers_count,
     'posts_count' => $posts_count,
-    'is_observable' => $is_observable
+    'is_observable' => $is_observable,
+    'is_user' => $is_user,
     ) = $subscription;
 ?>
 
@@ -64,10 +65,15 @@ list(
         </p>
     </div>
     <div class="post-mini__user-buttons user__buttons">
-        <a class="post-mini__user-button user__button user__button--subscription button
+        <?php
+        if (!$is_user): ?>
+            <a class="post-mini__user-button user__button user__button--subscription button
            button--<?= $is_observable ? 'quartz' : 'main' ?>"
-           href="subscribe.php?user-id=<?= $id ?>"
-           type="button"><?= $is_observable ? 'Отписаться' : 'Подписаться' ?>
-        </a>
+               href="subscribe.php?user-id=<?= $id ?>"
+               type="button"><?= $is_observable ? 'Отписаться'
+                    : 'Подписаться' ?>
+            </a>
+        <?php
+        endif;; ?>
     </div>
 </li>
