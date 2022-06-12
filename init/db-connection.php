@@ -1,6 +1,7 @@
 <?php
 
 require_once 'config/db.php';
+require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/renderers/common.php';
 
@@ -24,5 +25,6 @@ if (!$db_connection || mysqli_error($db_connection)) {
     exit();
 }
 
+mysqli_timezone_sync($db_connection, TIMEZONE);
 mysqli_set_charset($db_connection, $charset);
 mysqli_options($db_connection, MYSQLI_OPT_INT_AND_FLOAT_NATIVE, true);

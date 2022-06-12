@@ -1,5 +1,7 @@
 <?php
 
+const TIMEZONE = 'UTC';
+
 const DEFAULT_POSTS_LIMIT = 6;
 
 const DEFAULT_COMMENTS_LIMIT = 2;
@@ -13,6 +15,8 @@ const CONTENT_FILTER_QUERY = 'content_type_id';
 const COMMENTS_EXPANDED = 'comments-expanded';
 
 const TAB_QUERY = 'tab';
+
+const COMMENTS_POST_ID_QUERY = 'comments-post-id';
 
 const USER_ID_QUERY = 'user-id';
 
