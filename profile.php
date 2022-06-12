@@ -3,7 +3,6 @@
 require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 require_once 'utils/helpers.php';
-require_once 'utils/functions.php';
 require_once 'utils/renderers/profile.php';
 require_once 'models/like.php';
 require_once 'models/user.php';
