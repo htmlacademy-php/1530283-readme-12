@@ -38,7 +38,7 @@ require_once 'models/post_hashtag.php';
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
- *     is_liked: 0 | 1
+ *     is_liked: bool
  * }>
  */
 function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
@@ -72,7 +72,7 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
-            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
+            (JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) = 1) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -153,7 +153,7 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
  *     comments_count: int,
  *     reposts_count: int,
  *     hashtags: array,
- *     is_liked: 0 | 1
+ *     is_liked: bool
  * }>
  */
 function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
@@ -184,7 +184,7 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
             COUNT(DISTINCT comments.id) AS comments_count,
             COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
-            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
+            (JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) = 1) AS is_liked
         FROM posts
             JOIN users ON posts.author_id = users.id
             JOIN content_types ON posts.content_type_id = content_types.id
@@ -257,7 +257,7 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
  *     comments_count: int,
  *     reposts_count: int,
  *     hashtags: array,
- *     is_liked: 0 | 1,
+ *     is_liked: bool,
  *     is_own: bool
  * }>
  */
@@ -280,7 +280,7 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
             COUNT(DISTINCT reposts.repost_id) AS reposts_count,
-            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
+            (JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) = 1) AS is_liked,
             MATCH(posts.title, posts.string_content, posts.text_content)
                 AGAINST(? IN BOOLEAN MODE) AS score,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
@@ -352,7 +352,7 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
  *     comments_count: int,
  *     reposts_count: int,
  *     hashtags: array,
- *     is_liked: 0 | 1,
+ *     is_liked: bool,
  *     is_own: bool
  * }>
  */
@@ -379,7 +379,7 @@ function get_posts_by_hashtag(
             COUNT(DISTINCT comments.id) AS comments_count,
             COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
-            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
+            (JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) = 1) AS is_liked,
             (posts.author_id = ?) AS is_own
         FROM posts
             JOIN users ON posts.author_id = users.id
@@ -447,7 +447,7 @@ function get_posts_by_hashtag(
  *     comments_count: int,
  *     reposts_count: int,
  *     hashtags: array,
- *     is_liked: 0 | 1,
+ *     is_liked: bool,
  *     is_own: bool
  * }>
  */
@@ -486,7 +486,7 @@ function get_posts_by_author(
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
             COUNT(DISTINCT reposts.repost_id) AS reposts_count,
-            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
+            (JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) = 1) AS is_liked,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
             (posts.author_id = ?) AS is_own
         FROM posts
@@ -547,7 +547,7 @@ function get_posts_by_author(
  *     comments_count: int,
  *     reposts_count: int,
  *     hashtags: array,
- *     is_liked: 0 | 1,
+ *     is_liked: bool,
  *     is_own: bool
  * } - данные публикации
  */
@@ -569,7 +569,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
             COUNT(DISTINCT comments.id) AS comments_count,
             COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
-            JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
+            (JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) = 1) AS is_liked,
             (posts.author_id = ?) AS is_own
         FROM posts
             JOIN users ON posts.author_id = users.id
