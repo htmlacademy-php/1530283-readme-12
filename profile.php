@@ -8,6 +8,7 @@ require_once 'utils/renderers/profile.php';
 require_once 'models/like.php';
 require_once 'models/user.php';
 require_once 'models/post.php';
+require_once 'models/subscription.php';
 
 /**
  * @var array $user_session - сессия пользователя
@@ -77,7 +78,7 @@ if ($current_tab === PROFILE_POSTS_TAB['value']) {
 }
 
 if ($current_tab === PROFILE_LIKES_TAB['value']) {
-    $likes = get_likes($db_connection, $user['id']);
+    $likes = get_likes($db_connection, $user_id);
     // todo: handle error / empty state
     $main_content = include_template(
         "pages/profile/main/$current_tab.php",
@@ -87,7 +88,9 @@ if ($current_tab === PROFILE_LIKES_TAB['value']) {
 
 if ($current_tab === PROFILE_SUBSCRIPTIONS_TAB['value']) {
     // todo handle subscriptions tab
-    $subscriptions = [];
+    $subscriptions =
+        get_observable_users($db_connection, $user_id, $user_session['id']);
+    var_dump($subscriptions);
     // todo: handle error / empty state
     $main_content = include_template(
         "pages/profile/main/$current_tab.php",

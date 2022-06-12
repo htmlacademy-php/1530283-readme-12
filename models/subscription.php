@@ -108,3 +108,58 @@ function toggle_subscription(
 
     return $change_status($db_connection, $user_id, $observable_id);
 }
+
+// todo: add phpDoc to users
+/**
+ * @param  mysqli  $db_connection
+ * @param  int  $user_id
+ *
+ * @return array|null
+ */
+function get_observable_users(
+    mysqli $db_connection,
+    int $user_id,
+    int $ref_user_id
+) {
+    $sql = "
+        SELECT
+            users.id AS id,
+            users.avatar_url AS avatar_url,
+            users.login AS login,
+            users.created_at AS created_at,
+            (SELECT
+                JSON_CONTAINS(JSON_ARRAYAGG(sub_subscriptions.subscriber_id), ?)
+            FROM users sub_users
+            LEFT JOIN subscriptions sub_subscriptions
+                ON sub_users.id = sub_subscriptions.observable_id
+            WHERE sub_subscriptions.observable_id = users.id
+            GROUP BY sub_users.id) AS is_observable,
+            (SELECT COUNT(posts.id)
+            FROM posts
+            WHERE posts.author_id = users.id) AS posts_count,
+            (SELECT COUNT(sub_subscriptions.subscriber_id)
+            FROM subscriptions sub_subscriptions
+            WHERE sub_subscriptions.observable_id = users.id) AS subscribers_count
+        FROM subscriptions
+        JOIN users ON subscriptions.observable_id = users.id
+        WHERE subscriptions.subscriber_id = ?
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        'si',
+        $ref_user_id,
+        $user_id
+    );
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+
+    var_dump(mysqli_error($db_connection));
+
+    if (!$result) {
+        return null;
+    }
+
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}

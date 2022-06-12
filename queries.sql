@@ -57,5 +57,10 @@ WHERE post_id = 1;
 INSERT INTO likes (post_id, author_id) VALUES
     (1, 2), (1, 3), (2, 1), (3, 1);
 
-# подписаться на пользователя. Пользователь с id = 1 подписывается на пользователя с id = 2.
-INSERT INTO subscriptions (subscriber_id, observable_id) VALUES (1 ,2);
+# подписаться на пользователя
+# пользователь с id = 1 подписывается на пользователя с id = 2.
+# пользователь с id = 1 подписывается на пользователя с id = 3.
+# пользователь с id = 2 подписывается на пользователя с id = 3.
+# пользователь с id = 3 подписывается на пользователя с id = 1.
+INSERT INTO subscriptions (subscriber_id, observable_id) VALUES
+    (1 ,2), (1, 3), (2, 3), (3, 1);

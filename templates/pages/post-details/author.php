@@ -67,7 +67,8 @@ $user_name = strip_tags($user_name);
     <?php
     if (!$is_own_post): ?>
         <div class="post-details__user-buttons user__buttons">
-            <a class="user__button user__button--subscription button button--main"
+            <a class="user__button user__button--subscription button
+               button--<?= $is_observable ? 'quartz' : 'main' ?>"
                href="subscribe.php?user-id=<?= $id ?>"><?= $is_observable
                     ? 'Отписаться' : 'Подписаться' ?>
             </a>
