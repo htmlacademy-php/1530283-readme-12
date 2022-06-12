@@ -1,6 +1,7 @@
 <?php
 
 require_once 'models/post.php';
+require_once 'models/hashtag.php';
 
 /**
  * Функция добавляет репост в базу данных.
@@ -31,6 +32,10 @@ function create_repost(
     $post_data['author_id'] = $user_id;
 
     mysqli_begin_transaction($db_connection);
+
+    $hashtags = get_hashtags($db_connection, $post_data['id']);
+    $post_data['tags'] =
+        implode(TEXT_SEPARATOR, array_column($hashtags, 'name'));
 
     $repost_id = create_post($db_connection, $post_data);
 

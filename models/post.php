@@ -222,7 +222,8 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['hashtags'] =
+            array_unique(decode_json_array_agg($post['hashtags']));
         $post['author'] = json_decode($post['author'], true);
     }
 
@@ -318,7 +319,8 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['hashtags'] =
+            array_unique(decode_json_array_agg($post['hashtags']));
         $post['author'] = json_decode($post['author'], true);
     }
 
@@ -406,7 +408,8 @@ function get_posts_by_hashtag(
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['hashtags'] =
+            array_unique(decode_json_array_agg($post['hashtags']));
         $post['author'] = json_decode($post['author'], true);
     }
 
@@ -514,7 +517,8 @@ function get_posts_by_author(
     $posts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     foreach ($posts as &$post) {
-        $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+        $post['hashtags'] =
+            array_unique(decode_json_array_agg($post['hashtags']));
         $post['author'] = json_decode($post['author'], true);
         $post['original_post'] = json_decode($post['original_post'], true);
     }
@@ -598,7 +602,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
         return null;
     }
 
-    $post['hashtags'] = decode_json_array_agg($post['hashtags']);
+    $post['hashtags'] = array_unique(decode_json_array_agg($post['hashtags']));
 
     return $post;
 }
