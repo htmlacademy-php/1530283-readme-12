@@ -755,8 +755,8 @@ function get_basic_post_data(mysqli $db_connection, int $post_id)
  * Функция увеличивает значение числа просмотров публикации на 1.
  * Функция возваращает результат выполнения операции в булевом формате.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $post_id - id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  - id публикации
  *
  * @return bool - результат выполнения операции
  */
@@ -770,5 +770,6 @@ function increase_views_count(mysqli $db_connection, int $post_id)
 
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'i', $post_id);
+
     return mysqli_stmt_execute($statement);
 }

@@ -23,7 +23,7 @@ function create_repost(
     int $user_id,
     array $post_data
 ) {
-    if ($post_data['author_id'] = $user_id) {
+    if ($post_data['author_id'] === $user_id) {
         return null;
     }
 
@@ -34,13 +34,20 @@ function create_repost(
 
     $repost_id = create_post($db_connection, $post_data);
 
+    if (!$repost_id) {
+        var_dump($db_connection);
+        mysqli_rollback($db_connection);
+
+        return null;
+    }
+
     $sql = "INSERT INTO reposts (original_post_id, repost_id) VALUES (?, ?)";
 
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'ii', $original_post_id, $repost_id);
-    mysqli_stmt_execute($statement);
 
-    if (mysqli_error($db_connection)) {
+    if (!mysqli_stmt_execute($statement)) {
+        var_dump($db_connection);
         mysqli_rollback($db_connection);
 
         return null;
