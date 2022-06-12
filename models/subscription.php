@@ -109,17 +109,33 @@ function toggle_subscription(
     return $change_status($db_connection, $user_id, $observable_id);
 }
 
-// todo: add phpDoc to users
+// todo: try to replace sub-query with join - is_observable
+// todo: try to replace sub-query with join - posts_count
+// todo: try to replace sub-query with join - subscribers_count
 /**
- * @param  mysqli  $db_connection
- * @param  int  $user_id
+ * Функция получает подписки для заданного подписчика.
+ * В случае успешного запроса функция возвращает массив данных о пользователях,
+ * на которых подписан заданный подписчик, в виде ассоциативных массивов.
+ * В случае неуспешного запроса возвращается null.
  *
- * @return array|null
+ * @param  mysqli  $db_connection - ресурс соединеня с базой данных
+ * @param  int  $user_id - id пользователя
+ * @param  int  $subscriber_id - id подписчика
+ *
+ * @return null | array<int, array{
+ *     id: int,
+ *     avatar_url: string,
+ *     login: string,
+ *     created_at: string,
+ *     is_observable: 0 | 1,
+ *     posts_count: int,
+ *     subscribers_count: int
+ * }>
  */
-function get_observable_users(
+function get_subscriptions_by_subscriber(
     mysqli $db_connection,
     int $user_id,
-    int $ref_user_id
+    int $subscriber_id
 ) {
     $sql = "
         SELECT
@@ -149,8 +165,8 @@ function get_observable_users(
     mysqli_stmt_bind_param(
         $statement,
         'si',
-        $ref_user_id,
-        $user_id
+        $user_id,
+        $subscriber_id
     );
     mysqli_stmt_execute($statement);
     $result = mysqli_stmt_get_result($statement);

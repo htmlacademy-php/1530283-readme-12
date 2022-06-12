@@ -79,12 +79,16 @@ switch ($current_tab) {
 
     case PROFILE_SUBSCRIPTIONS_TAB['value']:
         $subscriptions =
-            get_observable_users($db_connection, $user_id, $user_session['id']);
+            get_subscriptions_by_subscriber(
+                $db_connection,
+                $user_session['id'],
+                $user_id
+            );
 
         if (is_null($subscriptions)) {
             http_response_code(SERVER_ERROR_STATUS);
         }
-
+        // todo: handle case when subscription is the user
         $main_content = get_profile_subscriptions_tab_content($subscriptions);
         break;
 

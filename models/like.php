@@ -90,6 +90,7 @@ function toggle_like(mysqli $db_connection, int $user_id, int $post_id): bool
     return $change_status($db_connection, $user_id, $post_id);
 }
 
+// todo: try to replace sub-query with join
 /**
  * Функция получает из базы данных данных о лайках к публикациям для заданного
  * автра публикаций.
