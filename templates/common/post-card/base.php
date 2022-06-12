@@ -16,6 +16,7 @@ list(
     'created_at' => $created_at,
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
+    'reposts_count' => $reposts_count,
     'hashtags' => $hashtags,
     'is_liked' => $is_liked
     )
@@ -88,7 +89,7 @@ list(
                 <svg class="post__indicator-icon" width="19" height="17">
                     <use xlink:href="#icon-repost"></use>
                 </svg>
-                <span>5</span>
+                <span><?= $reposts_count ?></span>
                 <span class="visually-hidden">количество репостов</span>
             </a>
         </div>

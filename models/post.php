@@ -151,6 +151,7 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     reposts_count: int,
  *     hashtags: array,
  *     is_liked: 0 | 1
  * }>
@@ -181,6 +182,7 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
+            COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
@@ -189,6 +191,7 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
             JOIN subscriptions ON posts.author_id = subscriptions.observable_id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN reposts ON posts.id = reposts.original_post_id
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         $filter_sql
@@ -252,6 +255,7 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     reposts_count: int,
  *     hashtags: array,
  *     is_liked: 0 | 1
  * }>
@@ -274,6 +278,7 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
+            COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
             MATCH(posts.title, posts.string_content, posts.text_content)
                 AGAINST(? IN BOOLEAN MODE) AS score,
@@ -283,6 +288,7 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN reposts ON posts.id = reposts.original_post_id
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         WHERE MATCH(posts.title, posts.string_content, posts.text_content)
@@ -335,6 +341,7 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     reposts_count: int,
  *     hashtags: array
  *     is_liked: 0 | 1
  * }>
@@ -360,6 +367,7 @@ function get_posts_by_hashtag(
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
+            COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
@@ -367,6 +375,7 @@ function get_posts_by_hashtag(
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN reposts ON posts.id = reposts.original_post_id
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         GROUP BY posts.id, posts.created_at
@@ -419,6 +428,7 @@ function get_posts_by_hashtag(
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     reposts_count: int,
  *     hashtags: array,
  *     is_liked: 0 | 1
  * }>
@@ -444,6 +454,7 @@ function get_posts_by_author(
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
+            COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked,
             JSON_ARRAYAGG(hashtags.name) AS hashtags
         FROM posts
@@ -451,6 +462,7 @@ function get_posts_by_author(
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN reposts ON posts.id = reposts.original_post_id
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         WHERE posts.author_id = ?
@@ -500,6 +512,7 @@ function get_posts_by_author(
  *     content_type: string,
  *     likes_count: int,
  *     comments_count: int,
+ *     reposts_count: int,
  *     hashtags: array,
  *     is_liked: 0 | 1
  * } - данные публикации
@@ -520,6 +533,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
             content_types.type AS content_type,
             COUNT(DISTINCT likes.author_id) AS likes_count,
             COUNT(DISTINCT comments.id) AS comments_count,
+            COUNT(DISTINCT reposts.repost_id) AS reposts_count,
             JSON_ARRAYAGG(hashtags.name) AS hashtags,
             JSON_CONTAINS(JSON_ARRAYAGG(likes.author_id), ?) AS is_liked
         FROM posts
@@ -527,6 +541,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
             JOIN content_types ON posts.content_type_id = content_types.id
             LEFT JOIN likes ON posts.id = likes.post_id
             LEFT JOIN comments ON posts.id = comments.post_id
+            LEFT JOIN reposts ON posts.id = reposts.original_post_id
             LEFT JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
             LEFT JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
         WHERE posts.id = ?

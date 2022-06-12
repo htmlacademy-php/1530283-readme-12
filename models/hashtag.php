@@ -110,6 +110,7 @@ function create_hashtag(mysqli $db_connection, string $name)
 }
 
 
+// todo: add transaction ?
 /**
  * Функция добавляет хэштег к существующей публикации.
  * Функция принимает название хэштега и id публикации. В случае, если

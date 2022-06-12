@@ -16,6 +16,7 @@ list(
     'title' => $title,
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
+    'reposts_count' => $reposts_count,
     'views_count' => $views_count,
     'is_liked' => $is_liked
     )
@@ -65,7 +66,7 @@ list(
                                  height="17">
                                 <use xlink:href="#icon-repost"></use>
                             </svg>
-                            <span>5</span>
+                            <span><?= $reposts_count ?></span>
                             <span class="visually-hidden">количество репостов</span>
                         </a>
                     </div>
