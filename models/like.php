@@ -90,7 +90,6 @@ function toggle_like(mysqli $db_connection, int $user_id, int $post_id): bool
     return $change_status($db_connection, $user_id, $post_id);
 }
 
-// todo: try to replace sub-query with join
 /**
  * Функция получает из базы данных данных о лайках к публикациям для заданного
  * автра публикаций.
@@ -125,12 +124,7 @@ function get_likes(mysqli $db_connection, int $user_id)
                 'id', posts.id,
                 'title', posts.title,
                 'string_content', posts.string_content,
-                'content_type', (
-                    SELECT content_types.type
-                    FROM content_types
-                    WHERE content_types.id = posts.content_type_id
-                    )
-                ) AS post,
+                'content_type', content_types.type) AS post,
             JSON_OBJECT(
                 'id', likes.author_id,
                 'avatar_url', users.avatar_url,
@@ -141,6 +135,8 @@ function get_likes(mysqli $db_connection, int $user_id)
                 ON posts.id = likes.post_id
             JOIN users 
                 ON likes.author_id = users.id
+            JOIN content_types
+                ON posts.content_type_id = content_types.id
         WHERE posts.author_id = ?
         ORDER BY likes.created_at DESC
      ";
