@@ -13,12 +13,12 @@ INSERT INTO users (email, login, password_hash, avatar_url) VALUES
     ('sidr_sidorov@mail.com', 'user_sidr', 'user_sidr_password_hash', 'img/userpic-mark.jpg');
 
 # создает существующий список постов
-INSERT INTO posts (author_id, content_type_id, title, text_content, string_content, views_count) VALUES
-    (1, 4, 'Цитата', 'Мы в жизни любим только раз, а после ищем лишь похожих', 'Неизвестный автор', 3),
-    (2, 3, 'Игра престолов', 'Не могу дождаться начала финального сезона своего любимого сериала!', '', 0),
-    (3, 1, 'Наконец, обработал фотки!', '', 'img/rock-medium.jpg', 2),
-    (1, 1, 'Моя мечта', '', 'img/coast-medium.jpg', 10),
-    (2, 5, 'Лучшие курсы', '', 'www.htmlacademy.ru', 5);
+INSERT INTO posts (author_id, content_type_id, title, text_content, string_content) VALUES
+    (1, 4, 'Цитата', 'Мы в жизни любим только раз, а после ищем лишь похожих', 'Неизвестный автор'),
+    (2, 3, 'Игра престолов', 'Не могу дождаться начала финального сезона своего любимого сериала!', ''),
+    (3, 1, 'Наконец, обработал фотки!', '', 'img/rock-medium.jpg'),
+    (1, 1, 'Моя мечта', '', 'img/coast-medium.jpg'),
+    (2, 5, 'Лучшие курсы', '', 'www.htmlacademy.ru');
 
 # создает пару комментариев к разным постам
 INSERT INTO comments (author_id, post_id, content) VALUES

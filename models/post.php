@@ -709,8 +709,8 @@ function check_post(mysqli $db_connection, int $post_id): bool
  * Функция возвращает данные в виде ассоциативного массива.
  * В случае неуспешного запроса функция возвращает null.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $post_id - id публикации
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $post_id  - id публикации
  *
  * @return null | array{
  *     id: int,
@@ -751,3 +751,24 @@ function get_basic_post_data(mysqli $db_connection, int $post_id)
     return mysqli_fetch_assoc($result) ?? null;
 }
 
+/**
+ * Функция увеличивает значение числа просмотров публикации на 1.
+ * Функция возваращает результат выполнения операции в булевом формате.
+ *
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param  int  $post_id - id публикации
+ *
+ * @return bool - результат выполнения операции
+ */
+function increase_views_count(mysqli $db_connection, int $post_id)
+{
+    $sql = "
+        UPDATE posts
+        SET views_count = views_count + 1
+        WHERE posts.id = ?
+    ";
+
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param($statement, 'i', $post_id);
+    return mysqli_stmt_execute($statement);
+}

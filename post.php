@@ -64,6 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $comments_limit = $is_comments_expanded ? null : DEFAULT_COMMENTS_LIMIT;
 
 if ($post_id) {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        increase_views_count($db_connection, $post_id);
+    }
     $post = get_post($db_connection, $user_session['id'], $post_id);
     $comments = get_comments($db_connection, $post_id, $comments_limit);
     $hashtags = get_hashtags($db_connection, $post_id);
