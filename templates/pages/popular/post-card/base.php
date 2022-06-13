@@ -45,8 +45,8 @@ list(
                 <div class="post__avatar-wrapper">
                     <img class="post__author-avatar"
                          src="/<?= $author['avatar_url'] ??
-                                   'img/icon-input-user.svg' ?>"
-                         alt="Аватар пользователя">
+                                   AVATAR_PLACEHOLDER ?>"
+                         alt="Аватар пользователя" width="40" height="40">
                 </div>
                 <div class="post__info">
                     <b class="post__author-name"><?= strip_tags(
@@ -76,7 +76,8 @@ list(
                     <span class="visually-hidden">количество лайков</span>
                 </a>
                 <a class="post__indicator post__indicator--comments button"
-                   href="post.php?post-id=<?= $id ?>#comments" title="Комментарии">
+                   href="post.php?post-id=<?= $id ?>#comments"
+                   title="Комментарии">
                     <svg class="post__indicator-icon" width="19" height="17">
                         <use xlink:href="#icon-comment"></use>
                     </svg>
