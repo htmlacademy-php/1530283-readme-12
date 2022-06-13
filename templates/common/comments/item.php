@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон комментария для списка секции комментариев.
+ * Шаблон комментария в списке для секции комментариев к публикации.
  *
  * @var array $comment - ассоциативный массив комментария
  */
@@ -11,6 +11,7 @@ list(
     'author' => $author
     ) = $comment;
 ?>
+
 <li class="comments__item user">
     <div class="comments__avatar">
         <a class="user__avatar-link"

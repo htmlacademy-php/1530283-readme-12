@@ -149,3 +149,94 @@ function get_profile_subscriptions_tab_content($subscriptions): string
         ['subscriptions' => $subscriptions]
     );
 }
+
+/**
+ * Функция добавляет к публикациям в массиве контент секции комментариев.
+ * Секция комментариев имеет два режима - открытый и закрытый.
+ * По умолчанию (в закрытом режиме) в секции комментариев располагается кнопка
+ * показа комменатриев (перехода в открытый режим).
+ * В открытом режиме показывается сокращенный список комментариев (не более 2
+ * комментариев), ссылка показа полного списка (при количестве комментариев
+ * более 2) и форма добавления комментариея.
+ *
+ * Ограничения:
+ * Нажатие на кнопку показа комментариев к публикации приводит к закрытию
+ * аналогичных секций к другим комментариям на странице, т.е. на странице
+ * не может находиться более одной публикации с открытой секцией комментариев.
+ *
+ * @param  array  $posts - массив публикаций
+ * @param  array  $comments_data - данные для отображения комментариев
+ *
+ * @return array - массив публикаций с контентом секции комментариев
+ */
+function add_comments_contents(array $posts, array $comments_data): array
+{
+    array_walk(
+        $posts,
+        function (&$post) use (
+            $comments_data
+        ) {
+            list(
+                'post_id' => $post_id,
+                'form_data' => $form_data,
+                'list_data' => $list_data,
+                'basename' => $basename,
+                'is_expanded' => $is_expanded
+                ) = $comments_data;
+
+            if ($post['id'] === intval($post_id)) {
+                $post['comments_form_content'] = include_template(
+                    'common/comments/form.php',
+                    $form_data
+                );
+
+                if (is_null($list_data['comments'])) {
+                    $post['comments_list_content'] =
+                        include_template(
+                            'common/message.php',
+                            [
+                                'title' => 'Ошибка',
+                                'content' => 'Не удалось загрузить комментарии',
+                                'comments' => true
+                            ]
+                        );
+
+                    return;
+                }
+
+                if (!count($list_data['comments'])) {
+                    $post['comments_list_content'] = include_template(
+                        'common/comments/list.php',
+                        $list_data
+                    );
+
+                    return;
+                }
+
+                $comments_count = $post['comments_count'];
+                $is_expansion_required =
+                    count($list_data['comments']) < $comments_count;
+                $expand_comments_url = !$is_expanded && $is_expansion_required
+                    ? get_expand_comments_url($basename) : null;
+
+                $list_data['comments_count'] = $comments_count;
+                $list_data['expand_comments_url'] = $expand_comments_url;
+
+                $post['comments_list_content'] = include_template(
+                    'common/comments/list.php',
+                    $list_data
+                );
+
+                return;
+            }
+
+            $open_comments_url = get_open_comments_url($basename, $post['id']);
+            $post['comments_list_content'] = include_template(
+                'common/comments/show-button.php',
+                ['url' => $open_comments_url]
+            );
+        }
+    );
+
+    return $posts;
+}

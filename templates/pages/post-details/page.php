@@ -8,7 +8,8 @@ require_once 'utils/helpers.php';
  * @var array $post - ассоциативный массив с данными публикации
  * @var string $post_content - разметка секции контента публикации
  * @var string $author_content - разметка секции автора публикации
- * @var string $comments_content - разметка секции с комментариями
+ * @var string $comments_list_content - разметка списка с комментариями
+ * @var string $comments_form_content - разметка формы добаваления комментария
  */
 
 list(
@@ -84,7 +85,10 @@ list(
                     'common/post-card/hashtags.php',
                     ['hashtags' => $post['hashtags']]
                 ) ?>
-                <?= $comments_content ?>
+                <div class="comments">
+                    <?= $comments_list_content ?>
+                    <?= $comments_form_content ?>
+                </div>
             </div>
             <?= $author_content ?>
         </div>

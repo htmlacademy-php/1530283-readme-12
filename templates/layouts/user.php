@@ -35,6 +35,19 @@
             flex-grow: 1;
         }
 
+        .container--comments{
+            margin-top: auto;
+            width: auto;
+        }
+
+        .container--comments h2 {
+            padding-top: 0 !important;
+        }
+
+        .container--comments p {
+            margin-top: auto;
+        }
+
         .post-link__info-wrapper {
             align-items: center;
         }

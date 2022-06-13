@@ -46,8 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $created_comment_id = create_comment($db_connection, $form_data);
 
         if ($created_comment_id) {
-            $post_author_id = $form_data['post_author_id'];
-            header("Location: profile.php?user-id=$post_author_id");
+            $query_param = $_GET;
+            $query_param[USER_ID_QUERY] = $form_data['post_author_id'];
+            $query_param[COMMENTS_POST_ID_QUERY] = $post_id;
+            $query_string = http_build_query($query_param);
+
+            header("Location: profile.php?$query_string#comments");
             exit();
         }
 
@@ -111,23 +115,25 @@ $post_details_content = include_template(
 $form_data['post_id'] = $post['id'];
 $form_data['post_author_id'] = $post['author_id'];
 
-$all_comments_count = $is_comments_expanded
-    ? count($comments)
-    : get_comments_count(
-        $db_connection,
-        $post_id
-    );
-$is_comments_expansion_required = count($comments) < $all_comments_count;
+$comments_count = $post['comments_count'];
+$is_comments_expansion_required = count($comments) < $comments_count;
 $expand_comments_url =
     !$is_comments_expanded && $is_comments_expansion_required
         ? get_expand_comments_url($basename) : null;
 
-$comments_content = include_template(
-    'common/comments.php',
+
+$comments_list_content = include_template(
+    'common/comments/list.php',
     [
         'comments' => $comments,
-        'comments_count' => $all_comments_count,
+        'comments_count' => $comments_count,
         'expand_comments_url' => $expand_comments_url,
+    ]
+);
+
+$comments_form_content = include_template(
+    'common/comments/form.php',
+    [
         'user' => $user_session,
         'form_data' => $form_data,
         'errors' => $errors,
@@ -140,7 +146,8 @@ $page_content = include_template(
         'post' => $post,
         'post_content' => $post_details_content,
         'author_content' => $author_content,
-        'comments_content' => $comments_content,
+        'comments_list_content' => $comments_list_content,
+        'comments_form_content' => $comments_form_content,
     ]
 );
 

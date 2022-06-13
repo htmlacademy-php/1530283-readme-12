@@ -206,6 +206,23 @@ function get_expand_comments_url(string $basename): string
 }
 
 /**
+ * Функция возвращает ссылку для показа показа полного списка комментариев.
+ *
+ * @param  string  $basename  - URL страницы без GET параметров
+ *
+ * @return string - ссылка показа полного списка комментариев
+ */
+function get_open_comments_url(string $basename, int $post_id): string
+{
+    $query_params = $_GET;
+    $query_params[COMMENTS_EXPANDED] = 'false';
+    $query_params[COMMENTS_POST_ID_QUERY] = $post_id;
+    $query_string = http_build_query($query_params);
+
+    return "/$basename?$query_string#comments";
+}
+
+/**
  * Функция генерирует ссылку для сортировки публикаций по заданному полю.
  * Поле публикации, по которму производится сортировка должно соотествовать
  * структуре публикаций возвращаемых функицей get_posts.

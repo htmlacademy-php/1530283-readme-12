@@ -1,8 +1,6 @@
 <?php
-// todo: add comments
-
 /**
- * Общий шаблон карточки публикации для
+ * Общий шаблон карточки публикации для страницы профиля пользователя
  *
  * @var string | null $card_modifier - модификатор карточки
  * @var array $post_card - ассоциативный массив с данными публикации
@@ -18,10 +16,13 @@ list(
     'original_post' => $original_post,
     'created_at' => $created_at,
     'likes_count' => $likes_count,
+    'comments_count' => $comments_count,
     'reposts_count' => $reposts_count,
     'hashtags' => $hashtags,
     'is_liked' => $is_liked,
-    'is_own' => $is_own
+    'is_own' => $is_own,
+    'comments_list_content' => $comments_list_content,
+    'comments_form_content' => $comments_form_content
     )
     = $post_card;
 ?>
@@ -89,6 +90,15 @@ list(
                 <span><?= $likes_count ?></span>
                 <span class="visually-hidden">количество лайков</span>
             </a>
+            <a class="post__indicator post__indicator--comments button"
+               href="post.php?post-id=<?= $id ?>#comments"
+               title="Комментарии">
+                <svg class="post__indicator-icon" width="19" height="17">
+                    <use xlink:href="#icon-comment"></use>
+                </svg>
+                <span><?= $comments_count ?></span>
+                <span class="visually-hidden">количество комментариев</span>
+            </a>
             <a class="post__indicator post__indicator--repost button"
                 <?= !$is_own ? "href=\"repost.php?post-id=$id\"" : '' ?>
                title="Репост">
@@ -106,8 +116,14 @@ list(
             назад
         </time>
     </footer>
+
     <?= include_template(
         'common/post-card/hashtags.php',
         ['hashtags' => $hashtags]
     ) ?>
+
+    <div class="comments">
+        <?= $comments_list_content ?>
+        <?= $comments_form_content ?>
+    </div>
 </article>
