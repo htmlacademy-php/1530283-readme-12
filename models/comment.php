@@ -65,36 +65,6 @@ function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
 }
 
 /**
- * Функция возвращает число комментариев к заданной публикации.
- * В случае ошибки запроса функция возвращает 0.
- *
- * @param  mysqli  $db_connection  - ресурс соединения с базой данных
- * @param  int  $post_id  -  id публикации
- *
- * @return int - число комментариев
- */
-function get_comments_count(mysqli $db_connection, int $post_id): int
-{
-    $sql = "
-        SELECT
-            COUNT(comments.id) AS comments_count
-        FROM comments
-        WHERE comments.post_id = ?
-    ";
-
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $post_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
-
-    if (!$result) {
-        return 0;
-    }
-
-    return mysqli_fetch_assoc($result)['comments_count'] ?? 0;
-}
-
-/**
  * Функция добавляет комментарий к публикации в базу данных.
  * Функция возвращает id созданного комментария.
  * В случае неуспешного создания возвращается null.
