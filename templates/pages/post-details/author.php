@@ -72,8 +72,12 @@ $user_name = strip_tags($user_name);
                href="subscribe.php?user-id=<?= $id ?>"><?= $is_observable
                     ? 'Отписаться' : 'Подписаться' ?>
             </a>
-            <a class="user__button user__button--writing button button--green"
-               href="messages.php">Сообщение</a>
+            <?php
+            if ($is_observable): ?>
+                <a class="user__button user__button--writing button button--green"
+                   href="messages.php">Сообщение</a>
+            <?php
+            endif; ?>
         </div>
     <?php
     endif; ?>
