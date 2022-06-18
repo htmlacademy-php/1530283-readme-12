@@ -1,8 +1,30 @@
 <?php
 
+const TIMEZONE = 'UTC';
+
+const DEFAULT_POSTS_LIMIT = 6;
+
+const DEFAULT_COMMENTS_LIMIT = 2;
+
+const INITIAL_POSTS_PAGE = 1;
+
 const AVATAR_PLACEHOLDER = 'img/icon-input-user.svg';
 
 const CONTENT_FILTER_QUERY = 'content_type_id';
+
+const COMMENTS_EXPANDED = 'comments-expanded';
+
+const TAB_QUERY = 'tab';
+
+const COMMENTS_POST_ID_QUERY = 'comments-post-id';
+
+const USER_ID_QUERY = 'user-id';
+
+const POST_ID_QUERY = 'post-id';
+
+const LIMIT_QUERY = 'limit';
+
+const PAGE_QUERY = 'page';
 
 const SEARCH_QUERY = 'query';
 
@@ -29,6 +51,27 @@ const SORT_TYPE_OPTIONS = [
         'label' => 'Дата',
         'value' => 'created_at',
     ],
+];
+
+const PROFILE_POSTS_TAB = [
+    'label' => 'Посты',
+    'value' => 'posts',
+];
+
+const PROFILE_LIKES_TAB = [
+    'label' => 'Лайки',
+    'value' => 'likes',
+];
+
+const PROFILE_SUBSCRIPTIONS_TAB = [
+    'label' => 'Подписки',
+    'value' => 'subscriptions',
+];
+
+const PROFILE_TABS = [
+    PROFILE_POSTS_TAB,
+    PROFILE_LIKES_TAB,
+    PROFILE_SUBSCRIPTIONS_TAB,
 ];
 
 const TEXT_SEPARATOR = ' ';
@@ -95,5 +138,7 @@ const MAX_TITLE_LENGTH = 255;
 const MAX_TAG_LENGTH = 255;
 
 const MAX_STRING_CONTENT_LENGTH = 255;
+
+const MIN_TEXT_CONTENT_LENGTH = 4;
 
 const MAX_TEXT_CONTENT_LENGTH = 1000;

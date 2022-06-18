@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $created_post_id = create_post($db_connection, $form_data);
 
         if ($created_post_id) {
-            header("Location: post.php?post_id=$created_post_id");
+            header("Location: post.php?post-id=$created_post_id");
             exit();
         }
 

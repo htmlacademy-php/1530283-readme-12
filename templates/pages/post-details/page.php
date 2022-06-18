@@ -8,7 +8,8 @@ require_once 'utils/helpers.php';
  * @var array $post - ассоциативный массив с данными публикации
  * @var string $post_content - разметка секции контента публикации
  * @var string $author_content - разметка секции автора публикации
- * @var array $comments - массив с комментариями к публикации
+ * @var string $comments_list_content - разметка списка с комментариями
+ * @var string $comments_form_content - разметка формы добаваления комментария
  */
 
 list(
@@ -16,14 +17,19 @@ list(
     'title' => $title,
     'likes_count' => $likes_count,
     'comments_count' => $comments_count,
+    'reposts_count' => $reposts_count,
     'views_count' => $views_count,
+    'is_liked' => $is_liked,
+    'is_own' => $is_own
     )
     = $post;
 
 ?>
 
 <div class="container">
-    <h1 class="page__title page__title--publication"><?= $title ?></h1>
+    <h1 class="page__title page__title--publication"><?= htmlspecialchars(
+            $title
+        ) ?></h1>
     <section class="post-details">
         <h2 class="visually-hidden">Публикация</h2>
         <div class="post-details__wrapper post-photo">
@@ -31,8 +37,11 @@ list(
                 <?= $post_content ?>
                 <div class="post__indicators">
                     <div class="post__buttons">
-                        <a class="post__indicator post__indicator--likes button"
-                           href="#" title="Лайк">
+                        <a class="post__indicator
+                           post__indicator--likes<?= $is_liked ? '-active'
+                            : '' ?>
+                           button"
+                           href="like.php?post-id=<?= $id ?>" title="Лайк">
                             <svg class="post__indicator-icon" width="20"
                                  height="17">
                                 <use xlink:href="#icon-heart"></use>
@@ -45,7 +54,7 @@ list(
                             <span class="visually-hidden">количество лайков</span>
                         </a>
                         <a class="post__indicator post__indicator--comments button"
-                           href="#" title="Комментарии">
+                           href="#сomments" title="Комментарии">
                             <svg class="post__indicator-icon" width="19"
                                  height="17">
                                 <use xlink:href="#icon-comment"></use>
@@ -54,12 +63,14 @@ list(
                             <span class="visually-hidden">количество комментариев</span>
                         </a>
                         <a class="post__indicator post__indicator--repost button"
-                           href="#" title="Репост">
+                            <?= !$is_own ? "href=\"repost.php?post-id=$id\""
+                                : '' ?>
+                           title="Репост">
                             <svg class="post__indicator-icon" width="19"
                                  height="17">
                                 <use xlink:href="#icon-repost"></use>
                             </svg>
-                            <span>5</span>
+                            <span><?= $reposts_count ?></span>
                             <span class="visually-hidden">количество репостов</span>
                         </a>
                     </div>
@@ -75,50 +86,8 @@ list(
                     ['hashtags' => $post['hashtags']]
                 ) ?>
                 <div class="comments">
-                    <form class="comments__form form" action="#" method="post">
-                        <div class="comments__my-avatar">
-                            <img class="comments__picture"
-                                 src="/img/userpic-medium.jpg"
-                                 alt="Аватар пользователя">
-                        </div>
-                        <div class="form__input-section form__input-section--error">
-                            <textarea
-                                    class="comments__textarea form__textarea form__input"
-                                    placeholder="Ваш комментарий"></textarea>
-                            <label class="visually-hidden">Ваш
-                                комментарий</label>
-                            <button class="form__error-button button"
-                                    type="button">!
-                            </button>
-                            <div class="form__error-text">
-                                <h3 class="form__error-title">Ошибка
-                                    валидации</h3>
-                                <p class="form__error-desc">Это поле обязательно
-                                    к заполнению</p>
-                            </div>
-                        </div>
-                        <button class="comments__submit button button--green"
-                                type="submit">Отправить
-                        </button>
-                    </form>
-                    <div class="comments__list-wrapper">
-                        <ul class="comments__list">
-                            <?php
-                            foreach ($comments as $comment): ?>
-                                <?= include_template(
-                                    'pages/post-details/comment.php',
-                                    [
-                                        'comment' => $comment
-                                    ]
-                                ) ?>
-                            <?php
-                            endforeach; ?>
-                        </ul>
-                        <a class="comments__more-link" href="#">
-                            <span>Показать все комментарии</span>
-                            <sup class="comments__amount"><?= $comments_count ?></sup>
-                        </a>
-                    </div>
+                    <?= $comments_list_content ?>
+                    <?= $comments_form_content ?>
                 </div>
             </div>
             <?= $author_content ?>

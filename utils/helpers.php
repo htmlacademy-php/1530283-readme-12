@@ -368,3 +368,27 @@ function generate_random_date($index)
 function convert_to_megabytes(int $bytes): int {
     return $bytes / (1024 * 1024);
 }
+
+/**
+ * Функция синхронизации часовой зоны PHP и MySQL
+ *
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param string $timezone - идентификатора часовой зоны
+ */
+function mysqli_timezone_sync(mysqli $db_connection, string $timezone) {
+    date_default_timezone_set($timezone);
+
+    $now = new DateTime();
+    $minutes = $now->getOffset() / 60;
+
+    $sign = ($minutes < 0 ? -1 : 1);
+    $minutes = abs($minutes);
+    $hours = floor($minutes / 60);
+    $minutes -= $hours * 60;
+
+    $offset = sprintf('%+d:%02d', $hours * $sign, $minutes);
+
+    $sql = "SET time_zone='$offset'";
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_execute($statement);
+}

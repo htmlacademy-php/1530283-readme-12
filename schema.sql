@@ -44,6 +44,18 @@ CREATE TABLE posts(
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
+CREATE TABLE reposts(
+    original_post_id int unsigned NOT NULL CHECK (original_post_id != repost_id),
+    repost_id int unsigned NOT NULL CHECK (original_post_id != repost_id),
+    PRIMARY KEY (original_post_id, repost_id),
+    FOREIGN KEY (original_post_id) REFERENCES posts(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (repost_id) REFERENCES posts(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE = InnoDB;
+
 CREATE TABLE posts_hashtags(
     post_id int unsigned NOT NULL,
     hashtag_id int unsigned NOT NULL,
@@ -73,6 +85,7 @@ CREATE TABLE comments(
 CREATE TABLE likes(
     post_id int unsigned NOT NULL,
     author_id int unsigned NOT NULL,
+    created_at timestamp DEFAULT current_timestamp,
     PRIMARY KEY (post_id, author_id),
     FOREIGN KEY (post_id) REFERENCES posts(id)
        ON UPDATE CASCADE

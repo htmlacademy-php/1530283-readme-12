@@ -35,8 +35,44 @@
             flex-grow: 1;
         }
 
+        .container--comments{
+            margin-top: auto;
+            width: auto;
+        }
+
+        .container--comments h2 {
+            padding-top: 0 !important;
+        }
+
+        .container--comments p {
+            margin-top: auto;
+        }
+
         .post-link__info-wrapper {
             align-items: center;
+        }
+
+        .button--gray-disabled {
+            cursor: initial;
+        }
+
+        .button--gray-disabled,
+        .button--gray-disabled:hover,
+        .button--gray-disabled:active {
+            opacity: 0.5;
+            background-color: rgba(205,212,232,.6);
+            color: rgba(46,56,77,.5);
+        }
+
+        .post-mini__image-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+
+        .post-mini__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -208,7 +244,7 @@
                                     </li>
                                     <li class="header__profile-nav-item">
                                         <a class="header__profile-nav-link"
-                                           href="#">
+                                           href="messages.php">
                               <span class="header__profile-nav-text">
                                 Сообщения
                                 <i class="header__profile-indicator">2</i>

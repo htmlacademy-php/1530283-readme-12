@@ -33,8 +33,12 @@ if ($is_hashtag_mode) {
     $query = substr($query, 1);
 }
 
-$post_cards = $is_hashtag_mode ? get_posts_by_hashtag($db_connection, $query)
-    : get_posts_by_query($db_connection, $query);
+$post_cards = $is_hashtag_mode ? get_posts_by_hashtag(
+    $db_connection,
+    $user_session['id'],
+    $query
+)
+    : get_posts_by_query($db_connection, $user_session['id'], $query);
 
 if (is_null($post_cards)) {
     http_response_code(SERVER_ERROR_STATUS);

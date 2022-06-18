@@ -6,6 +6,7 @@
  * @var string $content - описание сообщения об ощибке
  * @var string | null $link_url - URL ссылки для сообщения
  * @var string | null $link_description - описания ссылки для сообщения
+ * @var bool | null $comments - блок комментариев
  */
 
 if (!isset($title)) {
@@ -15,7 +16,10 @@ if (!isset($title)) {
 $withLink = isset($link_description) and isset($link_url);
 ?>
 
-<div class="container container--empty">
+<div
+    <?= $comments ? 'id="comments"' : '' ?>
+        class="container container--empty
+    <?= $comments ? 'container--comments' : '' ?>">
     <h2><?= $title ?></h2>
     <p><?= $content ?></p>
     <?php
