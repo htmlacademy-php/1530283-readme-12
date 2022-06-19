@@ -1,5 +1,6 @@
 <?php
 
+require_once 'utils/functions.php';
 require_once 'models/post.php';
 require_once 'models/hashtag.php';
 
