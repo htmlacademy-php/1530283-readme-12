@@ -20,6 +20,8 @@ const COMMENTS_POST_ID_QUERY = 'comments-post-id';
 
 const USER_ID_QUERY = 'user-id';
 
+const CONVERSATION_ID_QUERY = 'conversation-id';
+
 const POST_ID_QUERY = 'post-id';
 
 const LIMIT_QUERY = 'limit';

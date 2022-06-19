@@ -612,11 +612,11 @@ function decode_json_array_agg(string $json): array
  * mysqli_result, в случае его успешного выполения, либо null - в случае
  * неуспешного выполнения.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  string  $sql - подготовленное SQL выражение
- * @param  string  $types - строка, содержащая один или более символов,
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  string  $sql  - подготовленное SQL выражение
+ * @param  string  $types  - строка, содержащая один или более символов,
  * каждый из которых задаёт тип значения привязываемой переменной
- * @param  mixed  ...$variables - переменные, привязываемые к подготовленному
+ * @param  mixed  ...$variables  - переменные, привязываемые к подготовленному
  * выражению
  *
  * Ограничения: Количество переменных и длина строки types должны в точности
@@ -649,11 +649,11 @@ function execute_select_query(
  * подготовленного выражения. Функция возвращается результат запроса в булевом
  * формате.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  string  $sql - подготовленное SQL выражение
- * @param  string  $types - строка, содержащая один или более символов,
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  string  $sql  - подготовленное SQL выражение
+ * @param  string  $types  - строка, содержащая один или более символов,
  * каждый из которых задаёт тип значения привязываемой переменной
- * @param  mixed  ...$variables - переменные, привязываемые к подготовленному
+ * @param  mixed  ...$variables  - переменные, привязываемые к подготовленному
  * выражению
  *
  * Ограничения: Количество переменных и длина строки types должны в точности
@@ -675,4 +675,58 @@ function execute_non_select_query(
     );
 
     return mysqli_stmt_execute($statement);
+}
+
+/**
+ * Функция генерирует ссылку для перехода на страницу разговора.
+ *
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int  $conversation_id  - id разговора
+ *
+ * @return string - итоговый URL страницы для переключения на заданный разговор
+ */
+function get_conversation_url(
+    string $basename,
+    int $conversation_id
+): string {
+    $query_params = $_GET;
+    $query_params[CONVERSATION_ID_QUERY] = $conversation_id;
+    $query_string = http_build_query($query_params);
+
+    return "/$basename?$query_string";
+}
+
+/**
+ * Функция возвращает массив с данными карточек разговоров для страницы
+ * сообщений пользователя.
+ * данными карточки разговора представляют собой ассоциативный массив
+ * переданному массиву разговоров дополненный полями url и active.
+ *
+ * @param  array  $conversations  - массив с данными разговорав
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int  $current_conversation_id  - id разговора
+ *
+ * @return array - массив c данными карточек разговоров
+ */
+function get_conversation_cards(
+    array $conversations,
+    string $basename,
+    int $current_conversation_id
+): array {
+    array_walk(
+        $conversations,
+        function (&$conversation) use (
+            $basename,
+            $current_conversation_id
+        ) {
+            $conversation_id = $conversation['id'];
+            $url = get_conversation_url($basename, $conversation_id);
+            $active = $conversation_id === $current_conversation_id;
+
+            $conversation['url'] = $url;
+            $conversation['active'] = $active;
+        }
+    );
+
+    return $conversations;
 }
