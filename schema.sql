@@ -14,11 +14,11 @@ CREATE TABLE content_types(
 
 CREATE TABLE users(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
-    created_at timestamp DEFAULT current_timestamp,
     email varchar(255) NOT NULL UNIQUE,
     login varchar(255) NOT NULL,
     password_hash char(60) NOT NULL,
-    avatar_url varchar(255)
+    avatar_url varchar(255),
+    created_at timestamp DEFAULT current_timestamp
 ) ENGINE = InnoDB;
 
 CREATE TABLE hashtags(
@@ -30,11 +30,11 @@ CREATE TABLE posts(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
     author_id int unsigned NOT NULL,
     content_type_id int unsigned NOT NULL,
-    created_at timestamp DEFAULT current_timestamp,
     title varchar(255) NOT NULL,
     text_content varchar(1000),
     string_content varchar(255),
     views_count int unsigned DEFAULT 0,
+    created_at timestamp DEFAULT current_timestamp,
     FULLTEXT INDEX post_fulltext_index (title, string_content, text_content),
     FOREIGN KEY (author_id) REFERENCES users(id)
         ON UPDATE CASCADE
@@ -45,8 +45,8 @@ CREATE TABLE posts(
 ) ENGINE = InnoDB;
 
 CREATE TABLE reposts(
-    original_post_id int unsigned NOT NULL CHECK (original_post_id != repost_id),
-    repost_id int unsigned NOT NULL CHECK (original_post_id != repost_id),
+    original_post_id int unsigned NOT NULL,
+    repost_id int unsigned NOT NULL,
     PRIMARY KEY (original_post_id, repost_id),
     FOREIGN KEY (original_post_id) REFERENCES posts(id)
         ON UPDATE CASCADE
@@ -72,8 +72,8 @@ CREATE TABLE comments(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
     author_id int unsigned NOT NULL,
     post_id int unsigned NOT NULL,
-    created_at timestamp DEFAULT current_timestamp,
     content varchar(1000) NOT NULL,
+    created_at timestamp DEFAULT current_timestamp,
     FOREIGN KEY (post_id) REFERENCES posts(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
@@ -96,8 +96,8 @@ CREATE TABLE likes(
 ) ENGINE = InnoDB;
 
 CREATE TABLE subscriptions(
-    subscriber_id int unsigned NOT NULL CHECK (subscriber_id != observable_id),
-    observable_id int unsigned NOT NULL CHECK (subscriber_id != observable_id),
+    subscriber_id int unsigned NOT NULL,
+    observable_id int unsigned NOT NULL,
     PRIMARY KEY (subscriber_id, observable_id),
     FOREIGN KEY (subscriber_id) REFERENCES users(id)
         ON UPDATE CASCADE
@@ -107,16 +107,32 @@ CREATE TABLE subscriptions(
         ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE messages(
+CREATE TABLE conversations(
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
-    sender_id int unsigned NOT NULL CHECK (sender_id != receiver_id),
-    receiver_id int unsigned NOT NULL CHECK (sender_id != receiver_id),
-    created_at timestamp DEFAULT current_timestamp,
-    content varchar(1000) NOT NULL,
-    FOREIGN KEY (sender_id) REFERENCES users(id)
-       ON UPDATE CASCADE
-       ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id)
+    initiator_id int unsigned NOT NULL,
+    interlocutor_id int unsigned NOT NULL,
+    user_id_least int unsigned AS (least(initiator_id, interlocutor_id)),
+    user_id_greatest int unsigned AS (greatest(initiator_id, interlocutor_id)),
+    UNIQUE KEY unique_users (user_id_least, user_id_greatest),
+    FOREIGN KEY (initiator_id) REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (interlocutor_id) REFERENCES users(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE messages(
+     id int unsigned PRIMARY KEY AUTO_INCREMENT,
+     conversation_id int unsigned NOT NULL,
+     author_id int unsigned NOT NULL,
+     content varchar(1000) NOT NULL,
+     is_read boolean DEFAULT false,
+     created_at timestamp DEFAULT current_timestamp,
+     FOREIGN KEY (author_id) REFERENCES users(id)
+         ON UPDATE CASCADE
+         ON DELETE CASCADE,
+     FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+         ON UPDATE CASCADE
+         ON DELETE CASCADE
 ) ENGINE = InnoDB;
