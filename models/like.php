@@ -19,11 +19,8 @@ function check_like(mysqli $db_connection, int $user_id, int $post_id): bool
         WHERE post_id = ? AND author_id = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $post_id, $user_id);
-    mysqli_stmt_execute($statement);
-
-    $result = mysqli_stmt_get_result($statement);
+    $result =
+        execute_select_query($db_connection, $sql, 'ii', $post_id, $user_id);
 
     if (!$result) {
         return false;
@@ -44,7 +41,7 @@ function check_like(mysqli $db_connection, int $user_id, int $post_id): bool
 function create_like(mysqli $db_connection, int $user_id, int $post_id): bool
 {
     $sql = "INSERT INTO likes (post_id, author_id) VALUES (?, ?)";
-
+    // todo: add non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'ii', $post_id, $user_id);
 
@@ -63,7 +60,7 @@ function create_like(mysqli $db_connection, int $user_id, int $post_id): bool
 function delete_like(mysqli $db_connection, int $user_id, int $post_id): bool
 {
     $sql = "DELETE FROM likes WHERE post_id = ? AND author_id = ?";
-
+    // todo: add non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'ii', $post_id, $user_id);
 
@@ -97,8 +94,8 @@ function toggle_like(mysqli $db_connection, int $user_id, int $post_id): bool
  * ассоциативных массивов.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $user_id - id автора публикаций
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id автора публикаций
  *
  * @return array<int, array{
  *     created_at: string,
@@ -141,10 +138,7 @@ function get_likes(mysqli $db_connection, int $user_id)
         ORDER BY likes.created_at DESC
      ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $user_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 'i', $user_id);
 
     if (!$result) {
         return null;
@@ -152,7 +146,7 @@ function get_likes(mysqli $db_connection, int $user_id)
 
     $likes = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-    foreach ($likes AS &$like) {
+    foreach ($likes as &$like) {
         $like['post'] = json_decode($like['post'], true);
         $like['author'] = json_decode($like['author'], true);
     }

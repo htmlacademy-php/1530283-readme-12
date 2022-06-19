@@ -42,14 +42,12 @@ function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
         $limit_sql
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    if (is_null($limit)) {
-        mysqli_stmt_bind_param($statement, 'i', $post_id);
-    } else {
-        mysqli_stmt_bind_param($statement, 'ii', $post_id, $limit);
-    }
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = is_null($limit) ? execute_select_query(
+        $db_connection,
+        $sql,
+        'i',
+        $post_id
+    ) : execute_select_query($db_connection, $sql, 'ii', $post_id, $limit);
 
     if (!$result) {
         return null;
@@ -83,7 +81,7 @@ function create_comment(mysqli $db_connection, array $comment_data)
             content
         ) VALUES (?, ?, ?)
     ";
-
+    // todo: add non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param(
         $statement,

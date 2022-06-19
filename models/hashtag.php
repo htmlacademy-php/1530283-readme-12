@@ -28,10 +28,7 @@ function get_hashtag(mysqli $db_connection, string $hashtag_name)
         WHERE name = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 's', $hashtag_name);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 's', $hashtag_name);
 
     if (!$result) {
         return null;
@@ -67,10 +64,7 @@ function get_hashtags(mysqli $db_connection, int $post_id)
         WHERE posts_hashtags.post_id = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 's', $post_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 's', $post_id);
 
     if (!$result) {
         return null;
@@ -97,7 +91,7 @@ function create_hashtag(mysqli $db_connection, string $name)
     $name = mysqli_real_escape_string($db_connection, $name);
 
     $sql = "INSERT INTO hashtags (name) VALUES (?)";
-
+    // todo: add non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 's', $name);
     mysqli_stmt_execute($statement);
@@ -141,6 +135,7 @@ function add_hashtag_to_post(
 
     if (!$hashtag_id) {
         mysqli_rollback($db_connection);
+
         return false;
     }
 
@@ -148,9 +143,11 @@ function add_hashtag_to_post(
 
     if (!$is_success) {
         mysqli_rollback($db_connection);
+
         return false;
     }
 
     mysqli_commit($db_connection);
+
     return true;
 }

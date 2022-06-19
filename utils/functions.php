@@ -266,8 +266,8 @@ function get_sort_url(
  * Для генерирации ссылки, соотвествующей отсутствию фильтрации,
  * id типа контента не передается в функцию.
  *
- * @param  string  $basename - URL страницы без GET параметров
- * @param  int | null  $content_type_id - id типа контента публикации
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int | null  $content_type_id  - id типа контента публикации
  *
  * @return string - итоговый URL страницы для получения списка публикаций
  * с учетом фильтрации
@@ -411,8 +411,8 @@ function validate_sort_type(string $current_sort_type): bool
  * Функция генерирует ссылку переключения на заданный таб страницы профиля
  * пользователя.
  *
- * @param  string  $basename - URL страницы без GET параметров
- * @param  string  $tab_value - значение таба
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  string  $tab_value  - значение таба
  *
  * @return string - итоговый URL страницы для переключения на заданный таб
  */
@@ -604,4 +604,67 @@ function decode_json_array_agg(string $json): array
             return $value;
         }
     );
+}
+
+/**
+ * Функция производит получение данных из базы данных с использованием
+ * подготовленного выражения. Функция возвращается результат запроса типа
+ * mysqli_result, в случае его успешного выполения, либо null - в случае
+ * неуспешного выполнения.
+ *
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param  string  $sql - подготовленное SQL выражение
+ * @param  string  $types - строка, содержащая один или более символов,
+ * каждый из которых задаёт тип значения привязываемой переменной
+ * @param  mixed  ...$variables - переменные, привязываемые к подготовленному
+ * выражению
+ *
+ * Ограничения: Количество переменных и длина строки types должны в точности
+ * соответствовать количеству параметров в запросе
+ *
+ * @return mysqli_result | null - результат выполения запроса
+ */
+function execute_select_query(
+    mysqli $db_connection,
+    string $sql,
+    string $types,
+    ...$variables
+) {
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        $types,
+        ...$variables
+    );
+
+    if (!mysqli_stmt_execute($statement)) {
+        return null;
+    }
+
+    return mysqli_stmt_get_result($statement) ?: null;
+}
+
+// todo: add phpDoc
+/**
+ * @param  mysqli  $db_connection
+ * @param  string  $sql
+ * @param  string  $types
+ * @param ...$variables
+ *
+ * @return bool
+ */
+function execute_non_select_query(
+    mysqli $db_connection,
+    string $sql,
+    string $types,
+    ...$variables
+): bool {
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        $types,
+        ...$variables
+    );
+
+    return mysqli_stmt_execute($statement);
 }

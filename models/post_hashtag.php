@@ -18,7 +18,7 @@ function create_post_hashtag(
     int $hashtag_id
 ): bool {
     $sql = "INSERT INTO posts_hashtags (post_id, hashtag_id) VALUES (?, ?)";
-
+    // todo: non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'ss', $post_id, $hashtag_id);
     mysqli_stmt_execute($statement);

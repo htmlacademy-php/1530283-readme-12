@@ -22,11 +22,13 @@ function check_subscription(
         WHERE subscriber_id = ? AND observable_id = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
-    mysqli_stmt_execute($statement);
-
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $user_id,
+        $observable_id
+    );
 
     if (!$result) {
         return false;
@@ -52,7 +54,7 @@ function create_subscription(
 ): bool {
     $sql =
         "INSERT INTO subscriptions (subscriber_id, observable_id) VALUES (?, ?)";
-
+    // todo: add non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
 
@@ -76,7 +78,7 @@ function delete_subscription(
 ): bool {
     $sql =
         "DELETE FROM subscriptions WHERE subscriber_id = ? AND observable_id = ?";
-
+    // todo: add non-select query
     $statement = mysqli_prepare($db_connection, $sql);
     mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
 
@@ -155,16 +157,14 @@ function get_subscriptions_by_subscriber(
         GROUP BY users.id
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
         'sii',
         $user_id,
         $user_id,
         $subscriber_id
     );
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
