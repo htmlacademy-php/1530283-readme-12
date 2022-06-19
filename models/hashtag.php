@@ -91,12 +91,8 @@ function create_hashtag(mysqli $db_connection, string $name)
     $name = mysqli_real_escape_string($db_connection, $name);
 
     $sql = "INSERT INTO hashtags (name) VALUES (?)";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 's', $name);
-    mysqli_stmt_execute($statement);
 
-    if (mysqli_error($db_connection)) {
+    if (!execute_non_select_query($db_connection, $sql, 's', $name)) {
         return null;
     }
 

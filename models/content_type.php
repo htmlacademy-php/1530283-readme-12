@@ -39,8 +39,8 @@ function get_content_types(mysqli $db_connection)
  * ассоциативного массива.
  * В случае неуспешного запроса возвращается null.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $content_type_id - id типа контента
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $content_type_id  - id типа контента
  *
  * @return null | array{
  *     id: int,
@@ -59,10 +59,8 @@ function get_content_type(mysqli $db_connection, int $content_type_id)
         WHERE id = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $content_type_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result =
+        execute_select_query($db_connection, $sql, 'i', $content_type_id);
 
     if (!$result) {
         return null;

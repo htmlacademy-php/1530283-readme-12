@@ -81,22 +81,18 @@ function create_comment(mysqli $db_connection, array $comment_data)
             content
         ) VALUES (?, ?, ?)
     ";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+
+    if (!execute_non_select_query(
+        $db_connection,
+        $sql,
         'iis',
         $comment_data['author_id'],
         $comment_data['post_id'],
-        $comment_data['content'],
-    );
-    mysqli_stmt_execute($statement);
-
-    $comment_id = mysqli_insert_id($db_connection);
-
-    if (!$comment_id) {
+        $comment_data['content']
+    )
+    ) {
         return null;
     }
 
-    return $comment_id;
+    return mysqli_insert_id($db_connection);
 }

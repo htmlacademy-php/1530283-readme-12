@@ -87,19 +87,17 @@ function create_user(mysqli $db_connection, array $user_data)
             avatar_url
         ) VALUES (?, ?, ?, ?)
     ";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+
+    if (!execute_non_select_query(
+        $db_connection,
+        $sql,
         'ssss',
         $user_data['email'],
         $user_data['login'],
         $user_data['password_hash'],
-        $user_data['avatar_url'],
-    );
-    mysqli_stmt_execute($statement);
-
-    if (mysqli_error($db_connection)) {
+        $user_data['avatar_url']
+    )
+    ) {
         return null;
     }
 

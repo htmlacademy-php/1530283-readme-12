@@ -41,11 +41,14 @@ function check_like(mysqli $db_connection, int $user_id, int $post_id): bool
 function create_like(mysqli $db_connection, int $user_id, int $post_id): bool
 {
     $sql = "INSERT INTO likes (post_id, author_id) VALUES (?, ?)";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $post_id, $user_id);
 
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $post_id,
+        $user_id
+    );
 }
 
 /**
@@ -60,11 +63,14 @@ function create_like(mysqli $db_connection, int $user_id, int $post_id): bool
 function delete_like(mysqli $db_connection, int $user_id, int $post_id): bool
 {
     $sql = "DELETE FROM likes WHERE post_id = ? AND author_id = ?";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $post_id, $user_id);
 
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $post_id,
+        $user_id
+    );
 }
 
 /**

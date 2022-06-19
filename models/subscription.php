@@ -54,11 +54,14 @@ function create_subscription(
 ): bool {
     $sql =
         "INSERT INTO subscriptions (subscriber_id, observable_id) VALUES (?, ?)";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
 
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $user_id,
+        $observable_id
+    );
 }
 
 /**
@@ -78,11 +81,14 @@ function delete_subscription(
 ): bool {
     $sql =
         "DELETE FROM subscriptions WHERE subscriber_id = ? AND observable_id = ?";
-    // todo: add non-select query
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
 
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $user_id,
+        $observable_id
+    );
 }
 
 /**

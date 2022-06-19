@@ -644,14 +644,22 @@ function execute_select_query(
     return mysqli_stmt_get_result($statement) ?: null;
 }
 
-// todo: add phpDoc
 /**
- * @param  mysqli  $db_connection
- * @param  string  $sql
- * @param  string  $types
- * @param ...$variables
+ * Функция производит измененение данных а базы данных с использованием
+ * подготовленного выражения. Функция возвращается результат запроса в булевом
+ * формате.
  *
- * @return bool
+ * @param  mysqli  $db_connection - ресурс соединения с базой данных
+ * @param  string  $sql - подготовленное SQL выражение
+ * @param  string  $types - строка, содержащая один или более символов,
+ * каждый из которых задаёт тип значения привязываемой переменной
+ * @param  mixed  ...$variables - переменные, привязываемые к подготовленному
+ * выражению
+ *
+ * Ограничения: Количество переменных и длина строки types должны в точности
+ * соответствовать количеству параметров в запросе
+ *
+ * @return bool - результат выполения запроса
  */
 function execute_non_select_query(
     mysqli $db_connection,

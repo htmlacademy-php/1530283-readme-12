@@ -40,7 +40,6 @@ function create_repost(
     $repost_id = create_post($db_connection, $post_data);
 
     if (!$repost_id) {
-        var_dump($db_connection);
         mysqli_rollback($db_connection);
 
         return null;
@@ -48,11 +47,14 @@ function create_repost(
 
     $sql = "INSERT INTO reposts (original_post_id, repost_id) VALUES (?, ?)";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $original_post_id, $repost_id);
-
-    if (!mysqli_stmt_execute($statement)) {
-        var_dump($db_connection);
+    if (!execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $original_post_id,
+        $repost_id
+    )
+    ) {
         mysqli_rollback($db_connection);
 
         return null;
