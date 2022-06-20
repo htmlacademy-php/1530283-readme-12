@@ -5,7 +5,9 @@ require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 require_once 'utils/helpers.php';
 require_once 'models/conversation.php';
+require_once 'models/message.php';
 require_once 'models/user.php';
+require_once 'utils/renderers/messages.php';
 
 /**
  * @var array $user_session - сессия пользователя
@@ -21,7 +23,14 @@ $layout_data = [
     'basename' => $basename,
 ];
 
-// todo: handle POST request
+$form_data = [];
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // todo: handle POST request
+    // todo: if (not count error) - create message - else go further
+    // todo: if (creation error) - show error page - else go further
+}
 
 $interlocutor_id =
     filter_input(INPUT_GET, USER_ID_QUERY, FILTER_SANITIZE_NUMBER_INT);
@@ -88,21 +97,34 @@ if (!$current_conversation_id) {
     $current_conversation_id = $conversations[0]['id'];
 }
 
-// todo: fetch messages for current_conversation_id;
-
 $conversation_cards =
     get_conversation_cards($conversations, $basename, $current_conversation_id);
 
-$page_content = include_template(
-    'pages/messages/page.php',
+$conversations_content = include_template(
+    'pages/messages/conversations-list.php',
+    ['conversations' => $conversation_cards]
+);
+
+$messages = get_messages($db_connection, $current_conversation_id);
+
+$form_data['conversation_id'] = $current_conversation_id;
+
+$form_content = include_template(
+    'pages/messages/messages-form.php',
     [
         'user' => $user_session,
-        'conversations' => $conversation_cards,
+        'form_data' => $form_data,
+        'errors' => $errors,
     ]
 );
 
-$layout_data['content'] = $page_content;
+if (is_null($messages)) {
+    http_response_code(SERVER_ERROR_STATUS);
+}
 
-$layout_content = include_template('layouts/user.php', $layout_data);
-
-print($layout_content);
+render_messages_page(
+    $messages,
+    $conversations_content,
+    $form_content,
+    $layout_data
+);

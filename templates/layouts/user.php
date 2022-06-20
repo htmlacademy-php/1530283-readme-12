@@ -74,6 +74,10 @@
             height: 100%;
             object-fit: cover;
         }
+
+        .messages__chat-wrapper {
+            min-height: 680px;
+        }
     </style>
 </head>
 <body class="page">
