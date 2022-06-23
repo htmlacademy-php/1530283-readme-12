@@ -1,0 +1,13 @@
+{
+    "name": "skrobov/readme",
+    "description": "HTMLAcademy study project",
+    "type": "project",
+    "license": "ISC",
+    "authors": [
+        {
+            "name": "Eugene Skrobov",
+            "email": "skrobov.ev@gmail.com"
+        }
+    ],
+    "require": {}
+}
