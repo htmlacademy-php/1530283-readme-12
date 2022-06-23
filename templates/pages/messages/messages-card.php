@@ -11,15 +11,18 @@ require_once 'utils/functions.php';
  */
 
 list(
+    'id' => $id,
     'author' => $author,
     'content' => $content,
-    'created_at' => $created_at
+    'created_at' => $created_at,
+    'is_own' => $is_own
     ) = $message;
 
-$user_profile_url = 'profile.php?user-id?=' . $author['id'];
+$user_profile_url = 'profile.php?user-id=' . $author['id'];
 ?>
-<!--messages__item--my-->
-<li class="messages__item">
+
+<li id="message-id-<?= $id ?>"
+        class="messages__item <?= $is_own ? 'messages__item--my' : '' ?>">
     <div class="messages__info-wrapper">
         <div class="messages__item-avatar">
             <a class="messages__author-link" href="<?= $user_profile_url ?>">

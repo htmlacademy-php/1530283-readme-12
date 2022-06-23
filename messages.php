@@ -7,6 +7,7 @@ require_once 'utils/helpers.php';
 require_once 'models/conversation.php';
 require_once 'models/message.php';
 require_once 'models/user.php';
+require_once 'utils/form-handlers/add-message.php';
 require_once 'utils/renderers/messages.php';
 
 /**
@@ -27,9 +28,28 @@ $form_data = [];
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // todo: handle POST request
-    // todo: if (not count error) - create message - else go further
-    // todo: if (creation error) - show error page - else go further
+    $message_author_id = $user_session['id'];
+    list(
+        'form_data' => $form_data,
+        'errors' => $errors
+        ) = handle_add_message_form();
+
+    if (!count($errors)) {
+        $created_message_id =
+            create_message($db_connection, $message_author_id, $form_data);
+
+        if (!$created_message_id) {
+            http_response_code(SERVER_ERROR_STATUS);
+            render_message_page(
+                ['content' => 'Произошла внутренняя ошибка сервера'],
+                'user',
+                $layout_data
+            );
+            exit();
+        }
+
+        $form_data = [];
+    }
 }
 
 $interlocutor_id =
@@ -57,7 +77,7 @@ if ($interlocutor_id) {
     if (!$current_conversation_id) {
         http_response_code(SERVER_ERROR_STATUS);
         render_message_page(
-            ['content' => 'Произошла внутренняя ошикба сервера'],
+            ['content' => 'Произошла внутренняя ошибка сервера'],
             'user',
             $layout_data
         );
@@ -68,12 +88,16 @@ if ($interlocutor_id) {
     exit();
 }
 
-$conversations = get_conversations($db_connection, $user_session['id']);
+$conversations = get_conversations(
+    $db_connection,
+    $user_session['id'],
+    $current_conversation_id
+);
 
 if (is_null($conversations)) {
     http_response_code(SERVER_ERROR_STATUS);
     render_message_page(
-        ['content' => 'Произошла внутренняя ошикба сервера'],
+        ['content' => 'Произошла внутренняя ошибка сервера'],
         'user',
         $layout_data
     );
@@ -105,7 +129,8 @@ $conversations_content = include_template(
     ['conversations' => $conversation_cards]
 );
 
-$messages = get_messages($db_connection, $current_conversation_id);
+$messages =
+    get_messages($db_connection, $user_session['id'], $current_conversation_id);
 
 $form_data['conversation_id'] = $current_conversation_id;
 
@@ -120,6 +145,12 @@ $form_content = include_template(
 
 if (is_null($messages)) {
     http_response_code(SERVER_ERROR_STATUS);
+} else {
+    read_conversation_messages(
+        $db_connection,
+        $user_session['id'],
+        $current_conversation_id
+    );
 }
 
 render_messages_page(

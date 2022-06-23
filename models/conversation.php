@@ -2,13 +2,15 @@
 
 require_once 'utils/functions.php';
 
-// todo: обработка текущего $current_conversation_id
 /**
  * Функция получает из базы данных массив разговоров для заданного пользователя.
+ * Функция возвращает разговоры, для которых создано хотя бы одно сообщения,
+ * а также текущий разговор.
+ * В случае ошибки запроса функция возвращает null.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $user_id - id пользователя
- * @param  int|null  $current_conversation_id - id текущего разговора
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  int|null  $current_conversation_id  - id текущего разговора
  *
  * @return null | array<int, array{
  *     id: int,
@@ -37,22 +39,49 @@ function get_conversations(
                     'id', initiators.id,
                     'login', initiators.login,
                     'avatar_url', initiators.avatar_url
-                ))) AS interlocutor
+                ))) AS interlocutor,
+               (SELECT
+                       JSON_OBJECT(
+                           'id', messages.id,
+                           'content', messages.content,
+                           'is_own', messages.author_id = ?,
+                           'created_at', messages.created_at
+                           ) as last_message_json
+                   FROM messages   
+                   WHERE messages.conversation_id = conversations.id
+                   ORDER BY messages.created_at DESC
+                   LIMIT 1) AS last_message,
+               COUNT(DISTINCT
+                   IF(!messages.is_read AND messages.author_id != ?,
+                       messages.id, null)
+                   ) AS unread_messages_count
         FROM conversations
         JOIN users initiators
             ON conversations.initiator_id = initiators.id
         JOIN users interlocutors
             ON conversations.interlocutor_id = interlocutors.id
-        WHERE (initiator_id = ?) OR (interlocutor_id = ?)
+        LEFT JOIN messages
+            ON conversations.id = messages.conversation_id
+        WHERE ((initiator_id = ?) OR (interlocutor_id = ?))
+        GROUP BY conversations.id
+        ORDER BY conversations.id = ? DESC,
+            (SELECT messages.created_at
+                FROM messages   
+                WHERE messages.conversation_id = conversations.id
+                ORDER BY messages.created_at DESC
+                LIMIT 1) DESC
     ";
 
     $result = execute_select_query(
         $db_connection,
         $sql,
-        'iii',
+        'iiiiii',
         $user_id,
         $user_id,
-        $user_id
+        $user_id,
+        $user_id,
+        $user_id,
+        $current_conversation_id
     );
 
     if (!$result) {
@@ -64,9 +93,18 @@ function get_conversations(
     foreach ($conversations as &$conversation) {
         $conversation['interlocutor'] =
             json_decode($conversation['interlocutor'], true);
+        $conversation['last_message'] =
+            json_decode($conversation['last_message'], true);
     }
 
-    return $conversations;
+    return array_filter(
+        $conversations,
+        function ($conversation) use ($current_conversation_id) {
+            return $conversation['last_message']
+                   || $conversation['id'] === $current_conversation_id;
+    },
+        ARRAY_FILTER_USE_BOTH
+    );
 }
 
 /**
@@ -75,9 +113,9 @@ function get_conversations(
  * В случае отсутствия разговора в базе данных, либо ошибки запроса,
  * функция возвращает null.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $user_id_1 - id первого собеседника разговора
- * @param  int  $user_id_2 - id второго собеседника разговора
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id_1  - id первого собеседника разговора
+ * @param  int  $user_id_2  - id второго собеседника разговора
  *
  * @return null | int - id разговора
  */
@@ -111,6 +149,45 @@ function get_conversation_id_by_users(
     $conversation = mysqli_fetch_assoc($result);
 
     return $conversation ? $conversation['id'] : null;
+}
+
+/**
+ * Функция проверяет наличие доступа к заданному разговору для заданного
+ * пользователя. Пользователь имеет доступ к разговору если он является
+ * одним из его участников.
+ *
+ * @param $db_connection  - ресурс соединения с базой данных
+ * @param $user_id  - id пользователя
+ * @param $conversation_id  - id разговора
+ *
+ * @return bool - наличие доступа к разговору
+ */
+function check_conversation_access(
+    $db_connection,
+    $user_id,
+    $conversation_id
+): bool {
+    $sql = "
+        SELECT id FROM conversations
+        WHERE conversations.id = ? AND (
+            conversations.initiator_id = ? OR conversations.interlocutor_id = ?
+        )
+    ";
+
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'iii',
+        $conversation_id,
+        $user_id,
+        $user_id
+    );
+
+    if (!$result) {
+        return false;
+    }
+
+    return boolval(mysqli_fetch_assoc($result));
 }
 
 /**

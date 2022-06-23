@@ -15,18 +15,21 @@
              src="<?= $user['avatar_url'] ?? AVATAR_PLACEHOLDER ?>"
              alt="Аватар пользователя">
     </div>
-    <div class="form__input-section form__input-section--error">
+    <div class="form__input-section
+     <?= $errors['content'] ? 'form__input-section--error' : '' ?>">
+        <input type="hidden" name="conversation-id"
+               value="<?= $form_data['conversation_id'] ?>">
         <textarea name="content"
                   class="comments__textarea form__textarea form__input"
-                  placeholder="Ваше сообщение"></textarea>
+                  placeholder="Ваше сообщение"><?= $form_data['content'] ??
+                                                   '' ?></textarea>
         <label class="visually-hidden">Ваше сообщение</label>
         <button class="form__error-button button" type="button">!
         </button>
-        <div class="form__error-text">
-            <h3 class="form__error-title">Ошибка валидации</h3>
-            <p class="form__error-desc">Это поле обязательно к
-                заполнению</p>
-        </div>
+        <?= include_template(
+            'common/form-error-text.php',
+            ['error' => $errors['content']]
+        ) ?>
     </div>
     <button class="comments__submit button button--green"
             type="submit">Отправить
