@@ -11,7 +11,7 @@
     <?php
     foreach ($messages as $message): ?>
         <?= include_template(
-            'pages/messages/messages-card.php',
+            'pages/messages/message-card.php',
             ['message' => $message]
         ) ?>
     <?php

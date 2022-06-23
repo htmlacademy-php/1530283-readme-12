@@ -1,7 +1,5 @@
 <?php
 
-// todo: change file name ?
-
 require_once 'utils/functions.php';
 
 /**

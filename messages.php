@@ -135,7 +135,7 @@ $messages =
 $form_data['conversation_id'] = $current_conversation_id;
 
 $form_content = include_template(
-    'pages/messages/messages-form.php',
+    'pages/messages/message-form.php',
     [
         'user' => $user_session,
         'form_data' => $form_data,
