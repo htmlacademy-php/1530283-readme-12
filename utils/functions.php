@@ -730,3 +730,18 @@ function get_conversation_cards(
 
     return $conversations;
 }
+
+/**
+ * Функция возвращает источник (origin) текущего URL, состоящегго из
+ * протокола, хоста и порта.
+ *
+ * @return string - источник URL
+ */
+function getOrigin(): string
+{
+    $host = $_SERVER['HTTP_HOST'];
+    $port = $_SERVER['SERVER_PORT'];
+    $protocol = $_SERVER['REQUEST_SCHEME'];
+
+    return "$protocol://$host:$port";
+}
