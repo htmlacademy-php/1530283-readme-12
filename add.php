@@ -1,18 +1,24 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+
+require_once 'init/user-session.php';
+require_once 'init/db-connection.php';
+require_once 'init/mail.php';
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/form-handlers/add-post.php';
 require_once 'utils/renderers/common.php';
+require_once 'utils/notifiers.php';
 require_once 'models/content_type.php';
 require_once 'models/post.php';
-require_once 'init/user-session.php';
-require_once 'init/db-connection.php';
+require_once 'models/subscription.php';
 
 /**
  * @var array $user_session - сессия пользователя
  * @var mysqli $db_connection - ресурс соединения с базой данных
+ * @var PHPMailer $mail - экзмепляр PHPMailer
  */
 
 $form_data = [];
@@ -34,17 +40,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $form_data['author_id'] = $user_session['id'];
         $created_post_id = create_post($db_connection, $form_data);
 
-        if ($created_post_id) {
-            header("Location: post.php?post-id=$created_post_id");
+        if (!$created_post_id) {
+            http_response_code(SERVER_ERROR_STATUS);
+            render_message_page(
+                ['content' => 'Не удалось создать публикацию'],
+                'user',
+                $layout_data,
+            );
             exit();
         }
 
-        http_response_code(SERVER_ERROR_STATUS);
-        render_message_page(
-            ['content' => 'Не удалось создать публикацию'],
-            'user',
-            $layout_data,
-        );
+        $subscribers = get_subscribers($db_connection, $user_session['id']);
+
+        if (is_array($subscribers)) {
+            $created_post_data = [
+                'id' => $created_post_id,
+                'title' => $form_data['title'],
+                'author' => $user_session,
+            ];
+
+            foreach ($subscribers as $subscriber) {
+                var_dump(
+                    notify_about_new_post(
+                        $mail,
+                        $subscriber,
+                        $created_post_data
+                    )
+                );
+                print '<br/>';
+                var_dump(
+                    notify_about_new_post(
+                        $mail,
+                        $subscriber,
+                        $created_post_data
+                    )
+                );
+                print '<br/>';
+                var_dump(
+                    notify_about_new_post(
+                        $mail,
+                        $subscriber,
+                        $created_post_data
+                    )
+                );
+                print '<br/>';
+            }
+
+            exit();
+        }
+
+        header("Location: post.php?post-id=$created_post_id");
         exit();
     }
 }

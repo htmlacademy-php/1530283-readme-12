@@ -48,7 +48,10 @@ if (!$is_subscription_toggled) {
 }
 
 if (!$observable_user['is_observable']) {
-    notify_about_new_subscriber($mail, $observable_user, $user_session);
+    var_dump(notify_about_new_subscriber($mail, $observable_user, $user_session));
+    var_dump(notify_about_new_subscriber($mail, $observable_user, $user_session));
+    var_dump(notify_about_new_subscriber($mail, $observable_user, $user_session));
+    exit();
 }
 
 header('Location: ' . $_SERVER['HTTP_REFERER']);

@@ -180,3 +180,44 @@ function get_subscriptions_by_subscriber(
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
+/**
+ * Функция получает из базы данных список подписчиков для заданного
+ * пользователя.
+ * В случае успешного запроса функция возвращает массив
+ * подписчиков в виде ассоциативных массивов.
+ * В случае неуспешного запроса возвращается null.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
+ *
+ * @return null | array<int, array{
+ *     id: int,
+ *     login: string,
+ *     email: string,
+ *     avatar_url: string,
+ *     created_at: string
+ * }> - список подписчиков
+ */
+function get_subscribers(mysqli $db_connection, int $user_id)
+{
+    $sql = "
+        SELECT 
+            users.id,
+            users.login,
+            users.email,
+            users.avatar_url,
+            users.created_at
+        FROM subscriptions
+        JOIN users on subscriptions.subscriber_id = users.id
+        WHERE subscriptions.observable_id = ?
+    ";
+
+    $result = execute_select_query($db_connection, $sql, 'i', $user_id);
+
+    if (!$result) {
+        return null;
+    }
+
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
