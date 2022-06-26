@@ -31,7 +31,7 @@ $user_profile_url = 'profile.php?user-id=' . $author['id'];
         </div>
         <div class="messages__item-info">
             <a class="messages__author" href="<?= $user_profile_url ?>">
-                <?= $author['login'] ?>
+                <?= htmlspecialchars($author['login']) ?>
             </a>
             <time class="messages__time"
                   datetime="<?= format_iso_date_time($created_at) ?>">
@@ -40,6 +40,6 @@ $user_profile_url = 'profile.php?user-id=' . $author['id'];
         </div>
     </div>
     <p class="messages__text">
-        <?= $content ?>
+        <?= htmlspecialchars($content) ?>
     </p>
 </li>

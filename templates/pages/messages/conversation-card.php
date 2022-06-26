@@ -33,14 +33,16 @@ list(
         </div>
         <div class="messages__info">
                   <span class="messages__contact-name">
-                    <?= $interlocutor['login'] ?>
+                    <?= htmlspecialchars($interlocutor['login']) ?>
                   </span>
             <?php
             if ($last_message): ?>
                 <div class="messages__preview">
                     <p class="messages__preview-text">
                         <?= $last_message['is_own'] ? 'Вы: '
-                            : '' ?><?= $last_message['content'] ?>
+                            : '' ?><?= htmlspecialchars(
+                            $last_message['content']
+                        ) ?>
                     </p>
                     <time class="messages__preview-time"
                           datetime="<?= format_iso_date_time(

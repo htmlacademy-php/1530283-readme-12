@@ -41,23 +41,29 @@ function notify_about_new_subscriber(
 
         $mail->Subject = "У вас новый подписчик";
 
-        $mail->Body = "Здравствуйте, $observable_login.
+        $mail->Body = htmlspecialchars(
+            "Здравствуйте, $observable_login.
             На вас подписался новый пользователь $subscriber_login.
             Вот ссылка на его профиль:
-            <a href=\"$subscriber_url\" target=\"_blank\">$subscriber_url</a>";
+            <a href=\"$subscriber_url\" target=\"_blank\">$subscriber_url</a>"
+        );
 
-        $mail->AltBody = "Здравствуйте, $observable_login.
+        $mail->AltBody = strip_tags(
+            "Здравствуйте, $observable_login.
             На вас подписался новый пользователь $subscriber_login.
-            Вот ссылка на его профиль: $subscriber_url";
+            Вот ссылка на его профиль: $subscriber_url"
+        );
 
         var_dump($observable_email);
         var_dump($observable_login);
         $result = $mail->send();
         $mail->clearAddresses();
+
         return $result;
     } catch (Exception $error) {
         var_dump('Error');
         var_dump($error);
+
         return false;
     }
 }
@@ -103,29 +109,38 @@ function notify_about_new_post(
         $post_author_url =
             "$origin/profile.php?user-id=$post_author_id#post-$post_id";
 
-        $mail->Subject = "Новая публикация от пользователя $post_author_login";
+        $mail->Subject =
+            strip_tags("Новая публикация от пользователя $post_author_login");
 
-        $mail->Body = "Здравствуйте, $subscriber_login.
+        $mail->Body = htmlspecialchars(
+            "Здравствуйте, $subscriber_login.
             Пользователь $post_author_login только что опубликовал
             новую запись „{$post_title}“. 
             Посмотрите её на странице пользователя:
             <a href=\"$post_author_url\" target=\"_blank\">$post_author_url</a>
-        ";
+        "
+        );
 
-        $mail->AltBody = "Здравствуйте, $subscriber_login.
+        $mail->AltBody = strip_tags(
+            "Здравствуйте, $subscriber_login.
             Пользователь $post_author_login только что опубликовал
             новую запись „{$post_title}“. 
-            Посмотрите её на странице пользователя: $post_author_url";
+            Посмотрите её на странице пользователя:
+            <a href=\"$post_author_url\" target=\"_blank\">$post_author_url</a>
+        "
+        );
 
         var_dump($subscriber_email);
         var_dump($subscriber_login);
         var_dump($post_author_login);
         $result = $mail->send();
         $mail->clearAddresses();
+
         return $result;
     } catch (Exception $error) {
         var_dump('Error');
         var_dump($error);
+
         return false;
     }
 }
