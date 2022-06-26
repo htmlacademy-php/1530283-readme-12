@@ -34,6 +34,10 @@ function notify_about_new_subscriber(
             'login' => $subscriber_login
             ) = $subscriber;
 
+        $observable_login = htmlspecialchars($observable_login);
+        $observable_email = htmlspecialchars($observable_email);
+        $subscriber_login = htmlspecialchars($subscriber_login);
+
         $mail->addAddress($observable_email, $observable_login);
 
         $origin = getOrigin();
@@ -41,12 +45,11 @@ function notify_about_new_subscriber(
 
         $mail->Subject = "У вас новый подписчик";
 
-        $mail->Body = htmlspecialchars(
+        $mail->Body =
             "Здравствуйте, $observable_login.
             На вас подписался новый пользователь $subscriber_login.
             Вот ссылка на его профиль:
-            <a href=\"$subscriber_url\" target=\"_blank\">$subscriber_url</a>"
-        );
+            <a href=\"$subscriber_url\" target=\"_blank\">$subscriber_url</a>";
 
         $mail->AltBody = strip_tags(
             "Здравствуйте, $observable_login.
@@ -54,16 +57,11 @@ function notify_about_new_subscriber(
             Вот ссылка на его профиль: $subscriber_url"
         );
 
-        var_dump($observable_email);
-        var_dump($observable_login);
         $result = $mail->send();
         $mail->clearAddresses();
 
         return $result;
     } catch (Exception $error) {
-        var_dump('Error');
-        var_dump($error);
-
         return false;
     }
 }
@@ -103,6 +101,11 @@ function notify_about_new_post(
             'login' => $post_author_login
             ) = $post_author;
 
+        $subscriber_email = htmlspecialchars($subscriber_email);
+        $subscriber_login = htmlspecialchars($subscriber_login);
+        $post_author_login = htmlspecialchars($post_author_login);
+        $post_title = htmlspecialchars($post_title);
+
         $mail->addAddress($subscriber_email, $subscriber_login);
 
         $origin = getOrigin();
@@ -112,14 +115,13 @@ function notify_about_new_post(
         $mail->Subject =
             strip_tags("Новая публикация от пользователя $post_author_login");
 
-        $mail->Body = htmlspecialchars(
+        $mail->Body =
             "Здравствуйте, $subscriber_login.
             Пользователь $post_author_login только что опубликовал
             новую запись „{$post_title}“. 
             Посмотрите её на странице пользователя:
             <a href=\"$post_author_url\" target=\"_blank\">$post_author_url</a>
-        "
-        );
+        ";
 
         $mail->AltBody = strip_tags(
             "Здравствуйте, $subscriber_login.
@@ -130,17 +132,11 @@ function notify_about_new_post(
         "
         );
 
-        var_dump($subscriber_email);
-        var_dump($subscriber_login);
-        var_dump($post_author_login);
         $result = $mail->send();
         $mail->clearAddresses();
 
         return $result;
     } catch (Exception $error) {
-        var_dump('Error');
-        var_dump($error);
-
         return false;
     }
 }

@@ -60,33 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
 
             foreach ($subscribers as $subscriber) {
-                var_dump(
-                    notify_about_new_post(
-                        $mail,
-                        $subscriber,
-                        $created_post_data
-                    )
+                notify_about_new_post(
+                    $mail,
+                    $subscriber,
+                    $created_post_data
                 );
-                print '<br/>';
-                var_dump(
-                    notify_about_new_post(
-                        $mail,
-                        $subscriber,
-                        $created_post_data
-                    )
-                );
-                print '<br/>';
-                var_dump(
-                    notify_about_new_post(
-                        $mail,
-                        $subscriber,
-                        $created_post_data
-                    )
-                );
-                print '<br/>';
             }
-
-            exit();
         }
 
         header("Location: post.php?post-id=$created_post_id");
@@ -141,7 +120,10 @@ if ($current_content_id) {
 
 if (!$current_content_type) {
     $content_index =
-        array_search($current_content_id, array_column($content_types, 'id'));
+        array_search(
+            $current_content_id,
+            array_column($content_types, 'id')
+        );
     $current_content_type = $content_types[$content_index]['type'];
 }
 
