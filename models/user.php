@@ -1,5 +1,7 @@
 <?php
 
+require_once 'utils/functions.php';
+
 /**
  * Функция получает пользователя из базы данных по заданному id.
  * В случае успешного запроса функция возвращается публикация
@@ -43,10 +45,13 @@ function get_user(mysqli $db_connection, int $user_id, int $reference_user_id)
         GROUP BY users.id
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'si', $reference_user_id, $user_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'si',
+        $reference_user_id,
+        $user_id
+    );
 
     if (!$result) {
         return null;
@@ -83,18 +88,16 @@ function create_user(mysqli $db_connection, array $user_data)
         ) VALUES (?, ?, ?, ?)
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+    if (!execute_non_select_query(
+        $db_connection,
+        $sql,
         'ssss',
         $user_data['email'],
         $user_data['login'],
         $user_data['password_hash'],
-        $user_data['avatar_url'],
-    );
-    mysqli_stmt_execute($statement);
-
-    if (mysqli_error($db_connection)) {
+        $user_data['avatar_url']
+    )
+    ) {
         return null;
     }
 
@@ -132,10 +135,7 @@ function get_user_by_email(mysqli $db_connection, string $user_email)
         WHERE email = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 's', $user_email);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 's', $user_email);
 
     if (!$result) {
         return null;
@@ -159,10 +159,7 @@ function check_user(mysqli $db_connection, int $user_id): bool
 {
     $sql = "SELECT users.id FROM users WHERE users.id = ?";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $user_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 'i', $user_id);
 
     if (!$result) {
         return false;

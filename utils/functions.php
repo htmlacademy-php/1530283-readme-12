@@ -266,8 +266,8 @@ function get_sort_url(
  * Для генерирации ссылки, соотвествующей отсутствию фильтрации,
  * id типа контента не передается в функцию.
  *
- * @param  string  $basename - URL страницы без GET параметров
- * @param  int | null  $content_type_id - id типа контента публикации
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int | null  $content_type_id  - id типа контента публикации
  *
  * @return string - итоговый URL страницы для получения списка публикаций
  * с учетом фильтрации
@@ -411,8 +411,8 @@ function validate_sort_type(string $current_sort_type): bool
  * Функция генерирует ссылку переключения на заданный таб страницы профиля
  * пользователя.
  *
- * @param  string  $basename - URL страницы без GET параметров
- * @param  string  $tab_value - значение таба
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  string  $tab_value  - значение таба
  *
  * @return string - итоговый URL страницы для переключения на заданный таб
  */
@@ -604,4 +604,144 @@ function decode_json_array_agg(string $json): array
             return $value;
         }
     );
+}
+
+/**
+ * Функция производит получение данных из базы данных с использованием
+ * подготовленного выражения. Функция возвращается результат запроса типа
+ * mysqli_result, в случае его успешного выполения, либо null - в случае
+ * неуспешного выполнения.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  string  $sql  - подготовленное SQL выражение
+ * @param  string  $types  - строка, содержащая один или более символов,
+ * каждый из которых задаёт тип значения привязываемой переменной
+ * @param  mixed  ...$variables  - переменные, привязываемые к подготовленному
+ * выражению
+ *
+ * Ограничения: Количество переменных и длина строки types должны в точности
+ * соответствовать количеству параметров в запросе
+ *
+ * @return mysqli_result | null - результат выполения запроса
+ */
+function execute_select_query(
+    mysqli $db_connection,
+    string $sql,
+    string $types,
+    ...$variables
+) {
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        $types,
+        ...$variables
+    );
+
+    if (!mysqli_stmt_execute($statement)) {
+        return null;
+    }
+
+    return mysqli_stmt_get_result($statement) ?: null;
+}
+
+/**
+ * Функция производит измененение данных а базы данных с использованием
+ * подготовленного выражения. Функция возвращается результат запроса в булевом
+ * формате.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  string  $sql  - подготовленное SQL выражение
+ * @param  string  $types  - строка, содержащая один или более символов,
+ * каждый из которых задаёт тип значения привязываемой переменной
+ * @param  mixed  ...$variables  - переменные, привязываемые к подготовленному
+ * выражению
+ *
+ * Ограничения: Количество переменных и длина строки types должны в точности
+ * соответствовать количеству параметров в запросе
+ *
+ * @return bool - результат выполения запроса
+ */
+function execute_non_select_query(
+    mysqli $db_connection,
+    string $sql,
+    string $types,
+    ...$variables
+): bool {
+    $statement = mysqli_prepare($db_connection, $sql);
+    mysqli_stmt_bind_param(
+        $statement,
+        $types,
+        ...$variables
+    );
+
+    return mysqli_stmt_execute($statement);
+}
+
+/**
+ * Функция генерирует ссылку для перехода на страницу разговора.
+ *
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int  $conversation_id  - id разговора
+ *
+ * @return string - итоговый URL страницы для переключения на заданный разговор
+ */
+function get_conversation_url(
+    string $basename,
+    int $conversation_id
+): string {
+    $query_params = $_GET;
+    $query_params[CONVERSATION_ID_QUERY] = $conversation_id;
+    $query_string = http_build_query($query_params);
+
+    return "/$basename?$query_string";
+}
+
+/**
+ * Функция возвращает массив с данными карточек разговоров для страницы
+ * сообщений пользователя.
+ * данными карточки разговора представляют собой ассоциативный массив
+ * переданному массиву разговоров дополненный полями url и active.
+ *
+ * @param  array  $conversations  - массив с данными разговорав
+ * @param  string  $basename  - URL страницы без GET параметров
+ * @param  int  $current_conversation_id  - id разговора
+ *
+ * @return array - массив c данными карточек разговоров
+ */
+function get_conversation_cards(
+    array $conversations,
+    string $basename,
+    int $current_conversation_id
+): array {
+    array_walk(
+        $conversations,
+        function (&$conversation) use (
+            $basename,
+            $current_conversation_id
+        ) {
+            $conversation_id = $conversation['id'];
+            $url = get_conversation_url($basename, $conversation_id);
+            $active = $conversation_id === $current_conversation_id;
+
+            $conversation['url'] = $url;
+            $conversation['active'] = $active;
+        }
+    );
+
+    return $conversations;
+}
+
+/**
+ * Функция возвращает источник (origin) текущего URL, состоящегго из
+ * протокола, хоста и порта.
+ *
+ * @return string - источник URL
+ */
+function getOrigin(): string
+{
+    $host = $_SERVER['HTTP_HOST'];
+    $port = $_SERVER['SERVER_PORT'];
+    $protocol = $_SERVER['REQUEST_SCHEME'];
+
+    return "$protocol://$host:$port";
 }

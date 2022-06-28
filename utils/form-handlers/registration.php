@@ -52,7 +52,7 @@ function handle_registration_form(mysqli $db_connection): array
     if ($is_email_busy) {
         $errors['email'] = [
             'title' => 'Электронная почта',
-            'description' => 'Пользователь с такой электронной почто уже зарегистрирован'
+            'description' => 'Пользователь с такой электронной почтой уже зарегистрирован'
         ];
     }
 

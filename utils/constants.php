@@ -10,7 +10,7 @@ const INITIAL_POSTS_PAGE = 1;
 
 const AVATAR_PLACEHOLDER = 'img/icon-input-user.svg';
 
-const CONTENT_FILTER_QUERY = 'content_type_id';
+const CONTENT_FILTER_QUERY = 'content-type-id';
 
 const COMMENTS_EXPANDED = 'comments-expanded';
 
@@ -19,6 +19,8 @@ const TAB_QUERY = 'tab';
 const COMMENTS_POST_ID_QUERY = 'comments-post-id';
 
 const USER_ID_QUERY = 'user-id';
+
+const CONVERSATION_ID_QUERY = 'conversation-id';
 
 const POST_ID_QUERY = 'post-id';
 

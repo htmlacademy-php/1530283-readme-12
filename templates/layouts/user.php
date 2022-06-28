@@ -35,7 +35,7 @@
             flex-grow: 1;
         }
 
-        .container--comments{
+        .container--comments {
             margin-top: auto;
             width: auto;
         }
@@ -60,8 +60,8 @@
         .button--gray-disabled:hover,
         .button--gray-disabled:active {
             opacity: 0.5;
-            background-color: rgba(205,212,232,.6);
-            color: rgba(46,56,77,.5);
+            background-color: rgba(205, 212, 232, .6);
+            color: rgba(46, 56, 77, .5);
         }
 
         .post-mini__image-wrapper {
@@ -73,6 +73,22 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .messages__chat-wrapper {
+            min-height: 680px;
+        }
+
+        .messages__preview {
+            flex-wrap: wrap;
+        }
+
+        .messages__preview-text {
+            width: 100%;
+        }
+
+        .messages__preview-time {
+            max-width: 100%;
         }
     </style>
 </head>
@@ -247,7 +263,11 @@
                                            href="messages.php">
                               <span class="header__profile-nav-text">
                                 Сообщения
-                                <i class="header__profile-indicator">2</i>
+                                  <?php
+                                  if ($user['unread_messages_count']): ?>
+                                      <i class="header__profile-indicator"><?= $user['unread_messages_count'] ?></i>
+                                  <?php
+                                  endif; ?>
                               </span>
                                         </a>
                                     </li>
@@ -346,5 +366,6 @@
     </div>
 </footer>
 <script src="/js/upload-photo.js" type="module"></script>
+<script src="/js/chat.js" type="module"></script>
 </body>
 </html>

@@ -50,9 +50,6 @@ function handle_add_comment_form(mysqli $db_connection): array
  * ассоциативный массив ошибки валидации, содержащий название и описание ошибки.
  * В случае отсутствия ошибок возвращается пустой массив.
  *
- * Ограничения:
- * Допустимые значения типов контента - photo, link, text, quote, video.
- *
  * @param  array  $form_data  - ассоциативный массив полей формы и их значений
  *
  * @return array<int, array{

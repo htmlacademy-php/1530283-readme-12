@@ -1,5 +1,7 @@
 <?php
 
+require_once 'utils/functions.php';
+
 /**
  * Функция получает список комментариев к заданной публикации из базы данных.
  * В случае успешного запроса функция возвращается массив
@@ -42,14 +44,12 @@ function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
         $limit_sql
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    if (is_null($limit)) {
-        mysqli_stmt_bind_param($statement, 'i', $post_id);
-    } else {
-        mysqli_stmt_bind_param($statement, 'ii', $post_id, $limit);
-    }
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = is_null($limit) ? execute_select_query(
+        $db_connection,
+        $sql,
+        'i',
+        $post_id
+    ) : execute_select_query($db_connection, $sql, 'ii', $post_id, $limit);
 
     if (!$result) {
         return null;
@@ -84,21 +84,17 @@ function create_comment(mysqli $db_connection, array $comment_data)
         ) VALUES (?, ?, ?)
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+    if (!execute_non_select_query(
+        $db_connection,
+        $sql,
         'iis',
         $comment_data['author_id'],
         $comment_data['post_id'],
-        $comment_data['content'],
-    );
-    mysqli_stmt_execute($statement);
-
-    $comment_id = mysqli_insert_id($db_connection);
-
-    if (!$comment_id) {
+        $comment_data['content']
+    )
+    ) {
         return null;
     }
 
-    return $comment_id;
+    return mysqli_insert_id($db_connection);
 }

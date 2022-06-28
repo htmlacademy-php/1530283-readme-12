@@ -75,7 +75,7 @@ $user_name = strip_tags($user_name);
             <?php
             if ($is_observable): ?>
                 <a class="user__button user__button--writing button button--green"
-                   href="messages.php">Сообщение</a>
+                   href="messages.php?user-id=<?= $id ?>">Сообщение</a>
             <?php
             endif; ?>
         </div>

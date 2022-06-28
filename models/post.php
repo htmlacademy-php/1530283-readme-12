@@ -84,29 +84,24 @@ function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
         LIMIT ? OFFSET ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-
-    if ($filter_sql) {
-        mysqli_stmt_bind_param(
-            $statement,
+    $result = $filter_sql
+        ? execute_select_query(
+            $db_connection,
+            $sql,
             'siii',
             $user_id,
             $content_type_id,
             $limit,
             $offset
-        );
-    } else {
-        mysqli_stmt_bind_param(
-            $statement,
+        )
+        : execute_select_query(
+            $db_connection,
+            $sql,
             'sii',
             $user_id,
             $limit,
             $offset
         );
-    }
-
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
@@ -198,22 +193,14 @@ function get_feed_posts(mysqli $db_connection, int $user_id, $config = [])
         GROUP BY posts.id
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-
-    if ($config['content_type_id']) {
-        mysqli_stmt_bind_param(
-            $statement,
-            'sii',
-            $user_id,
-            $user_id,
-            $content_type_id
-        );
-    } else {
-        mysqli_stmt_bind_param($statement, 'si', $user_id, $user_id);
-    }
-
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = $content_type_id ? execute_select_query(
+        $db_connection,
+        $sql,
+        'sii',
+        $user_id,
+        $user_id,
+        $content_type_id
+    ) : execute_select_query($db_connection, $sql, 'si', $user_id, $user_id);
 
     if (!$result) {
         return null;
@@ -300,17 +287,15 @@ function get_posts_by_query(mysqli $db_connection, int $user_id, string $query)
         ORDER BY score DESC
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
         'ssis',
         $user_id,
         $query,
         $user_id,
         $query
     );
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
 
     if (!$result) {
         return null;
@@ -396,10 +381,14 @@ function get_posts_by_hashtag(
         ORDER BY posts.created_at DESC 
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'sis', $user_id, $user_id, $hashtag);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'sis',
+        $user_id,
+        $user_id,
+        $hashtag
+    );
 
     if (!$result) {
         return null;
@@ -505,10 +494,14 @@ function get_posts_by_author(
         ORDER BY posts.created_at DESC 
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'sii', $user_id, $user_id, $author_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'sii',
+        $user_id,
+        $user_id,
+        $author_id
+    );
 
     if (!$result) {
         return null;
@@ -587,10 +580,14 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
         GROUP BY posts.id
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'sii', $user_id, $user_id, $post_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'sii',
+        $user_id,
+        $user_id,
+        $post_id
+    );
 
     if (!$result) {
         return null;
@@ -648,23 +645,23 @@ function create_post(mysqli $db_connection, array $post_data)
         ) VALUES (?, ?, ?, ?, ?)
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+    if (!execute_non_select_query(
+        $db_connection,
+        $sql,
         'iisss',
         $post_data['author_id'],
         $post_data['content_type_id'],
         $post_data['title'],
         $post_data['text_content'],
         $post_data['string_content']
-    );
-    mysqli_stmt_execute($statement);
+    )
+    ) {
+        mysqli_rollback($db_connection);
 
-    $post_id = mysqli_insert_id($db_connection);
-
-    if (!$post_id) {
         return null;
     }
+
+    $post_id = mysqli_insert_id($db_connection);
 
     foreach ($tags as $tag) {
         $hashtag_success = add_hashtag_to_post($db_connection, $tag, $post_id);
@@ -694,10 +691,7 @@ function check_post(mysqli $db_connection, int $post_id): bool
 {
     $sql = "SELECT posts.id FROM posts WHERE posts.id = ?";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $post_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 'i', $post_id);
 
     if (!$result) {
         return false;
@@ -742,11 +736,7 @@ function get_basic_post_data(mysqli $db_connection, int $post_id)
         FROM posts
         WHERE posts.id = ?
     ";
-
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $post_id);
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query($db_connection, $sql, 'i', $post_id);
 
     if (!$result) {
         return null;
@@ -764,7 +754,7 @@ function get_basic_post_data(mysqli $db_connection, int $post_id)
  *
  * @return bool - результат выполнения операции
  */
-function increase_views_count(mysqli $db_connection, int $post_id)
+function increase_views_count(mysqli $db_connection, int $post_id): bool
 {
     $sql = "
         UPDATE posts
@@ -772,8 +762,5 @@ function increase_views_count(mysqli $db_connection, int $post_id)
         WHERE posts.id = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'i', $post_id);
-
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query($db_connection, $sql, 'i', $post_id);
 }

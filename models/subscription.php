@@ -1,5 +1,7 @@
 <?php
 
+require_once 'utils/functions.php';
+
 /**
  * Функция проверяет наличие подписки в базе данных на заданного пользователя
  * и подписчика.
@@ -22,11 +24,13 @@ function check_subscription(
         WHERE subscriber_id = ? AND observable_id = ?
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
-    mysqli_stmt_execute($statement);
-
-    $result = mysqli_stmt_get_result($statement);
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $user_id,
+        $observable_id
+    );
 
     if (!$result) {
         return false;
@@ -53,10 +57,13 @@ function create_subscription(
     $sql =
         "INSERT INTO subscriptions (subscriber_id, observable_id) VALUES (?, ?)";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
-
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $user_id,
+        $observable_id
+    );
 }
 
 /**
@@ -77,10 +84,13 @@ function delete_subscription(
     $sql =
         "DELETE FROM subscriptions WHERE subscriber_id = ? AND observable_id = ?";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param($statement, 'ii', $user_id, $observable_id);
-
-    return mysqli_stmt_execute($statement);
+    return execute_non_select_query(
+        $db_connection,
+        $sql,
+        'ii',
+        $user_id,
+        $observable_id
+    );
 }
 
 /**
@@ -155,16 +165,55 @@ function get_subscriptions_by_subscriber(
         GROUP BY users.id
     ";
 
-    $statement = mysqli_prepare($db_connection, $sql);
-    mysqli_stmt_bind_param(
-        $statement,
+    $result = execute_select_query(
+        $db_connection,
+        $sql,
         'sii',
         $user_id,
         $user_id,
         $subscriber_id
     );
-    mysqli_stmt_execute($statement);
-    $result = mysqli_stmt_get_result($statement);
+
+    if (!$result) {
+        return null;
+    }
+
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+
+/**
+ * Функция получает из базы данных список подписчиков для заданного
+ * пользователя.
+ * В случае успешного запроса функция возвращает массив
+ * подписчиков в виде ассоциативных массивов.
+ * В случае неуспешного запроса возвращается null.
+ *
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
+ *
+ * @return null | array<int, array{
+ *     id: int,
+ *     login: string,
+ *     email: string,
+ *     avatar_url: string,
+ *     created_at: string
+ * }> - список подписчиков
+ */
+function get_subscribers(mysqli $db_connection, int $user_id)
+{
+    $sql = "
+        SELECT 
+            users.id,
+            users.login,
+            users.email,
+            users.avatar_url,
+            users.created_at
+        FROM subscriptions
+        JOIN users on subscriptions.subscriber_id = users.id
+        WHERE subscriptions.observable_id = ?
+    ";
+
+    $result = execute_select_query($db_connection, $sql, 'i', $user_id);
 
     if (!$result) {
         return null;
