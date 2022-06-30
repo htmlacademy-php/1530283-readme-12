@@ -17,13 +17,10 @@ require_once 'init/db-connection.php';
 
 session_start();
 $user_session = $_SESSION['user'] ?? null;
+$is_no_user = !$user_session || !$user_session['id']
+              || !check_user($db_connection, $user_session['id']);
 
-if (!$user_session || !$user_session['id']
-    || !check_user(
-        $db_connection,
-        $user_session['id']
-    )
-) {
+if ($is_no_user) {
     $form_data = [];
     $errors = [];
 
