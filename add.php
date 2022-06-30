@@ -71,6 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: post.php?post-id=$created_post_id");
         exit();
     }
+
+    ob_end_clean();
 }
 
 $basename = basename(__FILE__);

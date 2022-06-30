@@ -15,21 +15,28 @@ require_once 'utils/functions.php';
  *     errors: array,
  * } - данные формы и данные ошибок валидации
  */
-function handle_add_post_form(mysqli $db_connection): array {
-    $form_data= [];
+function handle_add_post_form(mysqli $db_connection): array
+{
+    $form_data = [];
 
     $with_file = isset($_FILES['photo-file'])
                  && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
 
-    $form_data['content_type_id'] = $_POST['content-type-id'] ?? '';
-    $form_data['title'] = $_POST['title'] ?? '';
-    $form_data['text_content'] = $_POST['text-content'] ?? '';
-    $form_data['string_content'] =
-        !$with_file ? $_POST['string-content'] ?? '' : '';
+    $form_data['content_type_id'] =
+        filter_input(INPUT_POST, 'content-type-id', FILTER_SANITIZE_NUMBER_INT);
+    $form_data['title'] =
+        filter_input(INPUT_POST, 'title', FILTER_SANITIZE_STRING);
+    $form_data['text_content'] =
+        filter_input(INPUT_POST, 'text-content', FILTER_SANITIZE_STRING);
+    $form_data['string_content'] = !$with_file ? filter_input(
+        INPUT_POST,
+        'string-content',
+        FILTER_SANITIZE_STRING
+    ) : '';
+    $tags = filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING) ?? '';
     $form_data['tags'] =
-        $_POST['tags'] ? trim(
-            preg_replace('/\s+/', TEXT_SEPARATOR, mb_strtolower($_POST['tags']))
-        ) : '';
+        preg_replace('/\s+/', TEXT_SEPARATOR, mb_strtolower($tags));
+
     $form_data['photo_file'] =
         $with_file ? $_FILES['photo-file'] : null;
 
