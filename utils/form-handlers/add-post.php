@@ -2,6 +2,7 @@
 
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
+require_once 'utils/functions.php';
 
 /**
  * Функция обрабабатыват данные формы создания публикации.
@@ -250,12 +251,9 @@ function get_post_photo_file_error(array $form_data)
     }
 
     $error_title = 'Файл фото';
-    $file = $form_data['photo_file'];
 
-    $file_info = finfo_open(FILEINFO_MIME_TYPE);
-    $file_type = finfo_file($file_info, $file['tmp_name']);
-    $is_valid_type =
-        array_search($file_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
+    $file = $form_data['photo_file'];
+    $is_valid_type = check_photo_file_type($file);
 
     if (!$is_valid_type) {
         return [

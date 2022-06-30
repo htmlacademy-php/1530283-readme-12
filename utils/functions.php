@@ -745,3 +745,21 @@ function getOrigin(): string
 
     return "$protocol://$host:$port";
 }
+
+/**
+ * Функция проверяет соотвествие типа файла изображения загруженного через
+ * форму. Валидными типами фото являются следущие MIME-типы: image/jpg,
+ * image/jpeg, image/png, image/gif.
+ *
+ * @param  array  $file - данные файла
+ *
+ * @return bool - соотвествие типа файла
+ */
+function check_photo_file_type(array $file): bool
+{
+    $file_info = finfo_open(FILEINFO_MIME_TYPE);
+    $file_type = finfo_file($file_info, $file['tmp_name']);
+
+    return
+        array_search($file_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
+}
