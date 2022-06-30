@@ -18,7 +18,7 @@ INSERT INTO posts (author_id, content_type_id, title, text_content, string_conte
     (2, 3, 'Игра престолов', 'Не могу дождаться начала финального сезона своего любимого сериала!', ''),
     (3, 1, 'Наконец, обработал фотки!', '', 'img/rock-medium.jpg'),
     (1, 1, 'Моя мечта', '', 'img/coast-medium.jpg'),
-    (2, 5, 'Лучшие курсы', '', 'www.htmlacademy.ru');
+    (2, 5, 'Лучшие курсы', '', 'https://htmlacademy.ru');
 
 # создает пару комментариев к разным постам
 INSERT INTO comments (author_id, post_id, content) VALUES
