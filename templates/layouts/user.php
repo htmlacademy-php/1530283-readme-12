@@ -75,6 +75,50 @@
             object-fit: cover;
         }
 
+        .header__profile-avatar{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comments__picture {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+
+        .post__author-avatar,
+        .messages__avatar,
+        .post-mini__picture {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .messages__item .messages__avatar {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+
+        .popular__post .post__author-avatar {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+        }
+
+        .profile__picture {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .post-details__picture {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+        }
+
         .messages__chat-wrapper {
             min-height: 680px;
         }
