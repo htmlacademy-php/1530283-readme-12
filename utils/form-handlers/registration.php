@@ -1,6 +1,7 @@
 <?php
 
 require_once 'utils/constants.php';
+require_once 'utils/functions.php';
 
 /**
  * Функция обрабабатыват данные формы регистрации.
@@ -18,10 +19,14 @@ function handle_registration_form(mysqli $db_connection): array
     $with_file = isset($_FILES['photo-file'])
                  && $_FILES['photo-file']['error'] !== UPLOAD_ERR_NO_FILE;
 
-    $form_data['email'] = $_POST['email'] ?? '';
-    $form_data['login'] = $_POST['login'] ?? '';
-    $form_data['password'] = $_POST['password'] ?? '';
-    $form_data['password_repeat'] = $_POST['password-repeat'] ?? '';
+    $form_data['email'] =
+        filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+    $form_data['login'] =
+        filter_input(INPUT_POST, 'login', FILTER_SANITIZE_STRING);
+    $form_data['password'] =
+        filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+    $form_data['password_repeat'] =
+        filter_input(INPUT_POST, 'password-repeat', FILTER_SANITIZE_STRING);
     $form_data['avatar_file'] =
         $with_file ? $_FILES['photo-file'] : null;
 
@@ -36,24 +41,28 @@ function handle_registration_form(mysqli $db_connection): array
         }
     }
 
-    $photo_url =
-        !count($errors) && $with_file ? save_file($form_data['avatar_file'])
-            : '';
+    $photo_url = '';
 
-    if ($with_file && !$photo_url) {
-        $errors['avatar_file'] = [
-            'title' => 'Файл фото',
-            'description' => 'Не удалось загрузить файл'
-        ];
+    if ($with_file && !count($errors)) {
+        $photo_url = save_file($form_data['avatar_file']);
+
+        if (!$photo_url) {
+            $errors['avatar_file'] = [
+                'title' => 'Файл фото',
+                'description' => 'Не удалось загрузить файл'
+            ];
+        }
     }
 
-    $is_email_busy = get_user_by_email($db_connection, $form_data['email']);
+    if (!$errors['email']) {
+        $is_email_busy = get_user_by_email($db_connection, $form_data['email']);
 
-    if ($is_email_busy) {
-        $errors['email'] = [
-            'title' => 'Электронная почта',
-            'description' => 'Пользователь с такой электронной почтой уже зарегистрирован'
-        ];
+        if ($is_email_busy) {
+            $errors['email'] = [
+                'title' => 'Электронная почта',
+                'description' => 'Пользователь с такой электронной почтой уже зарегистрирован'
+            ];
+        }
     }
 
     if (!count($errors) && $with_file) {
@@ -333,17 +342,14 @@ function get_registration_avatar_file_error(array $form_data)
     }
 
     $error_title = 'Файл фото';
-    $file = $form_data['avatar_file'];
 
-    $file_info = finfo_open(FILEINFO_MIME_TYPE);
-    $file_type = finfo_file($file_info, $file['tmp_name']);
-    $is_valid_type =
-        array_search($file_type, ALLOWED_PHOTO_FILE_TYPES) !== false;
+    $file = $form_data['avatar_file'];
+    $is_valid_type = check_photo_file_type($file);
 
     if (!$is_valid_type) {
         return [
             'title' => $error_title,
-            'description' => 'Некорретный тип файла',
+            'description' => 'Некорректный тип файла',
         ];
     }
 

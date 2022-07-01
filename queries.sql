@@ -8,9 +8,9 @@ INSERT INTO content_types (name, type) VALUES
 
 # создает трех пользователей
 INSERT INTO users (email, login, password_hash, avatar_url) VALUES
-    ('ivan_ivanov@mail.com', 'user_ivan', 'user_ivan_password_hash', 'img/userpic-larisa-small.jpg'),
-    ('petr_petrov@mail.com', 'user_petr', 'user_petr_password_hash', 'img/userpic.jpg'),
-    ('sidr_sidorov@mail.com', 'user_sidr', 'user_sidr_password_hash', 'img/userpic-mark.jpg');
+    ('larisa_ivanova@mail.com', 'Лариса Иванова', 'user_larisa_password_hash', 'img/userpic-larisa-small.jpg'),
+    ('petr_kuztentsov@mail.com', 'Петр Кузнецов', 'user_petr_password_hash', 'img/userpic.jpg'),
+    ('ivan_sidorov@mail.com', 'Иван Сидоров', 'user_ivan_password_hash', 'img/userpic-mark.jpg');
 
 # создает существующий список постов
 INSERT INTO posts (author_id, content_type_id, title, text_content, string_content) VALUES
@@ -18,7 +18,7 @@ INSERT INTO posts (author_id, content_type_id, title, text_content, string_conte
     (2, 3, 'Игра престолов', 'Не могу дождаться начала финального сезона своего любимого сериала!', ''),
     (3, 1, 'Наконец, обработал фотки!', '', 'img/rock-medium.jpg'),
     (1, 1, 'Моя мечта', '', 'img/coast-medium.jpg'),
-    (2, 5, 'Лучшие курсы', '', 'www.htmlacademy.ru');
+    (2, 5, 'Лучшие курсы', '', 'https://htmlacademy.ru');
 
 # создает пару комментариев к разным постам
 INSERT INTO comments (author_id, post_id, content) VALUES
@@ -49,18 +49,18 @@ FROM comments
         ON comments.author_id = users.id
 WHERE post_id = 1;
 
-# добавить лайки к посту.
-# пользователь с id = 2 ставит лайк к посту с id = 1.
-# пользователь с id = 3 ставит лайк к посту с id = 1.
-# пользователь с id = 1 ставит лайк к посту с id = 2.
+# добавить лайки к постам:
+# пользователь с id = 2 ставит лайк к посту с id = 1,
+# пользователь с id = 3 ставит лайк к посту с id = 1,
+# пользователь с id = 1 ставит лайк к посту с id = 2,
 # пользователь с id = 1 ставит лайк к посту с id = 3.
 INSERT INTO likes (post_id, author_id) VALUES
     (1, 2), (1, 3), (2, 1), (3, 1);
 
-# подписаться на пользователя
-# пользователь с id = 1 подписывается на пользователя с id = 2.
-# пользователь с id = 1 подписывается на пользователя с id = 3.
-# пользователь с id = 2 подписывается на пользователя с id = 3.
+# оформление подписок на пользователей:
+# пользователь с id = 1 подписывается на пользователя с id = 2,
+# пользователь с id = 1 подписывается на пользователя с id = 3,
+# пользователь с id = 2 подписывается на пользователя с id = 3,
 # пользователь с id = 3 подписывается на пользователя с id = 1.
 INSERT INTO subscriptions (subscriber_id, observable_id) VALUES
     (1 ,2), (1, 3), (2, 3), (3, 1);

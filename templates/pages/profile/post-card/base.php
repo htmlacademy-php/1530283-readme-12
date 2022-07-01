@@ -70,6 +70,7 @@ list(
             "common/post-card/content/$content_type.php",
             [
                 'id' => $id,
+                'title' => $title,
                 'text_content' => $text_content,
                 'string_content' => $string_content,
             ]

@@ -19,8 +19,10 @@ function handle_login_form(mysqli $db_connection): array
 {
     $form_data = [];
 
-    $form_data['email'] = $_POST['email'] ?? '';
-    $form_data['password'] = $_POST['password'] ?? '';
+    $form_data['email'] =
+        filter_input(INPUT_POST, 'email', FILTER_SANITIZE_STRING);
+    $form_data['password'] =
+        filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
     $errors = get_login_form_data_errors($form_data);
 

@@ -51,9 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $invalid_block_content = count($errors) ? include_template(
     'common/form-invalid-block.php',
-    [
-        'errors' => $errors
-    ]
+    ['errors' => $errors]
 ) : '';
 
 $page_content = include_template(

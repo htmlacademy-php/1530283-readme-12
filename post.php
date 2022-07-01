@@ -107,6 +107,7 @@ $content_type = $post['content_type'];
 $post_details_content = include_template(
     "pages/post-details/content/$content_type.php",
     [
+        'title' => $post['title'],
         'text_content' => $post['text_content'] ?? '',
         'string_content' => $post['string_content'] ?? '',
     ]
