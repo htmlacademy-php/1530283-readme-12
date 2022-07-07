@@ -148,7 +148,7 @@ function get_conversation_id_by_users(
 
     $conversation = mysqli_fetch_assoc($result);
 
-    return $conversation ? $conversation['id'] : null;
+    return $conversation['id'] ?? null;
 }
 
 /**

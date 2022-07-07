@@ -16,13 +16,14 @@
              src="/<?= $user['avatar_url'] ?? AVATAR_PLACEHOLDER ?>"
              alt="Аватар пользователя">
     </div>
-    <input name="post-id" value="<?= $form_data['post_id'] ?>"
+    <input name="post-id" value="<?= $form_data['post_id'] ?? '' ?>"
            type="hidden"/>
     <input name="post-author-id"
-           value="<?= $form_data['post_author_id'] ?>"
+           value="<?= $form_data['post_author_id'] ?? '' ?>"
            type="hidden"/>
     <div class="form__input-section
-             <?= $errors['content'] ? 'form__input-section--error' : '' ?>">
+             <?= isset($errors['content']) ?
+               'form__input-section--error' : '' ?>">
                 <textarea
                         name="content"
                         class="comments__textarea form__textarea form__input"

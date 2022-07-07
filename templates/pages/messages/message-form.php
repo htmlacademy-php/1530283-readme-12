@@ -16,9 +16,9 @@
              alt="Аватар пользователя">
     </div>
     <div class="form__input-section
-     <?= $errors['content'] ? 'form__input-section--error' : '' ?>">
+     <?= isset($errors['content']) ? 'form__input-section--error' : '' ?>">
         <input type="hidden" name="conversation-id"
-               value="<?= $form_data['conversation_id'] ?>">
+               value="<?= $form_data['conversation_id'] ?? '' ?>">
         <textarea name="content"
                   class="comments__textarea form__textarea form__input"
                   placeholder="Ваше сообщение"><?= $form_data['content'] ??
@@ -28,7 +28,7 @@
         </button>
         <?= include_template(
             'common/form-error-text.php',
-            ['error' => $errors['content']]
+            ['error' => $errors['content'] ?? []]
         ) ?>
     </div>
     <button class="comments__submit button button--green"

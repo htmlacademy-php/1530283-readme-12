@@ -43,16 +43,18 @@ require_once 'models/post_hashtag.php';
  */
 function get_popular_posts(mysqli $db_connection, int $user_id, $config = [])
 {
-    $sort_type = $config['sort_type'] ? mysqli_real_escape_string(
-        $db_connection,
-        $config['sort_type']
-    ) : null;
+    $sort_type = isset($config['sort_type']) && $config['sort_type']
+        ? mysqli_real_escape_string(
+            $db_connection,
+            $config['sort_type']
+        ) : null;
     $content_type_id = $config['content_type_id'] ?? '';
     $is_order_reversed = $config['is_order_reversed'] ?? false;
-    list('limit' => $limit, 'offset' => $offset) = $config;
+    $limit = $config['limit'] ?? DEFAULT_POSTS_LIMIT;
+    $offset = $config['offset'] ?? 0;
 
     $filter_sql =
-        $config['content_type_id'] ? "WHERE content_types.id = ?" : '';
+        $content_type_id ? "WHERE content_types.id = ?" : '';
     $order_direction_sql = $is_order_reversed ? 'ASC' : 'DESC';
     $sort_sql = $sort_type ? "ORDER BY $sort_type $order_direction_sql" : '';
 
@@ -595,7 +597,7 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
 
     $post = mysqli_fetch_assoc($result);
 
-    if (!$post['id']) {
+    if (!isset($post['id'])) {
         return null;
     }
 
@@ -628,11 +630,24 @@ function get_post(mysqli $db_connection, int $user_id, int $post_id)
  */
 function create_post(mysqli $db_connection, array $post_data)
 {
+    $author_id = $post_data['author_id'] ?? null;
+    $content_type_id = $post_data['content_type_id'] ?? null;
+    $title = $post_data['title'] ?? null;
+    $text_content = $post_data['text_content'] ?? null;
+    $string_content = $post_data['string_content'] ?? null;
+
+    if (!$author_id || !$content_type_id || !$title) {
+        return null;
+    }
+
     mysqli_begin_transaction($db_connection);
 
-    $tags = $post_data['tags'] ? explode(
-        TEXT_SEPARATOR,
-        mysqli_real_escape_string($db_connection, $post_data['tags'])
+    $post_data_tags = $post_data['tags'] ?? '';
+    $tags = $post_data_tags ? array_unique(
+        explode(
+            TEXT_SEPARATOR,
+            mysqli_real_escape_string($db_connection, $post_data_tags)
+        )
     ) : [];
 
     $sql = "
@@ -649,11 +664,11 @@ function create_post(mysqli $db_connection, array $post_data)
         $db_connection,
         $sql,
         'iisss',
-        $post_data['author_id'],
-        $post_data['content_type_id'],
-        $post_data['title'],
-        $post_data['text_content'],
-        $post_data['string_content']
+        $author_id,
+        $content_type_id,
+        $title,
+        $text_content,
+        $string_content
     )
     ) {
         mysqli_rollback($db_connection);
@@ -699,7 +714,7 @@ function check_post(mysqli $db_connection, int $post_id): bool
 
     $post = mysqli_fetch_assoc($result);
 
-    return boolval($post['id']);
+    return isset($post['id']);
 }
 
 /**

@@ -37,7 +37,8 @@
                                     <label class="adding-post__label form__label"
                                            for="title">Заголовок <span
                                                 class="form__input-required">*</span></label>
-                                    <div class="form__input-section <?= $errors['title']
+                                    <div class="form__input-section
+                                       <?= isset($errors['title'])
                                         ? 'form__input-section--error' : '' ?>">
                                         <input class="adding-post__input form__input"
                                                id="title" type="text"
@@ -80,7 +81,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <?= $invalid_block_content ?>
+                            <?= $invalid_block_content ?? '' ?>
                         </div>
                         <?php
                         if ($with_photo_file): ?>

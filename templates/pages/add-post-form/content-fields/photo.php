@@ -10,7 +10,7 @@
 <div class="adding-post__input-wrapper form__input-wrapper">
     <label class="adding-post__label form__label"
            for="string-content">Ссылка из интернета</label>
-    <div class="form__input-section <?= $errors['string_content']
+    <div class="form__input-section <?= isset($errors['string_content'])
         ? 'form__input-section--error' : '' ?>">
         <input class="adding-post__input form__input"
                id="string-content" type="text"

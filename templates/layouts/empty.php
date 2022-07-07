@@ -6,16 +6,11 @@
  * @var string | null $content - разметка контента страницы
  */
 
-if (!isset($title)) {
-    $title = 'Ошибка';
-}
-
-if (!isset($content)) {
-    $content = "
-        <h1>$title</h1>
-        <p>Что-то пошло не так...</p>
-    ";
-}
+$title = $title ?? 'Ошибка';
+$content = $content ?? "
+    <h1>$title</h1>
+    <p>Что-то пошло не так...</p>
+";
 ?>
 
 <!DOCTYPE html>

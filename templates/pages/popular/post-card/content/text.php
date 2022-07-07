@@ -6,6 +6,7 @@ require_once 'utils/functions.php';
 /**
  * Шаблон контента карточки публикации текста для страницы 'Популярное'
  *
+ * @var string $id - id публикации
  * @var string $text_content - текстовый контент публикации
  */
 
@@ -20,7 +21,8 @@ $is_cropped = $text_content !== $cropped_text_content;
 <?php
 if ($is_cropped): ?>
     <p><?= $cropped_text_content ?></p>
-    <a class='post-text__more-link' href='#'>Читать далее</a>
+    <a class='post-text__more-link' href='post.php?post-id=<?= $id ?>'>Читать
+        далее</a>
 <?php
 else: ?>
     <p><?= $text_content ?></p>

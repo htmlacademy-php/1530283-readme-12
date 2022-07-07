@@ -1,5 +1,6 @@
 <?php
 
+require_once 'init/common.php';
 require_once 'utils/constants.php';
 require_once 'init/user-session.php';
 require_once 'init/db-connection.php';

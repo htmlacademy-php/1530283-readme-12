@@ -6,16 +6,15 @@
  * @var bool $is_own_profile - собственный профиль
  */
 
-list(
-    'id' => $id,
-    'created_at' => $created_at,
-    'login' => $login,
-    'email' => $email,
-    'avatar_url' => $avatar_url,
-    'subscribers_count' => $subscribers_count,
-    'posts_count' => $posts_count,
-    'is_observable' => $is_observable
-    ) = $user;
+$id = $user['id'] ?? null;
+$login = isset($user['login']) ? htmlspecialchars($user['login']) : '';
+$avatar_url = $user['avatar_url'] ?? AVATAR_PLACEHOLDER;
+$created_at = $user['created_at'] ?? null;
+$iso_date_time = $created_at ? format_iso_date_time($created_at) : '';
+$relative_time = $created_at ? format_relative_time($created_at) : '';
+$posts_count = $user['posts_count'] ?? 0;
+$subscribers_count = $user['subscribers_count'] ?? 0;
+$is_observable = $user['is_observable'] ?? false;
 ?>
 
 <div class="profile__user-wrapper">
@@ -23,17 +22,14 @@ list(
         <div class="profile__user-info user__info">
             <div class="profile__avatar user__avatar">
                 <img class="profile__picture user__picture"
-                     src="/<?= $avatar_url ?? AVATAR_PLACEHOLDER ?>"
+                     src="/<?= $avatar_url ?>"
                      alt="Аватар пользователя" width="100" height="100">
             </div>
             <div class="profile__name-wrapper user__name-wrapper">
-                <span class="profile__name user__name"><?= htmlspecialchars(
-                        $login
-                    ) ?></span>
+                <span class="profile__name user__name"><?= $login ?></span>
                 <time class="profile__user-time user__time"
-                      datetime="<?= format_iso_date_time(
-                          $created_at
-                      ) ?>"><?= format_relative_time($created_at) ?> на сайте
+                      datetime="<?= $iso_date_time ?>"><?= $relative_time ?> на
+                    сайте
                 </time>
             </div>
         </div>

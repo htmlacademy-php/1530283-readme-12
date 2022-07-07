@@ -1,5 +1,7 @@
 <?php
 
+require_once 'init/common.php';
+
 session_start();
 
 $_SESSION = [];

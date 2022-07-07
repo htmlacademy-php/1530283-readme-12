@@ -59,7 +59,7 @@ function get_user(mysqli $db_connection, int $user_id, int $reference_user_id)
 
     $user = mysqli_fetch_assoc($result);
 
-    return $user['id'] ? $user : null;
+    return isset($user['id']) ? $user : null;
 }
 
 /**
@@ -79,6 +79,15 @@ function get_user(mysqli $db_connection, int $user_id, int $reference_user_id)
  */
 function create_user(mysqli $db_connection, array $user_data)
 {
+    $email = $user_data['email'] ?? null;
+    $login = $user_data['login'] ?? null;
+    $password_hash = $user_data['password_hash'] ?? null;
+    $avatar_url = $user_data['avatar_url'] ?? null;
+
+    if (!$email || !$login || !$password_hash) {
+        return null;
+    }
+
     $sql = "
         INSERT INTO users (
             email,
@@ -92,18 +101,16 @@ function create_user(mysqli $db_connection, array $user_data)
         $db_connection,
         $sql,
         'ssss',
-        $user_data['email'],
-        $user_data['login'],
-        $user_data['password_hash'],
-        $user_data['avatar_url']
+        $email,
+        $login,
+        $password_hash,
+        $avatar_url
     )
     ) {
         return null;
     }
 
-    $user_id = mysqli_insert_id($db_connection);
-
-    return $user_id ? intval($user_id) : null;
+    return mysqli_insert_id($db_connection);
 }
 
 /**
@@ -143,7 +150,7 @@ function get_user_by_email(mysqli $db_connection, string $user_email)
 
     $user = mysqli_fetch_assoc($result);
 
-    return $user['id'] ? $user : null;
+    return isset($user['id']) ? $user : null;
 }
 
 /**
@@ -167,5 +174,5 @@ function check_user(mysqli $db_connection, int $user_id): bool
 
     $user = mysqli_fetch_assoc($result);
 
-    return boolval($user['id']);
+    return isset($user['id']);
 }

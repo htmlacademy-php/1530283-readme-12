@@ -57,7 +57,8 @@ function handle_add_post_form(mysqli $db_connection): array
         ];
 
     if (count($errors)) {
-        if ($with_file && !$errors['photo_file']) {
+        $photo_file_error = $errors['photo_file'] ?? null;
+        if ($with_file && !$photo_file_error) {
             $errors['photo_file'] = [
                 'title' => 'Файл фото',
                 'description' => 'Загрузите файл еще раз'
@@ -253,14 +254,14 @@ function get_post_tags_error(array $form_data)
  */
 function get_post_photo_file_error(array $form_data)
 {
-    if (!$form_data['photo_file']) {
+    $photo_file = $form_data['photo_file'] ?? null;
+    if (!$photo_file) {
         return null;
     }
 
     $error_title = 'Файл фото';
 
-    $file = $form_data['photo_file'];
-    $is_valid_type = check_photo_file_type($file);
+    $is_valid_type = check_photo_file_type($photo_file);
 
     if (!$is_valid_type) {
         return [
@@ -269,7 +270,7 @@ function get_post_photo_file_error(array $form_data)
         ];
     }
 
-    if ($file['size'] > MAX_PHOTO_FILE_SIZE) {
+    if ($photo_file['size'] > MAX_PHOTO_FILE_SIZE) {
         return [
             'title' => $error_title,
             'description' => 'Превышен допустимый размер файла '
@@ -306,7 +307,8 @@ function get_post_photo_file_error(array $form_data)
  */
 function get_photo_post_string_content_error(array $form_data)
 {
-    if ($form_data['photo_file']) {
+    $photo_file = $form_data['photo_file'] ?? null;
+    if ($photo_file) {
         return null;
     }
 

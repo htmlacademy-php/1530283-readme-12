@@ -8,8 +8,9 @@
  * комментариев
  */
 
-$with_expand_button =
-    !is_null($comments_count) && !is_null($expand_comments_url);
+$comments_count = $comments_count ?? 0;
+$expand_comments_url = $expand_comments_url ?? '';
+$with_expand_button = $comments_count && $expand_comments_url;
 ?>
 
 <div class="comments__list-wrapper">

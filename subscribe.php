@@ -2,6 +2,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
+require_once 'init/common.php';
 require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 require_once 'init/mail.php';

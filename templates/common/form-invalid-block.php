@@ -14,8 +14,8 @@
         <?php
         foreach ($errors as $error): ?>
             <li class="form__invalid-item">
-                <?= $error['title'] ?>.
-                <?= $error['description'] ?>.
+                <?= $error['title'] ?? '' ?>.
+                <?= $error['description'] ?? '' ?>.
             </li>
         <?php
         endforeach; ?>

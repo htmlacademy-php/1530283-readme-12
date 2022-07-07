@@ -7,16 +7,18 @@
  * @var array $subscription - данные о подписке на пользователя
  */
 
-list(
-    'id' => $id,
-    'created_at' => $created_at,
-    'login' => $login,
-    'avatar_url' => $avatar_url,
-    'subscribers_count' => $subscribers_count,
-    'posts_count' => $posts_count,
-    'is_observable' => $is_observable,
-    'is_user' => $is_user,
-    ) = $subscription;
+$id = $subscription['id'] ?? null;
+$is_observable = $subscription['is_observable'] ?? false;
+$created_at = $subscription['created_at'] ?? null;
+$iso_date_time = $created_at ? format_iso_date_time($created_at) : '';
+$relative_time = $created_at ? format_relative_time($created_at) : '';
+$login =
+    isset($subscription['login']) ? htmlspecialchars($subscription['login'])
+        : '';
+$posts_count = $subscription['posts_count'] ?? 0;
+$subscribers_count = $subscription['subscribers_count'] ?? 0;
+$avatar_url = $subscription['avatar_url'] ?? AVATAR_PLACEHOLDER;
+$is_user = $subscription['is_user'] ?? false;
 ?>
 
 <li class="post-mini post-mini--photo post user">
@@ -25,7 +27,7 @@ list(
             <a class="user__avatar-link"
                href="profile.php?user-id=<?= $id ?>">
                 <img class="post-mini__picture user__picture"
-                     src="<?= $avatar_url ?? AVATAR_PLACEHOLDER ?>"
+                     src="<?= $avatar_url ?>"
                      alt="Аватар пользователя"
                      width="60" height="60">
             </a>
@@ -33,14 +35,11 @@ list(
         <div class="post-mini__name-wrapper user__name-wrapper">
             <a class="post-mini__name user__name"
                href="profile.php?user-id=<?= $id ?>">
-                <span><?= htmlspecialchars($login) ?></span>
+                <span><?= $login ?></span>
             </a>
             <time class="post-mini__time user__additional"
-                  datetime="<?= format_iso_date_time(
-                      $created_at
-                  ) ?>"><?= format_relative_time(
-                    $created_at
-                ) ?> на сайте
+                  datetime="<?= $iso_date_time ?>"><?= $relative_time ?> на
+                сайте
             </time>
         </div>
     </div>

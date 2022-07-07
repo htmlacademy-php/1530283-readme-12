@@ -5,26 +5,36 @@
  * @var array $post_card - ассоциативный массив с данными публикации
  */
 
-list(
-    'id' => $id,
-    'title' => $title,
-    'string_content' => $string_content,
-    'text_content' => $text_content,
-    'content_type' => $content_type,
-    'author' => $author,
-    'created_at' => $created_at,
-    'likes_count' => $likes_count,
-    'comments_count' => $comments_count,
-    'is_liked' => $is_liked
-    )
-    = $post_card;
+$id = $post_card['id'] ?? null;
+$title =
+    isset($post_card['title']) ? htmlspecialchars($post_card['title']) : '';
+$string_content =
+    isset($post_card['string_content']) ? htmlspecialchars(
+        $post_card['string_content']
+    ) : '';
+$text_content =
+    isset($post_card['text_content']) ? htmlspecialchars(
+        $post_card['text_content']
+    ) : '';
+$content_type = $post_card['content_type'] ?? '';
+$likes_count = $post_card['likes_count'] ?? 0;
+$comments_count = $post_card['comments_count'] ?? 0;
+$is_liked = $post_card['is_liked'] ?? false;
+$created_at = $post_card['created_at'] ?? null;
+$iso_date_time = $created_at ? format_iso_date_time($created_at) : '';
+$relative_time = $created_at ? format_relative_time($created_at) : '';
+$author = $post_card['author'] ?? [];
+$author_id = $author['id'] ?? null;
+$author_login =
+    isset($author['login']) ? htmlspecialchars($author['login']) : '';
+$author_avatar_url = $author['avatar_url'] ?? AVATAR_PLACEHOLDER;
 ?>
 <article
         id="post-<?= $id ?>"
         class="popular__post post post-<?= $content_type ?>">
     <header class="post__header">
         <a href="post.php?post-id=<?= $id ?>">
-            <h2><?= strip_tags($title) ?></h2>
+            <h2><?= $title ?></h2>
         </a>
     </header>
     <div class="post__main">
@@ -41,21 +51,18 @@ list(
     <footer class="post__footer">
         <div class="post__author">
             <a class="post__author-link"
-               href="profile.php?user-id=<?= $author['id'] ?>"
+               href="profile.php?user-id=<?= $author_id ?>"
                title="Автор">
                 <div class="post__avatar-wrapper">
                     <img class="post__author-avatar"
-                         src="/<?= $author['avatar_url'] ??
-                                   AVATAR_PLACEHOLDER ?>"
+                         src="/<?= $author_avatar_url ?>"
                          alt="Аватар пользователя" width="40" height="40">
                 </div>
                 <div class="post__info">
-                    <b class="post__author-name"><?= strip_tags(
-                            $author['login']
-                        ) ?></b>
-                    <time class="post__time" datetime="<?= format_iso_date_time(
-                        $created_at
-                    ) ?>"><?= format_relative_time($created_at) ?> назад
+                    <b class="post__author-name"><?= $author_login ?></b>
+                    <time class="post__time"
+                          datetime="<?= $iso_date_time ?>"><?= $relative_time ?>
+                        назад
                     </time>
                 </div>
             </a>

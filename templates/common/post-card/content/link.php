@@ -7,6 +7,7 @@
  * @var string $string_content - строковый контент публикации
  */
 
+$title = strip_tags($title);
 $string_content = strip_tags($string_content);
 ?>
 
@@ -20,7 +21,7 @@ $string_content = strip_tags($string_content);
                          alt="Иконка">
                 </div>
                 <div class="post-link__info">
-                    <h3><?= strip_tags($title) ?></h3>
+                    <h3><?= $title ?></h3>
                 </div>
             </div>
         </a>

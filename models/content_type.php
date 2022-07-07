@@ -70,5 +70,5 @@ function get_content_type(mysqli $db_connection, int $content_type_id)
 
     $content_type = mysqli_fetch_assoc($result);
 
-    return $content_type['id'] ? $content_type : null;
+    return isset($content_type['id']) ? $content_type : null;
 }

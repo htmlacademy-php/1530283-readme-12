@@ -147,8 +147,9 @@
             <h2 class="visually-hidden">Авторизация</h2>
             <form class="authorization__form form" action="index.php"
                   method="post">
-                <div class="authorization__input-wrapper form__input-wrapper <?= $errors['email']
-                    ? 'form__input-section--error' : '' ?>">
+                <div class="authorization__input-wrapper form__input-wrapper
+                   <?= isset($errors['email']) ?
+                    'form__input-section--error' : '' ?>">
                     <input class="authorization__input authorization__input--login form__input"
                            type="text" name="email"
                            placeholder="Электронная почта"
@@ -159,10 +160,11 @@
                     </svg>
                     <label class="visually-hidden">Логин</label>
                 </div>
-                <span class="form__error-label form__error-label--login"><?= $errors['email']
-                        ? $errors['email']['description']
-                        : '' ?></span>
-                <div class="authorization__input-wrapper form__input-wrapper <?= $errors['password']
+                <span class="form__error-label form__error-label--login">
+                    <?= isset($errors['email'])
+                        ? ($errors['email']['description'] ?? '') : '' ?></span>
+                <div class="authorization__input-wrapper form__input-wrapper
+                <?= isset($errors['password'])
                     ? 'form__input-section--error' : '' ?>">
                     <input class="authorization__input authorization__input--password form__input"
                            type="password" name="password" placeholder="Пароль"
@@ -173,8 +175,8 @@
                     </svg>
                     <label class="visually-hidden">Пароль</label>
                 </div>
-                <span class="form__error-label"><?= $errors['password']
-                        ? $errors['password']['description']
+                <span class="form__error-label"><?= isset($errors['password'])
+                        ? ($errors['password']['description'] ?? '')
                         : '' ?></span>
                 <a class="authorization__recovery" href="#">Восстановить
                     пароль</a>

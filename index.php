@@ -1,5 +1,6 @@
 <?php
 
+require_once 'init/common.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
 require_once 'utils/form-handlers/login.php';
@@ -16,11 +17,13 @@ require_once 'init/db-connection.php';
  */
 
 session_start();
-$user_session = $_SESSION['user'] ?? null;
-$is_no_user = !$user_session || !$user_session['id']
-              || !check_user($db_connection, $user_session['id']);
+$user_session = $_SESSION['user'] ?? [];
+$is_user_valid = isset($user_session['id']) ? check_user(
+    $db_connection,
+    $user_session['id']
+) : false;
 
-if ($is_no_user) {
+if (!$is_user_valid) {
     $form_data = [];
     $errors = [];
 
