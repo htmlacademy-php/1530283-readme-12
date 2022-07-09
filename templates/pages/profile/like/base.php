@@ -16,7 +16,7 @@ $additional_info =
 $post = $like['post'] ?? [];
 $post_id = $post['id'] ?? null;
 $post_content_type = $post['content_type'] ?? '';
-$created_at = $post['created_at'] ?? null;
+$created_at = $like['created_at'] ?? null;
 $iso_date_time = $created_at ? format_iso_date_time($created_at) : '';
 $relative_time = $created_at ? format_relative_time($created_at) : '';
 ?>
