@@ -2,6 +2,10 @@
 
 const TIMEZONE = 'UTC';
 
+const HASH_CHAR = '#';
+
+const QUESTION_CHAR = '?';
+
 const DEFAULT_POSTS_LIMIT = 6;
 
 const DEFAULT_COMMENTS_LIMIT = 2;

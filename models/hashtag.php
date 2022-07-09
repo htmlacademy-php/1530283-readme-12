@@ -37,7 +37,7 @@ function get_hashtag(mysqli $db_connection, string $hashtag_name)
 
     $hashtag = mysqli_fetch_assoc($result);
 
-    return $hashtag['id'] ? $hashtag : null;
+    return isset($hashtag['id']) ? $hashtag : null;
 }
 
 /**
@@ -127,8 +127,8 @@ function add_hashtag_to_post(
 
     $existent_hashtag = get_hashtag($db_connection, $name);
 
-    $hashtag_id = is_array($existent_hashtag) && $existent_hashtag['id']
-        ? $existent_hashtag['id'] : create_hashtag($db_connection, $name);
+    $hashtag_id =
+        $existent_hashtag['id'] ?? create_hashtag($db_connection, $name);
 
     if (!$hashtag_id) {
         mysqli_rollback($db_connection);

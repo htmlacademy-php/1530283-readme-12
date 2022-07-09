@@ -6,36 +6,42 @@
  * @var array $post_card - ассоциативный массив с данными публикации
  */
 
-list(
-    'id' => $id,
-    'title' => $title,
-    'string_content' => $string_content,
-    'text_content' => $text_content,
-    'content_type' => $content_type,
-    'author' => $author,
-    'original_post' => $original_post,
-    'created_at' => $created_at,
-    'likes_count' => $likes_count,
-    'comments_count' => $comments_count,
-    'reposts_count' => $reposts_count,
-    'hashtags' => $hashtags,
-    'is_liked' => $is_liked,
-    'is_own' => $is_own,
-    'comments_list_content' => $comments_list_content,
-    'comments_form_content' => $comments_form_content
-    )
-    = $post_card;
+$id = $post_card['id'] ?? null;
+$title =
+    isset($post_card['title']) ? htmlspecialchars($post_card['title']) : '';
+$string_content =
+    isset($post_card['string_content']) ? htmlspecialchars(
+        $post_card['string_content']
+    ) : '';
+$text_content =
+    isset($post_card['text_content']) ? htmlspecialchars(
+        $post_card['text_content']
+    ) : '';
+$content_type = $post_card['content_type'] ?? '';
+$author = $post_card['author'] ?? [];
+$likes_count = $post_card['likes_count'] ?? 0;
+$comments_count = $post_card['comments_count'] ?? 0;
+$reposts_count = $post_card['reposts_count'] ?? 0;
+$hashtags = $post_card['hashtags'] ?? [];
+$is_liked = $post_card['is_liked'] ?? false;
+$is_own = $post_card['is_own'] ?? false;
+$original_post = $post_card['original_post'] ?? null;
+$created_at = $post_card['created_at'] ?? null;
+$comments_list_content = $post_card['comments_list_content'] ?? '';
+$comments_form_content = $post_card['comments_form_content'] ?? '';
 ?>
 
 <article id="post-<?= $id ?>"
-         class="<?= $card_modifier ? "${card_modifier}__post" : '' ?>
+         class="<?= isset($card_modifier) && $card_modifier
+             ? "${card_modifier}__post" : '' ?>
          post <?= "post-$content_type" ?>">
     <header class="post__header">
         <div class="post__author">
             <?php
             if ($original_post): ?>
                 <a class="post__author-link"
-                   href="profile.php?user-id=<?= $original_post['author_id'] ?>"
+                   href="profile.php?user-id=<?= $original_post['author_id'] ??
+                                                 '' ?>"
                    title="Автор">
                     <div class="post__avatar-wrapper post__avatar-wrapper--repost">
                         <img class="post__author-avatar"
@@ -45,15 +51,19 @@ list(
                     </div>
                     <div class="post__info">
                         <b class="post__author-name">Репост:
-                            <?= strip_tags(
-                                $original_post['author_login']
-                            ) ?></b>
+                            <?= isset($original_post['author_login'])
+                                ? htmlspecialchars(
+                                    $original_post['author_login']
+                                ) : '' ?></b>
                         <time class="post__time"
-                              datetime="<?= format_iso_date_time(
-                                  $original_post['created_at']
-                              ) ?>"><?= format_relative_time(
-                                $original_post['created_at']
-                            ) ?>
+                              datetime="<?= isset($original_post['created_at'])
+                                  ? format_iso_date_time(
+                                      $original_post['created_at']
+                                  )
+                                  : '' ?>"><?= isset($original_post['created_at'])
+                                ? format_relative_time(
+                                    $original_post['created_at']
+                                ) : '' ?>
                             назад
                         </time>
                     </div>
@@ -63,9 +73,7 @@ list(
         </div>
     </header>
     <div class="post__main">
-        <h2><a href="post.php?post-id=<?= $id ?>"><?= htmlspecialchars(
-                    $title
-                ) ?></a></h2>
+        <h2><a href="post.php?post-id=<?= $id ?>"><?= $title ?></a></h2>
         <?= include_template(
             "common/post-card/content/$content_type.php",
             [
@@ -111,9 +119,10 @@ list(
             </a>
         </div>
         <time class="post__time"
-              datetime="<?= format_iso_date_time(
+              datetime="<?= $created_at ? format_iso_date_time(
                   $created_at
-              ) ?>"><?= format_relative_time($created_at) ?>
+              ) : '' ?>"><?= $created_at ? format_relative_time($created_at)
+                : '' ?>
             назад
         </time>
     </footer>

@@ -29,11 +29,13 @@ function handle_registration_form(mysqli $db_connection): array
         filter_input(INPUT_POST, 'password-repeat', FILTER_SANITIZE_STRING);
     $form_data['avatar_file'] =
         $with_file ? $_FILES['photo-file'] : null;
+    $form_data['avatar_url'] = null;
 
     $errors = get_registration_form_data_errors($form_data);
 
     if (count($errors)) {
-        if ($with_file && !$errors['avatar_file']) {
+        $avatar_file_error = $errors['avatar_file'] ?? null;
+        if ($with_file && !$avatar_file_error) {
             $errors['avatar_file'] = [
                 'title' => 'Файл фото',
                 'description' => 'Загрузите файл еще раз'
@@ -54,7 +56,8 @@ function handle_registration_form(mysqli $db_connection): array
         }
     }
 
-    if (!$errors['email']) {
+    $email_error = $errors['email'] ?? null;
+    if (!$email_error) {
         $is_email_busy = get_user_by_email($db_connection, $form_data['email']);
 
         if ($is_email_busy) {
@@ -337,14 +340,14 @@ function get_registration_password_repeat_error(array $form_data)
  */
 function get_registration_avatar_file_error(array $form_data)
 {
-    if (!$form_data['avatar_file']) {
+    $avatar_file = $form_data['avatar_file'] ?? null;
+    if (!$avatar_file) {
         return null;
     }
 
     $error_title = 'Файл фото';
 
-    $file = $form_data['avatar_file'];
-    $is_valid_type = check_photo_file_type($file);
+    $is_valid_type = check_photo_file_type($avatar_file);
 
     if (!$is_valid_type) {
         return [
@@ -353,7 +356,7 @@ function get_registration_avatar_file_error(array $form_data)
         ];
     }
 
-    if ($file['size'] > MAX_PHOTO_FILE_SIZE) {
+    if ($avatar_file['size'] > MAX_PHOTO_FILE_SIZE) {
         return [
             'title' => $error_title,
             'description' => 'Превышен допустимый размер файла '

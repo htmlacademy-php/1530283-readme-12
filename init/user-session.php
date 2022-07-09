@@ -10,11 +10,13 @@ require_once 'models/user.php';
 
 session_start();
 
-$user_session = $_SESSION['user'];
-$is_no_user = !$user_session || !$user_session['id']
-              || !check_user($db_connection, $user_session['id']);
+$user_session = $_SESSION['user'] ?? [];
+$is_user_valid = isset($user_session['id']) ? check_user(
+    $db_connection,
+    $user_session['id']
+) : false;
 
-if ($is_no_user) {
+if (!$is_user_valid) {
     header('Location: index.php');
 
     exit();

@@ -22,12 +22,11 @@
                     <label class="registration__label form__label"
                            for="registration-email">Электронная почта <span
                                 class="form__input-required">*</span></label>
-                    <div class="form__input-section <?= $errors['email']
+                    <div class="form__input-section <?= isset($errors['email'])
                         ? 'form__input-section--error' : '' ?>">
                         <input class="registration__input form__input"
                                id="registration-email" type="text" name="email"
-                               value="<?= $form_data['email'] ??
-                                          '' ?>"
+                               value="<?= $form_data['email'] ?? '' ?>"
                                placeholder="Укажите эл.почту">
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
@@ -42,12 +41,11 @@
                     <label class="registration__label form__label"
                            for="registration-login">Логин <span
                                 class="form__input-required">*</span></label>
-                    <div class="form__input-section <?= $errors['login']
+                    <div class="form__input-section <?= isset($errors['login'])
                         ? 'form__input-section--error' : '' ?>">
                         <input class="registration__input form__input"
                                id="registration-login" type="text" name="login"
-                               value="<?= $form_data['login'] ??
-                                          '' ?>"
+                               value="<?= $form_data['login'] ?? '' ?>"
                                placeholder="Укажите логин">
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
@@ -62,12 +60,12 @@
                     <label class="registration__label form__label"
                            for="registration-password">Пароль<span
                                 class="form__input-required">*</span></label>
-                    <div class="form__input-section <?= $errors['password']
+                    <div class="form__input-section
+                      <?= isset($errors['password'])
                         ? 'form__input-section--error' : '' ?>">
                         <input class="registration__input form__input"
                                id="registration-password" type="password"
-                               value="<?= $form_data['password'] ??
-                                          '' ?>"
+                               value="<?= $form_data['password'] ?? '' ?>"
                                name="password" placeholder="Придумайте пароль">
                         <button class="form__error-button button" type="button">
                             !<span class="visually-hidden">Информация об ошибке</span>
@@ -82,7 +80,8 @@
                     <label class="registration__label form__label"
                            for="registration-password-repeat">Повтор пароля<span
                                 class="form__input-required">*</span></label>
-                    <div class="form__input-section <?= $errors['password_repeat']
+                    <div class="form__input-section
+                      <?= isset($errors['password_repeat'])
                         ? 'form__input-section--error' : '' ?>">
                         <input class="registration__input form__input"
                                id="registration-password-repeat" type="password"
@@ -100,7 +99,7 @@
                     </div>
                 </div>
             </div>
-            <?= $invalid_block_content  ?>
+            <?= $invalid_block_content ?? '' ?>
         </div>
         <div class="registration__input-file-container form__input-container form__input-container--file">
             <input class="registration__input-file form__input-file"

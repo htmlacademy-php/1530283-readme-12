@@ -9,19 +9,15 @@ require_once 'utils/helpers.php';
  * @var bool $is_own_post - собственная публикация
  */
 
-list(
-    'id' => $id,
-    'login' => $user_name,
-    'avatar_url' => $avatar_url,
-    'created_at' => $created_at,
-    'subscribers_count' => $subscribers_count,
-    'posts_count' => $posts_count,
-    'is_observable' => $is_observable
-    )
-    = $author;
-
-$user_name = strip_tags($user_name);
-
+$id = $author['id'] ?? null;
+$avatar_url = $author['avatar_url'] ?? AVATAR_PLACEHOLDER;
+$user_name = isset($author['login']) ? htmlspecialchars($author['login']) : '';
+$posts_count = $author['posts_count'] ?? 0;
+$subscribers_count = $author['subscribers_count'] ?? 0;
+$is_observable = $author['is_observable'] ?? false;
+$created_at = $author['created_at'] ?? null;
+$iso_date_time = $created_at ? format_iso_date_time($created_at) : '';
+$relative_time = $created_at ? format_relative_time($created_at) : '';
 ?>
 <div class="post-details__user user">
     <div class="post-details__user-info user__info">
@@ -29,19 +25,18 @@ $user_name = strip_tags($user_name);
             <a class="post-details__avatar-link user__avatar-link"
                href="profile.php?user-id=<?= $id ?>">
                 <img class="post-details__picture user__picture"
-                     src="/<?= $avatar_url ?? AVATAR_PLACEHOLDER ?>"
+                     src="/<?= $avatar_url ?>"
                      alt="Аватар пользователя" width="60" height="60">
             </a>
         </div>
         <div class="post-details__name-wrapper user__name-wrapper">
             <a class="post-details__name user__name"
                href="profile.php?user-id=<?= $id ?>">
-                <span><?= strip_tags($user_name) ?></span>
+                <span><?= $user_name ?></span>
             </a>
             <time class="post-details__time user__time"
-                  datetime="<?= format_iso_date_time(
-                      $created_at
-                  ) ?>"><?= format_relative_time($created_at) ?> на сайте
+                  datetime="<?= $iso_date_time ?>"><?= $relative_time ?> на
+                сайте
             </time>
         </div>
     </div>

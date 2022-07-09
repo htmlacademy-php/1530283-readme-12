@@ -24,19 +24,17 @@ function notify_about_new_subscriber(
     array $subscriber
 ): bool {
     try {
-        list(
-            'email' => $observable_email,
-            'login' => $observable_login
-            ) = $observable;
-
-        list(
-            'id' => $subscriber_id,
-            'login' => $subscriber_login
-            ) = $subscriber;
-
-        $observable_login = htmlspecialchars($observable_login);
-        $observable_email = htmlspecialchars($observable_email);
-        $subscriber_login = htmlspecialchars($subscriber_login);
+        $observable_login =
+            isset($observable['login']) ? htmlspecialchars($observable['login'])
+                : null;
+        $observable_email =
+            isset($observable['email']) ? htmlspecialchars($observable['email'])
+                : null;
+        $subscriber_id = $subscriber['id'] ?? null;
+        $subscriber_login =
+            isset($subscriber['login']) ? htmlspecialchars(
+                $subscriber['login']
+            ) : null;
 
         $mail->addAddress($observable_email, $observable_login);
 
@@ -85,26 +83,19 @@ function notify_about_new_post(
     array $post
 ): bool {
     try {
-        list(
-            'email' => $subscriber_email,
-            'login' => $subscriber_login
-            ) = $subscriber;
-
-        list(
-            'id' => $post_id,
-            'title' => $post_title,
-            'author' => $post_author
-            ) = $post;
-
-        list(
-            'id' => $post_author_id,
-            'login' => $post_author_login
-            ) = $post_author;
-
-        $subscriber_email = htmlspecialchars($subscriber_email);
-        $subscriber_login = htmlspecialchars($subscriber_login);
-        $post_author_login = htmlspecialchars($post_author_login);
-        $post_title = htmlspecialchars($post_title);
+        $subscriber_email =
+            isset($subscriber['email']) ? htmlspecialchars($subscriber['email'])
+                : null;
+        $subscriber_login = isset($subscriber['login']) ? htmlspecialchars(
+            $subscriber['login']
+        ) : null;
+        $post_id = $post['id'] ?? null;
+        $post_title =
+            isset($post['title']) ? htmlspecialchars($post['title']) : null;
+        $post_author = $post['author'] ?? null;
+        $post_author_id = $post_author['id'] ?? null;
+        $post_author_login = isset($post_author['login'])
+            ? htmlspecialchars($post_author['login']) : null;
 
         $mail->addAddress($subscriber_email, $subscriber_login);
 

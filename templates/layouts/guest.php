@@ -153,8 +153,8 @@
     </div>
 </header>
 
-<section class="page__main <?= $page_modifier ? "page__main--$page_modifier"
-    : '' ?>">
+<section class="page__main <?= isset($page_modifier) && $page_modifier
+    ? "page__main--$page_modifier" : '' ?>">
     <?= $content ?>
 </section>
 

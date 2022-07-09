@@ -10,6 +10,9 @@
  * @var array $content_filters - массив с фильтрами по типу контента
  */
 
+$any_content_filter_type = $any_content_filter['type'] ?? '';
+$is_any_content_filter_active = $any_content_filter['active'] ?? false;
+$any_content_filter_url = $any_content_filter['url'] ?? '';
 ?>
 
 <div class="popular__filters-wrapper">
@@ -18,13 +21,16 @@
         <ul class="popular__sorting-list sorting__list">
             <?php
             foreach ($sort_types as $sort_type): ?>
+                <?php
+                $is_active = $sort_type['active'] ?? false;
+                ?>
                 <li class="sorting__item">
-                    <a class="sorting__link <?= $sort_type['active']
+                    <a class="sorting__link <?= $is_active
                         ? 'sorting__link--active'
                         : '' ?> <?= $is_sort_order_reversed
                         ? 'sorting__link--reverse' : '' ?>"
-                       href="<?= $sort_type['url'] ?>">
-                        <span><?= $sort_type['label'] ?></span>
+                       href="<?= $sort_type['url'] ?? '' ?>">
+                        <span><?= $sort_type['label'] ?? '' ?></span>
                         <svg class="sorting__icon" width="10" height="12">
                             <use xlink:href="#icon-sort"></use>
                         </svg>
@@ -37,24 +43,34 @@
     <div class="popular__filters filters">
         <b class="popular__filters-caption filters__caption">Тип контента:</b>
         <ul class="popular__filters-list filters__list">
-            <li class="popular__filters-item popular__filters-item--<?= $any_content_filter['type'] ?> filters__item filters__item--<?= $any_content_filter['icon'] ?>">
-                <a class="filters__button filters__button--ellipse filters__button--all <?= $any_content_filter['active']
+            <li class="popular__filters-item
+                popular__filters-item--<?= $any_content_filter_type ?>
+                filters__item filters__item--<?= $any_content_filter_type ?>">
+                <a class="filters__button filters__button--ellipse
+                    filters__button--all <?= $is_any_content_filter_active
                     ? 'filters__button--active' : '' ?>"
-                    <?= !$any_content_filter['active']
-                        ? 'href="' . $any_content_filter['url'] . '"' : '' ?> >
-                    <span><?= $any_content_filter['name'] ?></span>
+                    <?= !$is_any_content_filter_active
+                        ? "href='$any_content_filter_url'" : '' ?> >
+                    <span><?= $any_content_filter['name'] ?? '' ?></span>
                 </a>
             </li>
             <?php
             foreach ($content_filters as $content_filter): ?>
+                <?php
+                $filter_type = $content_filter['type'] ?? '';
+                $filter_name = $content_filter['name'] ?? '';
+                $is_filter_active = $content_filter['active'] ?? false;
+                $filter_url = $content_filter['url'] ?? '';
+                ?>
                 <li class="popular__filters-item filters__item">
-                    <a class="filters__button filters__button--<?= $content_filter['type'] ?> <?= $content_filter['active']
-                        ? 'filters__button--active' : '' ?> button"
-                        <?= !$content_filter['active']
-                            ? 'href="' . $content_filter['url'] . '"' : '' ?> >
-                        <span class="visually-hidden"><?= $content_filter['name'] ?></span>
+                    <a class="filters__button
+                        filters__button--<?= $filter_type ?>
+                        <?= $is_filter_active ? 'filters__button--active'
+                        : '' ?> button"
+                        <?= !$is_filter_active ? "href='$filter_url'" : '' ?> >
+                        <span class="visually-hidden"><?= $filter_name ?></span>
                         <svg class="filters__icon" width="22" height="18">
-                            <use xlink:href="#icon-filter-<?= $content_filter['type'] ?>"></use>
+                            <use xlink:href="#icon-filter-<?= $filter_type ?>"></use>
                         </svg>
                     </a>
                 </li>

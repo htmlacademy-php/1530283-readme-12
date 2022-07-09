@@ -11,7 +11,7 @@
     <label class="adding-post__label form__label"
            for="text-content">Текст цитаты <span
                 class="form__input-required">*</span></label>
-    <div class="form__input-section <?= $errors['text_content']
+    <div class="form__input-section <?= isset($errors['text_content'])
         ? 'form__input-section--error' : '' ?>">
         <textarea
                 class="adding-post__textarea adding-post__textarea--quote form__textarea form__input"
@@ -32,7 +32,7 @@
     <label class="adding-post__label form__label"
            for="string-content">Автор <span
                 class="form__input-required">*</span></label>
-    <div class="form__input-section <?= $errors['string_content']
+    <div class="form__input-section <?= isset($errors['string_content'])
         ? 'form__input-section--error' : '' ?>">
         <input class="adding-post__input form__input"
                id="string-content" type="text"

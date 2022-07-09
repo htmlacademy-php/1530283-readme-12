@@ -12,15 +12,18 @@
     <ul class="profile__tabs-list filters__list tabs__list">
         <?php
         foreach ($tabs as $tab): ?>
+            <?php
+            $is_active = $tab['active'] ?? false;
+            $url = $tab['url'] ?? '';
+            ?>
             <li class="profile__tabs-item filters__item">
                 <a class="
                     profile__tabs-link button
                     filters__button tabs__item
-                    <?= $tab['active']
+                    <?= $is_active
                     ? 'filters__button--active tabs__item--active' : '' ?>"
-                    <?=
-                    $tab['active'] ? '' : 'href="' . $tab['url'] . '"' ?>
-                ><?= $tab['label'] ?></a>
+                    <?= $is_active ? '' : "href='$url'" ?>
+                ><?= $tab['label'] ?? '' ?></a>
             </li>
         <?php
         endforeach; ?>

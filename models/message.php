@@ -72,9 +72,9 @@ function get_messages(mysqli $db_connection, int $user_id, int $conversation_id)
  * Пользователь может добавляет сообщения только к тем разговорам, к которым
  * у него есть доступ. В случае отсутствия доступа функция вернет null.
  *
- * @param  mysqli  $db_connection - ресурс соедения с базой данных
- * @param  int  $user_id - id пользователя
- * @param  array  $message_data - данные сообщения
+ * @param  mysqli  $db_connection  - ресурс соедения с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  array  $message_data  - данные сообщения
  *
  * @return int | null - id созданного сообщения
  */
@@ -83,10 +83,12 @@ function create_message(
     int $user_id,
     array $message_data
 ) {
-    list(
-        'content' => $content,
-        'conversation_id' => $conversation_id
-        ) = $message_data;
+    $content = $message_data['content'] ?? null;
+    $conversation_id = $message_data['conversation_id'] ?? null;
+
+    if (!$content || !$conversation_id) {
+        return null;
+    }
 
     $is_access =
         check_conversation_access($db_connection, $user_id, $conversation_id);
@@ -120,8 +122,8 @@ function create_message(
  * для заданного пользователя.
  * В случае ошибки запроса функция возвращает 0.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $user_id - id пользователя
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
  *
  * @return int - количество непрочитанных сообщений
  */
@@ -163,9 +165,9 @@ function get_unread_messages_count(mysqli $db_connection, int $user_id)
  * пользователя и разговороа.
  * Функция возвращает результат выполнения операции в булевом формате.
  *
- * @param  mysqli  $db_connection - ресурс соединения с базой данных
- * @param  int  $user_id - id пользователя
- * @param  int  $conversation_id - id разговора
+ * @param  mysqli  $db_connection  - ресурс соединения с базой данных
+ * @param  int  $user_id  - id пользователя
+ * @param  int  $conversation_id  - id разговора
  *
  * @return bool - результат выполнения операции
  */

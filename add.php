@@ -2,6 +2,7 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
+require_once 'init/common.php';
 require_once 'init/user-session.php';
 require_once 'init/db-connection.php';
 require_once 'init/mail.php';
@@ -21,6 +22,8 @@ require_once 'models/subscription.php';
  * @var PHPMailer $mail - экзмепляр PHPMailer
  */
 
+$basename = basename(__FILE__);
+
 $form_data = [];
 $errors = [];
 
@@ -28,6 +31,7 @@ $layout_data = [
     'title' => 'Добавить публикацию',
     'user' => $user_session,
     'page_modifier' => 'adding-post',
+    'basename' => $basename
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -74,8 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     ob_end_clean();
 }
-
-$basename = basename(__FILE__);
 
 $content_types = get_content_types($db_connection);
 

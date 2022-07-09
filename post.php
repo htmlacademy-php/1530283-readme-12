@@ -1,5 +1,6 @@
 <?php
 
+require_once 'init/common.php';
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
@@ -33,6 +34,7 @@ $layout_data = [
     'title' => 'Просмотр поста',
     'user' => $user_session,
     'page_modifier' => 'publication',
+    'basename' => $basename
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

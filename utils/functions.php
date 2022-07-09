@@ -529,6 +529,28 @@ function get_random_file_name(string $extension = 'tmp'): string
 }
 
 /**
+ * Функция возвращает название файла из переданного URL.
+ *
+ * @param  string  $url - URL
+ *
+ * @return string - название файла
+ */
+function parse_filename(string $url): string {
+    $file_name = basename($url);
+
+    if (strpos($file_name, HASH_CHAR) !== false) {
+        $file_name = explode(HASH_CHAR, $file_name)[0];
+    }
+
+
+    if (strpos($file_name, QUESTION_CHAR) !== false) {
+        $file_name = explode(QUESTION_CHAR, $file_name)[0];
+    }
+
+    return $file_name;
+}
+
+/**
  * Функция сохраняет файл перданный по ссылке.
  * Имя файла генерируется случайными образом.
  * Функция возвращает путь к сохраненному файлу.
@@ -551,7 +573,7 @@ function download_file(string $url, string $destination = 'uploads')
         return false;
     }
 
-    $original_file_name = basename($url);
+    $original_file_name = parse_filename($url);
     $extension = pathinfo($original_file_name, PATHINFO_EXTENSION);
     $file_name = get_random_file_name($extension);
     $file_path = "$destination/$file_name";

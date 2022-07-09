@@ -76,6 +76,14 @@ function get_comments(mysqli $db_connection, int $post_id, int $limit = null)
  */
 function create_comment(mysqli $db_connection, array $comment_data)
 {
+    $author_id = $comment_data['author_id'] ?? null;
+    $post_id = $comment_data['post_id'] ?? null;
+    $content = $comment_data['content'] ?? null;
+
+    if (!$author_id || !$post_id || !$content) {
+        return null;
+    }
+
     $sql = "
         INSERT INTO comments (
             author_id,
@@ -88,9 +96,9 @@ function create_comment(mysqli $db_connection, array $comment_data)
         $db_connection,
         $sql,
         'iis',
-        $comment_data['author_id'],
-        $comment_data['post_id'],
-        $comment_data['content']
+        $author_id,
+        $post_id,
+        $content
     )
     ) {
         return null;

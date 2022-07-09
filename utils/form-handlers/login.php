@@ -31,7 +31,7 @@ function handle_login_form(mysqli $db_connection): array
         $form_data['email']
     ) : null;
 
-    $is_password_correct = $user
+    $is_password_correct = isset($user['password_hash'])
                            && password_verify(
                                $form_data['password'],
                                $user['password_hash']

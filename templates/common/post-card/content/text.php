@@ -6,8 +6,10 @@ require_once 'utils/functions.php';
 /**
  * Общий шаблон контента карточки публикации текста
  *
+ * @var string $id - id публикации
  * @var string $text_content - текстовый контент публикации
  */
+
 
 $text_content = htmlspecialchars($text_content);
 $cropped_text_content = crop_text(
@@ -20,7 +22,8 @@ $is_cropped = $text_content !== $cropped_text_content;
 <?php
 if ($is_cropped): ?>
     <p><?= $cropped_text_content ?></p>
-    <a class='post-text__more-link' href='#'>Читать далее</a>
+    <a class='post-text__more-link' href='post.php?post-id=<?= $id ?>'>Читать
+        далее</a>
 <?php
 else: ?>
     <p><?= $text_content ?></p>

@@ -12,18 +12,14 @@ require_once 'utils/helpers.php';
  * @var string $comments_form_content - разметка формы добаваления комментария
  */
 
-list(
-    'id' => $id,
-    'title' => $title,
-    'likes_count' => $likes_count,
-    'comments_count' => $comments_count,
-    'reposts_count' => $reposts_count,
-    'views_count' => $views_count,
-    'is_liked' => $is_liked,
-    'is_own' => $is_own
-    )
-    = $post;
-
+$id = $post['id'] ?? null;
+$title = isset($post['title']) ? htmlspecialchars($post['title']) : '';
+$likes_count = $post['likes_count'] ?? 0;
+$comments_count = $post['comments_count'] ?? 0;
+$reposts_count = $post['reposts_count'] ?? 0;
+$views_count = $post['views_count'] ?? 0;
+$is_liked = $post['is_liked'] ?? false;
+$is_own = $post['is_own'] ?? false;
 ?>
 
 <div class="container">

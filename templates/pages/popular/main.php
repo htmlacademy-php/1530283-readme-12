@@ -7,10 +7,8 @@
  * @var array $pagination - ссылки пагинации
  */
 
-list(
-    'prev' => $prev_page_url,
-    'next' => $next_page_url
-    ) = $pagination;
+$prev_page_url = $pagination['prev'] ?? '';
+$next_page_url = $pagination['next'] ?? '';
 ?>
 
 <div class="popular__posts">

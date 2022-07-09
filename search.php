@@ -1,5 +1,6 @@
 <?php
 
+require_once 'init/common.php';
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';
@@ -13,6 +14,8 @@ require_once 'init/db-connection.php';
  * @var mysqli $db_connection - ресурс соединения с базой данных
  */
 
+$basename = basename(__FILE__);
+
 $query = filter_input(INPUT_GET, SEARCH_QUERY, FILTER_SANITIZE_STRING);
 
 $layout_data = [
@@ -20,6 +23,7 @@ $layout_data = [
     'user' => $user_session,
     'page_modifier' => 'search-results',
     'query' => $query,
+    'basename' => $basename
 ];
 
 $query_content = include_template(
@@ -27,7 +31,7 @@ $query_content = include_template(
     ['query' => $query]
 );
 
-$is_hashtag_mode = $query[0] === '#';
+$is_hashtag_mode = $query[0] === HASH_CHAR;
 
 if ($is_hashtag_mode) {
     $query = substr($query, 1);

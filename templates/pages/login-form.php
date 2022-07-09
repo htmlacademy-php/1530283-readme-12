@@ -21,7 +21,7 @@
                 <div class="login__input-wrapper form__input-wrapper">
                     <label class="login__label form__label" for="login-email">Электронная
                         почта</label>
-                    <div class="form__input-section <?= $errors['email']
+                    <div class="form__input-section <?= isset($errors['email'])
                         ? 'form__input-section--error' : '' ?>">
                         <input class="login__input form__input" id="login-email"
                                type="text" name="email"
@@ -40,7 +40,8 @@
                 <div class="login__input-wrapper form__input-wrapper">
                     <label class="login__label form__label"
                            for="login-password">Пароль</label>
-                    <div class="form__input-section <?= $errors['password']
+                    <div class="form__input-section
+                      <?= isset($errors['password'])
                         ? 'form__input-section--error' : '' ?>">
                         <input class="login__input form__input"
                                id="login-password"
@@ -57,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            <?= $invalid_block_content  ?>
+            <?= $invalid_block_content ?? '' ?>
         </div>
         <button class="login__submit button button--main" type="submit">
             Отправить

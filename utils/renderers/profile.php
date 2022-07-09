@@ -176,13 +176,14 @@ function add_comments_contents(array $posts, array $comments_data): array
         function (&$post) use (
             $comments_data
         ) {
-            list(
-                'post_id' => $post_id,
-                'form_data' => $form_data,
-                'list_data' => $list_data,
-                'basename' => $basename,
-                'is_expanded' => $is_expanded
-                ) = $comments_data;
+            $post_id = $comments_data['post_id'] ?? null;
+            $form_data = $comments_data['form_data'] ?? [];
+            $list_data = $comments_data['list_data'] ?? [];
+            $basename = $comments_data['basename'] ?? '';
+            $is_expanded = $comments_data['is_expanded'] ?? false;
+
+            $post['comments_form_content'] = '';
+            $post['comments_list_content'] = '';
 
             if ($post['id'] === intval($post_id)) {
                 $post['comments_form_content'] = include_template(

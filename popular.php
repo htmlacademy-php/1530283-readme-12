@@ -1,5 +1,6 @@
 <?php
 
+require_once 'init/common.php';
 require_once 'utils/constants.php';
 require_once 'utils/helpers.php';
 require_once 'utils/functions.php';

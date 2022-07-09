@@ -75,7 +75,7 @@
             object-fit: cover;
         }
 
-        .header__profile-avatar{
+        .header__profile-avatar {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -223,7 +223,7 @@
             <div class="header__search">
                 <label class="visually-hidden">Поиск</label>
                 <input class="header__search-input form__input" type="search"
-                       name="query" value="<?= $query ?>">
+                       name="query" value="<?= $query ?? '' ?>">
                 <button class="header__search-button button" type="submit">
                     <svg class="header__search-icon" width="18" height="18">
                         <use xlink:href="#icon-search"></use>
@@ -283,7 +283,7 @@
                             </div>
                             <div class="header__profile-name">
                                     <span>
-                                        <?= $user['login'] ?>
+                                        <?= $user['login'] ?? '' ?>
                                     </span>
                                 <svg class="header__link-arrow" width="10"
                                      height="6">
@@ -308,7 +308,9 @@
                               <span class="header__profile-nav-text">
                                 Сообщения
                                   <?php
-                                  if ($user['unread_messages_count']): ?>
+                                  if (isset($user['unread_messages_count'])
+                                      && $user['unread_messages_count']
+                                  ): ?>
                                       <i class="header__profile-indicator"><?= $user['unread_messages_count'] ?></i>
                                   <?php
                                   endif; ?>
@@ -338,8 +340,8 @@
     </div>
 </header>
 
-<section class="page__main <?= $page_modifier ? "page__main--$page_modifier"
-    : '' ?>">
+<section class="page__main <?= isset($page_modifier) && $page_modifier ?
+    "page__main--$page_modifier" : '' ?>">
     <?= $content ?>
 </section>
 

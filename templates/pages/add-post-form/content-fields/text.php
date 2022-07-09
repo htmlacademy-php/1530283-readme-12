@@ -11,7 +11,7 @@
     <label class="adding-post__label form__label"
            for="text-content">Текст поста <span
                 class="form__input-required">*</span></label>
-    <div class="form__input-section <?= $errors['text_content']
+    <div class="form__input-section <?= isset($errors['text_content'])
         ? 'form__input-section--error' : '' ?>">
         <textarea class="adding-post__textarea form__textarea form__input"
                   id="text-content" name="text-content"
