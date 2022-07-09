@@ -33,9 +33,11 @@ function handle_add_post_form(mysqli $db_connection): array
         'string-content',
         FILTER_SANITIZE_STRING
     ) : '';
-    $tags = filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING) ?? '';
+    $tags = mb_strtolower(
+        trim(filter_input(INPUT_POST, 'tags', FILTER_SANITIZE_STRING) ?? '')
+    );
     $form_data['tags'] =
-        preg_replace('/\s+/', TEXT_SEPARATOR, mb_strtolower($tags));
+        preg_replace('/\s+/', TEXT_SEPARATOR, $tags);
 
     $form_data['photo_file'] =
         $with_file ? $_FILES['photo-file'] : null;
