@@ -31,7 +31,7 @@ $query_content = include_template(
     ['query' => $query]
 );
 
-$is_hashtag_mode = $query[0] === '#';
+$is_hashtag_mode = $query[0] === HASH_CHAR;
 
 if ($is_hashtag_mode) {
     $query = substr($query, 1);
